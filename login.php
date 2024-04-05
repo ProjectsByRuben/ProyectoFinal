@@ -19,19 +19,21 @@ if (isset($_POST['usuario']) && isset($_POST['pass'])) {
     $password = $_POST['pass'];
 
     // Consulta para verificar las credenciales del usuario
-    $sql = "SELECT * FROM usuarios WHERE usuario = '$username' AND contraseña = '$password'";
+    $sql = "SELECT id_usuario FROM usuarios WHERE usuario = '$username' AND contraseña = '$password'";
     $result = $conn->query($sql);
 
     if ($result->num_rows == 1) {
         // Usuario autenticado correctamente
+        $row = $result->fetch_assoc();
         $_SESSION['usuario'] = $username;
         $_SESSION['pass'] = $password;
-        header("Location: dashboard.php"); // Redirigir al usuario a la página ejercicios.php
+        $_SESSION['id_usuario'] = $row['id_usuario']; // Guardar el ID de usuario en la sesión
+        header("Location: dashboard.php"); // Redirigir al usuario a la página dashboard.php
         exit();
     } else {
         // Usuario no encontrado o contraseña incorrecta
         $_SESSION['error'] = "Usuario o contraseña incorrectos.";
-        header("Location: index.php"); // Redirigir al usuario a la página ejercicios.php
+        header("Location: index.php"); // Redirigir al usuario a la página index.php
         exit();
     }
 

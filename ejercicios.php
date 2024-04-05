@@ -70,10 +70,7 @@ $result = $conn->query($sql);
                     <a class="nav-link active" aria-current="page" href="./ejercicios.php">Ejercicios</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Mis Respuestas</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Pricing</a>
+                <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>
                 </li>
             </ul>
         </div>
@@ -98,7 +95,7 @@ $result = $conn->query($sql);
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary">Guardar cambios</button>
+                <a href="cerrar_sesion.php" class="btn btn-primary">Cerrar sesión</a>
             </div>
         </div>
     </div>
@@ -131,7 +128,7 @@ if ($result->num_rows > 0) {
         echo "<div class='card' style='width: 18rem;'>";
         echo "<img src='$imagen_path' class='card-img-top' alt='Asignatura Imagen'>";
         echo "<div class='card-body'>";
-        echo "<h5 class='card-title'>{$row['enunciado']}</h5>"; // Aquí se imprime el enunciado del ejercicio
+        echo "<h5 class='card-title'>{$row['titulo']}</h5>"; // Aquí se imprime el enunciado del ejercicio
         echo "<p class='card-text'></p>";
         echo "<a href='ver_solucion.php?id={$row['id_ejercicio']}' class='btn'><button type='button' class='btn btn-success'>Ver Solución</button></a> <br>";
         echo "<a href='solucion.php?id={$row['id_ejercicio']}' class='btn'><button type='button' class='btn btn-warning'>Intentar</button></a> <br>";
@@ -144,9 +141,6 @@ if ($result->num_rows > 0) {
 ?>
 
 </div>
-
-<a href="cerrar_sesion.php"><button type="button" class="btn btn-danger btn-cerrar-sesion">Cerrar Sesión</button></a>
-<a href="ejercicios_resueltos.php"><button type="button" class="btn btn-success btn-cerrar-sesion">Ejercicios Resueltos</button></a>
 
 <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 </body>
