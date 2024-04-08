@@ -1,12 +1,12 @@
 <?php
 session_start();
 
-// Verificar si el usuario no ha iniciado sesión
 if (!isset($_SESSION['usuario'])) {
-  // Redirigir al usuario a la página de index.php
-  header("Location: index.php");
-  exit(); // Detener la ejecución del script después de redirigir
+    header("Location: index.php");
+    exit();
 }
+
+$tipo_usuario = $_SESSION['tipo'];
 ?>
 
 <!DOCTYPE html>
@@ -57,8 +57,13 @@ if (!isset($_SESSION['usuario'])) {
                     <a class="nav-link active" aria-current="page" href="./ejercicios.php">Ejercicios</a>
                 </li>
                 <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>
+                    <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>
                 </li>
+                <?php if ($tipo_usuario === 'profesor'): ?>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./crear_ejercicio.php">Crear Ejercicio</a>
+                    </li>
+                <?php endif; ?>
             </ul>
         </div>
     </div>

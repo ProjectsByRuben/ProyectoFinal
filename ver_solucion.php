@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+$tipo_usuario = $_SESSION['tipo'];
+
 // Verificar si el usuario ha iniciado sesión
 if (!isset($_SESSION['usuario'])) {
     // Si el usuario no ha iniciado sesión, redireccionar al formulario de inicio de sesión
@@ -15,37 +17,22 @@ if (!isset($_GET['id'])) {
     exit();
 }
 
-// Conexión a la base de datos (omitido para simplificar)
-$servername = "localhost";
-$username = "root";
-$password = "root";
-$dbname = "proyecto_asignaturas";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
-}
-
-// Obtener el ID del ejercicio desde el parámetro GET (omitido para simplificar)
+// Obtener el ID del ejercicio desde el parámetro GET
 $id_ejercicio = $_GET['id'];
 
-// Consulta para obtener la solución del ejercicio (omitido para simplificar)
-$sql = "SELECT solucion FROM ejercicios WHERE id_ejercicio = $id_ejercicio";
-$result = $conn->query($sql);
+// Directorio donde se encuentran los archivos HTML de las soluciones
+$directorio_ejercicios = 'ejercicios/';
 
-if ($result->num_rows > 0) {
-    // Mostrar la solución del ejercicio (omitido para simplificar)
-    $row = $result->fetch_assoc();
-    $solucion = htmlspecialchars($row['solucion']); // Convertir el texto HTML a entidades HTML
-    $solucion2 = $row['solucion']; // Solución sin modificar
+// Comprobar si el archivo HTML de la muestra del ejercicio existe
+$ruta_muestra = $directorio_ejercicios . $id_ejercicio . '.html';
+if (!file_exists($ruta_muestra)) {
+    // Si el archivo no existe, mostrar un mensaje de error
+    $muestra = "La muestra de este ejercicio no está disponible.";
 } else {
-    // Si no se encuentra el ejercicio, mostrar un mensaje de error (omitido para simplificar)
-    $solucion = "La solución de este ejercicio no está disponible.";
-    $solucion2 = "La solución de este ejercicio no está disponible.";
+    // Si el archivo existe, cargar su contenido
+    $codigo = file_get_contents($ruta_muestra);
 }
 
-$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -87,6 +74,11 @@ $conn->close();
                 <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>
                 </li>
+                <?php if ($tipo_usuario === 'profesor'): ?>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./crear_ejercicio.php">Crear Ejercicio</a>
+                    </li>
+                <?php endif; ?>
             </ul>
         </div>
     </div>
@@ -116,18 +108,20 @@ $conn->close();
     </div>
 </div>
 
-    <h1>Solución del Ejercicio</h1>
-    <h2>Muestra ejercicio</h2>
-    <div class="code-container">
-        <code class="html"><?php echo $solucion2; ?></code>
-    </div>
-    <h2>Codigo ejercicio</h2>
-    <div class="code-container">
-        <pre><code class="html"><?php echo $solucion; ?></code></pre>
-    </div>
+<h1>Solución del Ejercicio</h1>
+
+<h2>Muestra ejercicio</h2>
+<div class="code-container">
+    <?php echo $codigo; ?>
+</div>
+
+<h2>Código ejercicio</h2>
+<div class="code-container">
+    <pre><code class="html"><?php echo htmlspecialchars($codigo); ?></code></pre>
+</div>
     
-    <!-- Incluir script de Highlight.js para resaltar la sintaxis -->
-    <script>hljs.highlightAll();</script>
-    <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script>hljs.highlightAll();</script>
+<!-- Incluir script de Highlight.js para resaltar la sintaxis -->
+<script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 </body>
 </html>

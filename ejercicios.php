@@ -33,6 +33,8 @@
 <?php
 session_start();
 
+$tipo_usuario = $_SESSION['tipo'];
+
 // Verificar si el usuario ha iniciado sesión
 if (!isset($_SESSION['usuario'])) {
     // Si el usuario no ha iniciado sesión, redireccionar al formulario de inicio de sesión
@@ -72,6 +74,11 @@ $result = $conn->query($sql);
                 <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>
                 </li>
+                <?php if ($tipo_usuario === 'profesor'): ?>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./crear_ejercicio.php">Crear Ejercicio</a>
+                    </li>
+                <?php endif; ?>
             </ul>
         </div>
     </div>

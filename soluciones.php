@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+$tipo_usuario = $_SESSION['tipo'];
+
 // Verificar si el usuario ha iniciado sesión
 if (!isset($_SESSION['usuario'])) {
     // Si el usuario no ha iniciado sesión, redireccionar al formulario de inicio de sesión
@@ -58,6 +60,11 @@ $conn->close();
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>
                     </li>
+                    <?php if ($tipo_usuario === 'profesor'): ?>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./crear_ejercicio.php">Crear Ejercicio</a>
+                    </li>
+                <?php endif; ?>
                 </ul>
             </div>
         </div>
@@ -98,8 +105,9 @@ $conn->close();
                     $ruta_archivo = $row['solucion'];
                     $titulo = $row['titulo']; // Cambio de $enunciado a $titulo
                     $id_ejercicio = $row['id_ejercicio'];
+                    $id_solucion = $row['id_solucion']; // Obtener id_solucion
                     ?>
-                    <div class="col" data-id="<?php echo $id_ejercicio; ?>">
+                    <div class="col" data-id="<?php echo $id_solucion; ?>"> <!-- Usar id_solucion como data-id -->
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">ID del Ejercicio</h5>
@@ -110,7 +118,7 @@ $conn->close();
                                 <p class="card-text"><?php echo basename($ruta_archivo); ?></p>
                                 <a href="<?php echo $ruta_archivo; ?>" class="btn btn-primary" download>Descargar</a>
                                 <!-- Botón de eliminar -->
-                                <button class="btn btn-danger" onclick="eliminarRespuesta(<?php echo $id_ejercicio; ?>)">Eliminar</button>
+                                <button class="btn btn-danger" onclick="eliminarRespuesta(<?php echo $id_solucion; ?>)">Eliminar</button>
                             </div>
                         </div>
                     </div>
@@ -126,16 +134,16 @@ $conn->close();
     <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     
     <script>
-        function eliminarRespuesta(id_ejercicio) {
+        function eliminarRespuesta(id_solucion) { // Cambiar el nombre de la variable a id_solucion
             if (confirm("¿Estás seguro de que deseas eliminar esta respuesta?")) {
                 // Realiza una solicitud al servidor para eliminar la respuesta
-                fetch('eliminar_respuesta.php?id=' + id_ejercicio, {
+                fetch('eliminar_respuesta.php?id=' + id_solucion, { // Pasar id_solucion en la URL
                     method: 'GET'
                 })
                 .then(response => {
                     if (response.ok) {
                         // Elimina la tarjeta de respuesta de la interfaz de usuario
-                        const cardToRemove = document.querySelector(`[data-id="${id_ejercicio}"]`);
+                        const cardToRemove = document.querySelector(`[data-id="${id_solucion}"]`); // Usar id_solucion
                         if (cardToRemove) {
                             cardToRemove.parentNode.removeChild(cardToRemove);
                         }

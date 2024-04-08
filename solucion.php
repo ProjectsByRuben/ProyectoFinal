@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+$tipo_usuario = $_SESSION['tipo'];
+
 // Verificar si el usuario ha iniciado sesión
 if (!isset($_SESSION['usuario'])) {
     // Si el usuario no ha iniciado sesión, redireccionar al formulario de inicio de sesión
@@ -123,6 +125,11 @@ $conn->close();
                 <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>
                 </li>
+                <?php if ($tipo_usuario === 'profesor'): ?>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./crear_ejercicio.php">Crear Ejercicio</a>
+                    </li>
+                <?php endif; ?>
             </ul>
         </div>
     </div>
@@ -158,7 +165,7 @@ $conn->close();
 
 <div id="drop-area" onclick="document.getElementById('fileElem').click();" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
     <p>Haz clic aquí o arrastra tus archivos para subirlos</p>
-    <input type="file" id="fileElem" name="archivo" multiple accept="image/*, video/*, audio/*" style="display:none;">
+    <input type="file" id="fileElem" name="archivo" multiple accept="*" style="display:none;">
 </div>
 
 <div id="file-list">
@@ -172,6 +179,45 @@ $conn->close();
 
 <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 <script>
+    document.getElementById('fileElem').onchange = function(event) {
+        var fileList = event.target.files;
+        var filesContainer = document.getElementById('file-list');
+        filesContainer.innerHTML = '';
+
+        for (var i = 0; i < fileList.length; i++) {
+            var file = fileList[i];
+            var fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.textContent = file.name;
+
+            var sendButton = document.createElement('button');
+            sendButton.textContent = 'Enviar';
+            sendButton.onclick = function(file) {
+                return function() {
+                    var formData = new FormData();
+                    formData.append('archivo', file);
+
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('POST', '<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . '?id=' . $id_ejercicio; ?>', true);
+                    xhr.onload = function() {
+                        if (xhr.status === 200) {
+                            alert('Respuesta enviada correctamente.');
+                            console.log('Archivo enviado correctamente');
+                            location.reload();
+                        } else {
+                            alert('Error al enviar la respuesta.');
+                            console.error('Error al enviar el archivo');
+                        }
+                    };
+                    xhr.send(formData);
+                };
+            }(file);
+
+            fileItem.appendChild(sendButton);
+            filesContainer.appendChild(fileItem);
+        }
+    };
+
     function dragOverHandler(event) {
         event.preventDefault();
         document.getElementById('drop-area').classList.add('highlight');

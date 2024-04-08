@@ -8,9 +8,9 @@ if (!isset($_SESSION['usuario'])) {
     exit();
 }
 
-// Verificar si se proporciona el ID del ejercicio a eliminar
+// Verificar si se proporciona el ID de la solución a eliminar
 if (!isset($_GET['id'])) {
-    // Si no se proporciona el ID del ejercicio, redireccionar a alguna página apropiada
+    // Si no se proporciona el ID de la solución, redireccionar a alguna página apropiada
     header("Location: alguna_pagina_apropiada.php");
     exit();
 }
@@ -27,11 +27,11 @@ if ($conn->connect_error) {
     die("Conexión fallida: " . $conn->connect_error);
 }
 
-// Obtener el ID del ejercicio a eliminar
-$id_ejercicio = $_GET['id'];
+// Obtener el ID de la solución a eliminar
+$id_solucion = $_GET['id'];
 
 // Consulta para eliminar la respuesta de la base de datos
-$sql = "DELETE FROM soluciones WHERE id_ejercicio = $id_ejercicio";
+$sql = "DELETE FROM soluciones WHERE id_solucion = $id_solucion";
 
 if ($conn->query($sql) === TRUE) {
     // Redireccionar a la página actual para recargarla
