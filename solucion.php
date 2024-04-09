@@ -106,6 +106,34 @@ $conn->close();
         .file-item button {
             margin-left: 10px;
         }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .code-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        #pdf-viewer {
+            width: 100%;
+            max-width: 800px;
+            margin: 20px auto;
+            text-align: center; /* Para centrar el visor PDF */
+        }
+        .pdf-navigation {
+            margin-top: 20px;
+            text-align: center;
+        }
+        h1, h2, h3 {
+            color: #343a40;
+        }
+        .alert h3{
+            font-size: 15px;
+        }
     </style>
 </head>
 <body>
@@ -159,9 +187,17 @@ $conn->close();
     </div>
 </div>
 
-<h1><?php echo $titulo; ?></h1>
-<h2>Enunciado:</h2>
-<p><?php echo $enunciado; ?></p>
+<div class="container">
+    <h1 class="text-center mt-4">Solución del Ejercicio:</h1>
+    <h2 class="text-center"><?php echo $titulo; ?></h2>
+    <div class="alert alert-dark" role="alert">
+        <h3 class="text-center"><?php echo $enunciado; ?></h3>
+    </div>
+</div>
+
+<?php if (!empty($row['enunciado_archivo'])): ?>
+    <a href="<?php echo $row['enunciado_archivo']; ?>" class="btn btn-primary download-button" download>Descargar Enunciado</a>
+<?php endif; ?>
 
 <div id="drop-area" onclick="document.getElementById('fileElem').click();" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
     <p>Haz clic aquí o arrastra tus archivos para subirlos</p>

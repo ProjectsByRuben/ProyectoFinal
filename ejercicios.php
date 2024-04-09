@@ -26,6 +26,19 @@
             margin-top: 10px; /* Espacio superior */
             font-size: 14px; /* Tamaño de fuente más pequeño */
         }
+
+        /* Estilos para los diferentes colores de la dificultad */
+        .dificultad-facil {
+            color: green;
+        }
+
+        .dificultad-medio {
+            color: yellow;
+        }
+
+        .dificultad-dificil {
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -57,6 +70,29 @@ if ($conn->connect_error) {
 // Consulta para obtener los ejercicios
 $sql = "SELECT * FROM ejercicios";
 $result = $conn->query($sql);
+
+// Array asociativo para mapear id_asignatura con la ruta de la imagen correspondiente
+$imagenes_por_asignatura = array(
+    1 => "./img/3.png",   // iaw.png para id_asignatura 1
+    2 => "./img/4.png",   // sad.png para id_asignatura 2
+    3 => "./img/5.png",   // sri.png para id_asignatura 3
+    4 => "./img/1.png", // asgbd.png para id_asignatura 4
+    5 => "./img/2.png"    // aso.png para id_asignatura 5
+);
+
+// Función para obtener el texto de la dificultad en español
+function dificultad_en_espanol($dificultad) {
+    switch ($dificultad) {
+        case 'facil':
+            return '(Fácil)';
+        case 'medio':
+            return '(Medio)';
+        case 'dificil':
+            return '(Difícil)';
+        default:
+            return '';
+    }
+}
 ?>
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -112,14 +148,6 @@ $result = $conn->query($sql);
 
 <div class="ejercicios-container">
 <?php
-// Array asociativo para mapear id_asignatura con la ruta de la imagen correspondiente
-$imagenes_por_asignatura = array(
-    1 => "./img/3.png",   // iaw.png para id_asignatura 1
-    2 => "./img/4.png",   // sad.png para id_asignatura 2
-    3 => "./img/5.png",   // sri.png para id_asignatura 3
-    4 => "./img/1.png", // asgbd.png para id_asignatura 4
-    5 => "./img/2.png"    // aso.png para id_asignatura 5
-);
 
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
@@ -131,14 +159,32 @@ if ($result->num_rows > 0) {
             // Si el id_asignatura no tiene una imagen asociada, se usa una imagen por defecto
             $imagen_path = "./img/default.png";  // Ruta de la imagen por defecto
         }
-        
+
+        // Determinar la clase de dificultad en función del valor en la base de datos
+        $dificultad_class = '';
+        switch ($row['dificultad']) {
+            case 'facil':
+                $dificultad_class = 'dificultad-facil';
+                break;
+            case 'medio':
+                $dificultad_class = 'dificultad-medio';
+                break;
+            case 'dificil':
+                $dificultad_class = 'dificultad-dificil';
+                break;
+            default:
+                $dificultad_class = '';
+                break;
+        }
+
         echo "<div class='card' style='width: 18rem;'>";
         echo "<img src='$imagen_path' class='card-img-top' alt='Asignatura Imagen'>";
         echo "<div class='card-body'>";
-        echo "<h5 class='card-title'>{$row['titulo']}</h5>"; // Aquí se imprime el enunciado del ejercicio
-        echo "<p class='card-text'></p>";
-        echo "<a href='ver_solucion.php?id={$row['id_ejercicio']}' class='btn'><button type='button' class='btn btn-success'>Ver Solución</button></a> <br>";
+        echo "<h5 class='card-title'>{$row['titulo']} <span class='$dificultad_class'>" . dificultad_en_espanol($row['dificultad']) . "</span></h5>";
         echo "<a href='solucion.php?id={$row['id_ejercicio']}' class='btn'><button type='button' class='btn btn-warning'>Intentar</button></a> <br>";
+        echo "<a href='ver_solucion.php?id={$row['id_ejercicio']}' class='btn'><button type='button' class='btn btn-success'>Ver Solución</button></a> <br>";
+        // Botón para eliminar el ejercicio
+        echo "<a href='eliminar_ejercicio.php?id={$row['id_ejercicio']}' class='btn'><button type='button' class='btn btn-danger'>Eliminar Ejercicio</button></a>";
         echo "</div>";
         echo "</div>";
     }

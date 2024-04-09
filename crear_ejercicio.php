@@ -15,6 +15,7 @@ $tipo_usuario = $_SESSION['tipo'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <title>Crear Ejercicio</title>
     <style>
         /* Estilos personalizados */
         /* Puedes agregar estilos adicionales aquí según sea necesario */
@@ -103,7 +104,7 @@ $tipo_usuario = $_SESSION['tipo'];
     $result_asignaturas = $conn->query($sql_asignaturas);
 
     // Procesar la subida de archivos
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["archivo"])) {
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["archivo"]) && isset($_FILES["enunciado_archivo"])) {
         $asignatura_id = $_POST["asignatura"];
         $titulo = $_POST["titulo"];
         $enunciado = $_POST["enunciado"];
@@ -117,26 +118,47 @@ $tipo_usuario = $_SESSION['tipo'];
             mkdir($directorio, 0777, true);
         }
 
-        // Obtener el último número de ejercicio guardado en la carpeta
-        $archivos = glob($directorio . "*.*");
-        $ultimo_numero = count($archivos) + 1;
-
         // Obtener la extensión del archivo subido
-        $extension = pathinfo($_FILES["archivo"]["name"], PATHINFO_EXTENSION);
+        $extension = strtolower(pathinfo($_FILES["archivo"]["name"], PATHINFO_EXTENSION));
 
-        // Construir el nombre del archivo
-        $nombre_archivo = $ultimo_numero . "." . $extension;
-
-        // Mover el archivo a la carpeta de ejercicios
-        $ruta_archivo = $directorio . $nombre_archivo;
-        move_uploaded_file($_FILES["archivo"]["tmp_name"], $ruta_archivo);
-
-        // Guardar la ruta del archivo en la base de datos
-        $sql = "INSERT INTO ejercicios (id_asignatura, titulo, enunciado, dificultad, solucion) VALUES ('$asignatura_id', '$titulo', '$enunciado', '$dificultad', '$ruta_archivo')";
-        if ($conn->query($sql) === TRUE) {
-            echo '<script>alert("Ejercicio creado exitosamente.");</script>';
+        // Verificar si la extensión es permitida
+        $extensiones_permitidas = array("html", "php", "pdf", "zip", "js", "css", "py");
+        if (!in_array($extension, $extensiones_permitidas)) {
+            echo '<div class="alert alert-danger" role="alert">Error: Solo se permiten archivos HTML, PHP, PDF, ZIP, JS, CSS o PY.</div>';
         } else {
-            echo '<script>alert("Error al crear el ejercicio: ' . $conn->error . '");</script>';
+            // Obtener el ID del último ejercicio guardado en la base de datos
+            $sql_ultimo_id = "SELECT MAX(id_ejercicio) AS ultimo_id FROM ejercicios";
+            $result_ultimo_id = $conn->query($sql_ultimo_id);
+            $row_ultimo_id = $result_ultimo_id->fetch_assoc();
+            $ultimo_id = $row_ultimo_id['ultimo_id'] ?? 0;
+            
+            // Construir el nombre del archivo de la solución
+            $nombre_archivo = ($ultimo_id + 1) . "." . $extension;
+
+            // Mover el archivo a la carpeta de ejercicios
+            $ruta_archivo = $directorio . $nombre_archivo;
+            move_uploaded_file($_FILES["archivo"]["tmp_name"], $ruta_archivo);
+
+            // Procesar el archivo del enunciado
+            $extension_enunciado = strtolower(pathinfo($_FILES["enunciado_archivo"]["name"], PATHINFO_EXTENSION));
+            if (in_array($extension_enunciado, array("jpg", "jpeg", "png", "gif", "pdf"))) {
+                // Obtener el nombre del archivo del enunciado
+                $nombre_enunciado = ($ultimo_id + 1) . "." . $extension_enunciado;
+
+                // Mover el archivo del enunciado a la carpeta de enunciados
+                $ruta_enunciado = "enunciados/" . $nombre_enunciado;
+                move_uploaded_file($_FILES["enunciado_archivo"]["tmp_name"], $ruta_enunciado);
+            } else {
+                $ruta_enunciado = ""; // Si no se proporciona un archivo de enunciado válido
+            }
+
+            // Guardar la ruta de los archivos en la base de datos
+            $sql = "INSERT INTO ejercicios (id_asignatura, titulo, enunciado, enunciado_archivo, dificultad, solucion) VALUES ('$asignatura_id', '$titulo', '$enunciado', '$ruta_enunciado', '$dificultad', '$ruta_archivo')";
+            if ($conn->query($sql) === TRUE) {
+                echo '<div class="alert alert-success" role="alert">Ejercicio creado exitosamente.</div>';
+            } else {
+                echo '<div class="alert alert-danger" role="alert">Error al crear el ejercicio: ' . $conn->error . '</div>';
+            }
         }
     }
     ?>
@@ -148,6 +170,11 @@ $tipo_usuario = $_SESSION['tipo'];
         <div class="mb-3">
             <label for="enunciado" class="form-label">Enunciado:</label>
             <textarea class="form-control" id="enunciado" name="enunciado" rows="5" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="enunciado_archivo" class="form-label">Archivo del Enunciado (Opcional):</label>
+            <input type="file" class="form-control" id="enunciado_archivo" name="enunciado_archivo" accept=".jpg, .jpeg, .png, .gif, .pdf">
+            <small class="text-muted">Se permiten archivos de imagen (JPG, JPEG, PNG, GIF) o PDF.</small>
         </div>
         <div class="mb-3">
             <label for="dificultad" class="form-label">Dificultad:</label>
@@ -166,8 +193,9 @@ $tipo_usuario = $_SESSION['tipo'];
             </select>
         </div>
         <div class="mb-3">
-            <label for="archivo" class="form-label">Seleccionar archivo:</label>
-            <input type="file" class="form-control" id="archivo" name="archivo" required>
+            <label for="archivo" class="form-label">Archivo de la Solución:</label>
+            <input type="file" class="form-control" id="archivo" name="archivo" accept=".html, .php, .pdf, .zip, .js, .css, .py" required>
+            <small class="text-muted">Solo se permiten archivos HTML, PHP, PDF, JS, CSS, PY o ZIP. Si la solución consiste en varios archivos, por favor, comprímalos en un archivo ZIP.</small>
         </div>
         <div class="btn-container">
             <button type="submit" class="btn btn-primary">Crear Ejercicio</button>
