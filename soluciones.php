@@ -40,12 +40,20 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soluciones del Usuario</title>
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding: 10px; /* Reducir el padding a 10px para menos espacio en los bordes */
+        }
+    </style>
 </head>
 
 <body>
 
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <img src="./img/logo.png" alt="Bootstrap" width="80" height="80">
+        <img src="./img/ejercitacode.png" alt="Bootstrap" width="80" height="80">
         <div class="container-fluid">
             <a class="navbar-brand" href="./dashboard.php">Inicio</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -73,6 +81,7 @@ $conn->close();
             data-bs-target="#exampleModal">
             Sesión
         </button>
+        <button id="themeButton" onclick="toggleTheme()" class="btn btn-primary">Cambiar Tema</button>
     </nav>
 
     <!-- Modal -->
@@ -116,7 +125,7 @@ $conn->close();
                                 <p class="card-text"><?php echo $titulo; ?></p> <!-- Cambio de Enunciado a Título -->
                                 <h5 class="card-title">Archivo</h5>
                                 <p class="card-text"><?php echo basename($ruta_archivo); ?></p>
-                                <a href="<?php echo $ruta_archivo; ?>" class="btn btn-primary" download>Descargar</a>
+                                <a href="<?php echo $ruta_archivo; ?>" class="btn btn-primary text-color-button" download>Descargar</a>
                                 <!-- Botón de eliminar -->
                                 <button class="btn btn-danger" onclick="eliminarRespuesta(<?php echo $id_solucion; ?>)">Eliminar</button>
                             </div>
@@ -156,6 +165,27 @@ $conn->close();
                 });
             }
         }
+
+    function toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme); // Guarda el tema seleccionado en el almacenamiento local
+
+        // Actualiza el texto del botón después de cambiar el tema
+        const themeButton = document.getElementById('themeButton');
+        themeButton.textContent = newTheme === 'dark' ? 'Claro' : 'Oscuro';
+    }
+
+    // Aplica el tema almacenado en localStorage al cargar la página
+    const currentTheme = localStorage.getItem('theme');
+    if (currentTheme) {
+        document.documentElement.setAttribute('data-theme', currentTheme);
+    }
+
+    // Actualiza el texto del botón según el tema actual al cargar la página
+    const themeButton = document.getElementById('themeButton');
+    themeButton.textContent = currentTheme === 'dark' ? 'Claro' : 'Oscuro';
     </script>
 </body>
 

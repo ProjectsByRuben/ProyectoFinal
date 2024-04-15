@@ -98,11 +98,12 @@ if (file_exists($ruta_muestra_html)) {
     <title>Solución del Ejercicio</title>
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css">
+    <link rel="stylesheet" href="./styles.css?v=3" id="themeStylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f8f9fa;
-            padding: 20px;
+            padding: 10px; /* Reducir el padding a 10px para menos espacio en los bordes */
         }
         .code-container {
             background-color: #fff;
@@ -132,7 +133,7 @@ if (file_exists($ruta_muestra_html)) {
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-sm bg-body-tertiary"> <!-- Añadido navbar-sm para hacerlo más pequeño -->
-    <img src="./img/logo.png" alt="Bootstrap" width="80" height="80">
+    <img src="./img/ejercitacode.png" alt="Bootstrap" width="80" height="80">
     <div class="container-fluid">
         <a class="navbar-brand" href="./dashboard.php">Inicio</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -157,8 +158,9 @@ if (file_exists($ruta_muestra_html)) {
 
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        Usuario
+        Sesion
     </button>
+    <button id="themeButton" onclick="toggleTheme()" class="btn btn-primary">Cambiar Tema</button>
 </nav>
 
 <!-- Modal -->
@@ -263,6 +265,19 @@ if (file_exists($ruta_muestra_html)) {
             });
 
             loadPdf();
+
+    function toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme); // Guarda el tema seleccionado en el almacenamiento local
+    }
+
+    // Aplica el tema almacenado en localStorage al cargar la página
+    const currentTheme = localStorage.getItem('theme');
+    if (currentTheme) {
+        document.documentElement.setAttribute('data-theme', currentTheme);
+    }
         </script>
     <?php elseif ($tipo_archivo === 'zip'): ?>
         <!-- Si es un archivo ZIP, mostrar un mensaje indicando que debe descargarse para verlo -->
@@ -273,6 +288,29 @@ if (file_exists($ruta_muestra_html)) {
         </div>
     <?php endif; ?>
 </div>
+
+<script>
+    function toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme); // Guarda el tema seleccionado en el almacenamiento local
+
+        // Actualiza el texto del botón después de cambiar el tema
+        const themeButton = document.getElementById('themeButton');
+        themeButton.textContent = newTheme === 'dark' ? 'Claro' : 'Oscuro';
+    }
+
+    // Aplica el tema almacenado en localStorage al cargar la página
+    const currentTheme = localStorage.getItem('theme');
+    if (currentTheme) {
+        document.documentElement.setAttribute('data-theme', currentTheme);
+    }
+
+    // Actualiza el texto del botón según el tema actual al cargar la página
+    const themeButton = document.getElementById('themeButton');
+    themeButton.textContent = currentTheme === 'dark' ? 'Claro' : 'Oscuro';
+</script>
 
 <script>hljs.highlightAll();</script>
 <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>

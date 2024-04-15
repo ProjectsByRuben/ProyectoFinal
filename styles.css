@@ -1,0 +1,195 @@
+.carousel-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 50px; /* Espacio arriba */
+}
+
+.carousel-title {
+    font-size: 2rem; /* Tamaño del título */
+    margin-bottom: 20px; /* Espacio debajo del título */
+}
+
+.carousel-description {
+    font-size: 1.2rem; /* Tamaño de la descripción */
+    text-align: center; /* Alineación del texto */
+    max-width: 80%; /* Ancho máximo del contenedor de la descripción */
+    margin-bottom: 40px; /* Espacio debajo de la descripción */
+}
+
+/* Estilos personalizados para el botón de la ventana modal */
+.modal-button {
+    margin-left: auto; /* Mover el botón hacia la derecha */
+}
+
+/* Estilos para botón de cambio de tema */
+#themeButton {
+    margin-left: 10px; /* Espacio entre el botón de usuario y el de cambio de tema */
+}
+
+/* Estilos para el modo oscuro */
+[data-theme="dark"] {
+    --bg-body: #343a40; /* Color de fondo del cuerpo */
+    --text-color: #ffffff; /* Color del texto */
+    --input-bg: #43494e; /* Color de fondo para los input */
+    --navbar-bg: #343a40; /* Color de fondo del navbar en modo oscuro */
+}
+
+/* Estilos para el modo claro */
+[data-theme="light"] {
+    --bg-body: #ffffff; /* Color de fondo del cuerpo */
+    --text-color: #000000; /* Color del texto */
+}
+
+/* Aplica los estilos según el tema */
+body {
+    background-color: var(--bg-body) !important; /* Utiliza !important para priorizar estos estilos */
+    color: var(--text-color) !important;
+}
+
+/* Estilos para los input en el modo oscuro */
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="file"],
+[data-theme="dark"] select {
+    background-color: var(--input-bg);
+    color: #ffffff; /* Color del texto en los input */
+    border: none; /* Elimina el borde */
+}
+
+/* Estilos adicionales para las tarjetas en el modo oscuro */
+[data-theme="dark"] .card {
+    border: none; /* Elimina el borde */
+    background-color: #43494e; /* Cambia el color de fondo */
+}
+
+/* Estilos adicionales para los botones en las tarjetas en el modo oscuro */
+[data-theme="dark"] .card-body .btn {
+    border: none; /* Elimina el borde */
+}
+
+/* Estilos adicionales para los botones en las tarjetas en el modo oscuro */
+[data-theme="dark"] .card-body .btn-card {
+    background-color: #2f4f4f; /* Color para el botón de intentar */
+    border-color: #2f4f4f; /* Color del borde */
+}
+
+[data-theme="dark"] .card-body .btn-eliminar {
+    background-color: darkred; /* Color para el botón de eliminar */
+    border-color: darkred; /* Color del borde */
+}
+
+/* Estilos adicionales para el texto dentro de las tarjetas en el modo oscuro */
+[data-theme="dark"] .card-body {
+    color: #ffffff; /* Color del texto en modo oscuro */
+}
+
+/* Estilos adicionales para el texto dentro de los botones en el modo oscuro */
+[data-theme="dark"] .card-body .btn {
+    color: #ffffff; /* Color del texto en modo oscuro */
+}
+
+/* Estilos adicionales para los botones en las tarjetas en el modo oscuro */
+[data-theme="dark"] .card-body .btn-card {
+    background-color: #228182; /* Color para el botón de intentar */
+    border-color: #228182; /* Color del borde */
+}
+
+[data-theme="dark"] .card-body .btn-eliminar {
+    background-color: darkred; /* Color para el botón de eliminar */
+    border-color: darkred; /* Color del borde */
+}
+
+/* Estilos adicionales para los botones en las tarjetas en el modo claro */
+[data-theme="light"] .card-body .btn-card {
+    background-color: #0DF2F3; /* Color para el botón de intentar */
+    border-color: #0DF2F3; /* Color del borde */
+}
+
+[data-theme="light"] .card-body .btn-eliminar {
+    background-color: red; /* Color para el botón de eliminar */
+    border-color: red; /* Color del borde */
+    color: white;
+}
+
+/* Estilos para el botón de sesión */
+.btn-primary {
+    background-color: #0df2f3; /* Color de fondo del botón */
+    border-color: #0df2f3; /* Color del borde del botón */
+    color: #ffffff; /* Color del texto del botón */
+}
+
+/* Añade estilos específicos para el botón de sesión en el modo oscuro */
+[data-theme="dark"] .btn-primary {
+    background-color: #0df2f3; /* Color de fondo del botón */
+    border-color: #0df2f3; /* Color del borde del botón */
+    color: #4b4545; /* Color del texto del botón */
+}
+
+[data-theme="light"] .btn-primary {
+    background-color: #0df2f3; /* Color de fondo del botón */
+    border-color: #0df2f3; /* Color del borde del botón */
+    color: #4b4545; /* Color del texto del botón */
+}
+
+/* Estilos adicionales para el color de texto del botón Descargar */
+.text-color-button {
+    color: #4b4545 !important;
+}
+
+/* Estilos para el textarea en el modo claro */
+[data-theme="light"] textarea {
+    background-color: #ffffff; /* Color de fondo en modo claro */
+    color: #000000; /* Color del texto en modo claro */
+    border: 1px solid #ced4da; /* Borde en modo claro */
+}
+
+/* Estilos para el textarea en el modo oscuro */
+[data-theme="dark"] textarea {
+    background-color: #343a40; /* Color de fondo en modo oscuro */
+    color: #ffffff; /* Color del texto en modo oscuro */
+    border: 1px solid #343a40; /* Borde en modo oscuro */
+}
+
+/* Estilos para el modo oscuro */
+[data-theme="dark"] .navbar.bg-body-tertiary {
+    background-color: #343a40 !important; /* Color de fondo del navbar en modo oscuro */
+}
+
+[data-theme="dark"] .navbar.bg-body-tertiary .nav-link {
+    color: #ffffff !important; /* Color de los enlaces en modo oscuro */
+}
+
+/* Estilos para el modo oscuro */
+[data-theme="dark"] .navbar.bg-body-tertiary .navbar-brand {
+    color: #ffffff !important; /* Color del enlace en modo oscuro */
+}
+
+/* Estilos para el modo oscuro */
+[data-theme="dark"] {
+    --bg-body: #343a40; /* Color de fondo del cuerpo */
+    --text-color: #ffffff; /* Color del texto */
+    --input-bg: #43494e; /* Color de fondo para los input */
+    --navbar-bg: #343a40; /* Color de fondo del navbar en modo oscuro */
+
+    /* Agregar estilos para los h1 y h2 en modo oscuro */
+    h1, h2 {
+        color: #ffffff; /* Cambiar color a blanco */
+    }
+}
+/* Estilos para el contenido del ejercicio en modo oscuro */
+[data-theme="dark"] .code-container {
+    color: rgb(241, 7, 7); /* Hereda el color del texto */
+    background-color: #343A40; /* Hereda el color de fondo */
+}
+
+/* Estilos para el textarea en el modo oscuro */
+[data-theme="dark"] textarea {
+    background-color: var(--input-bg); /* Utiliza el color de fondo definido para los input */
+    color: #ffffff; /* Color del texto en modo oscuro */
+}
+
+/* Estilos para la ventana modal en modo oscuro */
+[data-theme="dark"] .modal-content {
+    background-color: #343A40; /* Cambia el color de fondo de la ventana modal */
+    color: #FFFFFF; /* Cambia el color del texto en modo oscuro */
+}

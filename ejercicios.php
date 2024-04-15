@@ -5,7 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ejercicios</title>
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding: 10px; /* Reducir el padding a 10px para menos espacio en los bordes */
+        }
         /* Estilos para el contenedor de ejercicios */
         .ejercicios-container {
             display: flex;
@@ -96,7 +102,7 @@ function dificultad_en_espanol($dificultad) {
 ?>
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <img src="./img/logo.png" alt="Bootstrap" width="80" height="80">
+    <img src="./img/ejercitacode.png" alt="Bootstrap" width="80" height="80">
     <div class="container-fluid">
         <a class="navbar-brand" href="./dashboard.php">Inicio</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -122,6 +128,7 @@ function dificultad_en_espanol($dificultad) {
  <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">
         Sesión
     </button>
+    <button id="themeButton" onclick="toggleTheme()" class="btn btn-primary">Cambiar Tema</button>
 </nav>
 
 <!-- Modal -->
@@ -181,19 +188,41 @@ if ($result->num_rows > 0) {
         echo "<img src='$imagen_path' class='card-img-top' alt='Asignatura Imagen'>";
         echo "<div class='card-body'>";
         echo "<h5 class='card-title'>{$row['titulo']} <span class='$dificultad_class'>" . dificultad_en_espanol($row['dificultad']) . "</span></h5>";
-        echo "<a href='solucion.php?id={$row['id_ejercicio']}' class='btn'><button type='button' class='btn btn-warning'>Intentar</button></a> <br>";
-        echo "<a href='ver_solucion.php?id={$row['id_ejercicio']}' class='btn'><button type='button' class='btn btn-success'>Ver Solución</button></a> <br>";
-        // Botón para eliminar el ejercicio
-        echo "<a href='eliminar_ejercicio.php?id={$row['id_ejercicio']}' class='btn'><button type='button' class='btn btn-danger'>Eliminar Ejercicio</button></a>";
+        echo "<a href='solucion.php?id={$row['id_ejercicio']}' class='btn'><button type='button' class='btn btn-card'>Intentar</button></a> <br>";
+        echo "<a href='ver_solucion.php?id={$row['id_ejercicio']}' class='btn'><button type='button' class='btn btn-card'>Ver Solución</button></a> <br>";
+        echo "<a href='eliminar_ejercicio.php?id={$row['id_ejercicio']}' class='btn'><button type='button' class='btn btn-eliminar'>Eliminar Ejercicio</button></a>";
         echo "</div>";
         echo "</div>";
+        
     }
 } else {
     echo "<p>No hay ejercicios disponibles.</p>";
 }
 ?>
-
 </div>
+
+<script>
+    function toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme); // Guarda el tema seleccionado en el almacenamiento local
+
+        // Actualiza el texto del botón después de cambiar el tema
+        const themeButton = document.getElementById('themeButton');
+        themeButton.textContent = newTheme === 'dark' ? 'Claro' : 'Oscuro';
+    }
+
+    // Aplica el tema almacenado en localStorage al cargar la página
+    const currentTheme = localStorage.getItem('theme');
+    if (currentTheme) {
+        document.documentElement.setAttribute('data-theme', currentTheme);
+    }
+
+    // Actualiza el texto del botón según el tema actual al cargar la página
+    const themeButton = document.getElementById('themeButton');
+    themeButton.textContent = currentTheme === 'dark' ? 'Claro' : 'Oscuro';
+</script>
 
 <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 </body>

@@ -15,8 +15,14 @@ $tipo_usuario = $_SESSION['tipo'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./styles.css?v=4" id="themeStylesheet">
     <title>Crear Ejercicio</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            padding: 10px; /* Reducir el padding a 10px para menos espacio en los bordes */
+        }
         /* Estilos personalizados */
         /* Puedes agregar estilos adicionales aquí según sea necesario */
 
@@ -31,11 +37,19 @@ $tipo_usuario = $_SESSION['tipo'];
             display: flex;
             justify-content: space-between;
         }
+        textarea.form-control:focus {
+            outline: none; /* Elimina el resaltado de foco */
+            background-color: #43494E !important; /* Establece el color de fondo como transparente */
+        }
+        textarea.form-control {
+            border-style: none;
+            color: white !important; /* Establece el color del texto en blanco */
+        }
     </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <img src="./img/logo.png" alt="Bootstrap" width="80" height="80">
+    <img src="./img/ejercitacode.png" alt="Bootstrap" width="80" height="80">
     <div class="container-fluid">
         <a class="navbar-brand" href="./dashboard.php">Inicio</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,8 +74,9 @@ $tipo_usuario = $_SESSION['tipo'];
 
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        Usuario
+        Sesion
     </button>
+    <button id="themeButton" onclick="toggleTheme()" class="btn btn-primary">Cambiar Tema</button>
 </nav>
 
 <!-- Modal -->
@@ -168,13 +183,13 @@ $tipo_usuario = $_SESSION['tipo'];
             <input type="text" class="form-control" id="titulo" name="titulo" required>
         </div>
         <div class="mb-3">
-            <label for="enunciado" class="form-label">Enunciado:</label>
+            <label for="enunciado" class="form-label">Enunciado:</label><br>
             <textarea class="form-control" id="enunciado" name="enunciado" rows="5" required></textarea>
         </div>
         <div class="mb-3">
             <label for="enunciado_archivo" class="form-label">Archivo del Enunciado (Opcional):</label>
             <input type="file" class="form-control" id="enunciado_archivo" name="enunciado_archivo" accept=".jpg, .jpeg, .png, .gif, .pdf">
-            <small class="text-muted">Se permiten archivos de imagen (JPG, JPEG, PNG, GIF) o PDF.</small>
+            <small><p>Se permiten archivos de imagen (JPG, JPEG, PNG, GIF) o PDF.</p></small>
         </div>
         <div class="mb-3">
             <label for="dificultad" class="form-label">Dificultad:</label>
@@ -195,7 +210,7 @@ $tipo_usuario = $_SESSION['tipo'];
         <div class="mb-3">
             <label for="archivo" class="form-label">Archivo de la Solución:</label>
             <input type="file" class="form-control" id="archivo" name="archivo" accept=".html, .php, .pdf, .zip, .js, .css, .py" required>
-            <small class="text-muted">Solo se permiten archivos HTML, PHP, PDF, JS, CSS, PY o ZIP. Si la solución consiste en varios archivos, por favor, comprímalos en un archivo ZIP.</small>
+            <small><p>Solo se permiten archivos HTML, PHP, PDF, JS, CSS, PY o ZIP. Si la solución consiste en varios archivos, por favor, comprímalos en un archivo ZIP.</p></small>
         </div>
         <div class="btn-container">
             <button type="submit" class="btn btn-primary">Crear Ejercicio</button>
@@ -203,6 +218,29 @@ $tipo_usuario = $_SESSION['tipo'];
     </form>
 </div>
 
+
+<script>
+    function toggleTheme() {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme); // Guarda el tema seleccionado en el almacenamiento local
+
+        // Actualiza el texto del botón después de cambiar el tema
+        const themeButton = document.getElementById('themeButton');
+        themeButton.textContent = newTheme === 'dark' ? 'Claro' : 'Oscuro';
+    }
+
+    // Aplica el tema almacenado en localStorage al cargar la página
+    const currentTheme = localStorage.getItem('theme');
+    if (currentTheme) {
+        document.documentElement.setAttribute('data-theme', currentTheme);
+    }
+
+    // Actualiza el texto del botón según el tema actual al cargar la página
+    const themeButton = document.getElementById('themeButton');
+    themeButton.textContent = currentTheme === 'dark' ? 'Claro' : 'Oscuro';
+</script>
 <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 </body>
 </html>
