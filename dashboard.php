@@ -20,8 +20,12 @@ $tipo_usuario = $_SESSION['tipo'];
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
-            padding: 10px; /* Reducir el padding a 10px para menos espacio en los bordes */
+            background-color: #F8F9FA;
+        }
+        .navbar {
+            padding-left: 0 !important; /* Eliminar el padding a la izquierda */
+            padding-right: 10px !important; /* Eliminar el padding a la derecha */
+            margin-top: 0 !important; /* Eliminar el margen superior */
         }
         /* Estilos personalizados */
         .carousel-container {
@@ -52,7 +56,7 @@ $tipo_usuario = $_SESSION['tipo'];
 <body>
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <img src="./img/ejercitacode.png" alt="Bootstrap" width="80" height="80">
+    <img src="./img/ejercitacode3.png" alt="Bootstrap" width="80" height="80">
     <div class="container-fluid">
         <a class="navbar-brand" href="./dashboard.php">Inicio</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

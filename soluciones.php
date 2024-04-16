@@ -40,12 +40,23 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soluciones del Usuario</title>
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
+    <link rel="stylesheet" href="./styles.css?v=1" id="themeStylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f8f9fa;
-            padding: 10px; /* Reducir el padding a 10px para menos espacio en los bordes */
+        }
+        .navbar {
+            padding-left: 0 !important; /* Eliminar el padding a la izquierda */
+            padding-right: 10px !important; /* Eliminar el padding a la derecha */
+            margin-top: 0 !important; /* Eliminar el margen superior */
+        }
+        .btn-descarga {
+            background-color: #0df2f3;
+        }
+        /* Estilo para el botón de descarga al pasar el ratón por encima */
+        .btn-descarga:hover {
+            background-color: #00d5d6; /* Mantener el color de fondo */
         }
     </style>
 </head>
@@ -53,7 +64,7 @@ $conn->close();
 <body>
 
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <img src="./img/ejercitacode.png" alt="Bootstrap" width="80" height="80">
+        <img src="./img/ejercitacode3.png" alt="Bootstrap" width="80" height="80">
         <div class="container-fluid">
             <a class="navbar-brand" href="./dashboard.php">Inicio</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -125,9 +136,9 @@ $conn->close();
                                 <p class="card-text"><?php echo $titulo; ?></p> <!-- Cambio de Enunciado a Título -->
                                 <h5 class="card-title">Archivo</h5>
                                 <p class="card-text"><?php echo basename($ruta_archivo); ?></p>
-                                <a href="<?php echo $ruta_archivo; ?>" class="btn btn-primary text-color-button" download>Descargar</a>
+                                <a href="<?php echo $ruta_archivo; ?>" class="btn btn-descarga" download>Descargar</a>
                                 <!-- Botón de eliminar -->
-                                <button class="btn btn-danger" onclick="eliminarRespuesta(<?php echo $id_solucion; ?>)">Eliminar</button>
+                                <button class="btn btn-danger btn-delete" onclick="eliminarRespuesta(<?php echo $id_solucion; ?>)">Eliminar</button>
                             </div>
                         </div>
                     </div>

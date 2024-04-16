@@ -98,12 +98,16 @@ if (file_exists($ruta_muestra_html)) {
     <title>Solución del Ejercicio</title>
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css">
-    <link rel="stylesheet" href="./styles.css?v=3" id="themeStylesheet">
+    <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f8f9fa;
-            padding: 10px; /* Reducir el padding a 10px para menos espacio en los bordes */
+        }
+        .navbar {
+            padding-left: 0 !important; /* Eliminar el padding a la izquierda */
+            padding-right: 10px !important; /* Eliminar el padding a la derecha */
+            margin-top: 0 !important; /* Eliminar el margen superior */
         }
         .code-container {
             background-color: #fff;
@@ -128,12 +132,16 @@ if (file_exists($ruta_muestra_html)) {
         .alert h3{
             font-size: 15px;
         }
+        .alert-dark {
+            --bs-alert-bg: #DDE0E0;
+            color: white;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/highlight.min.js"></script>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-sm bg-body-tertiary"> <!-- Añadido navbar-sm para hacerlo más pequeño -->
-    <img src="./img/ejercitacode.png" alt="Bootstrap" width="80" height="80">
+    <img src="./img/ejercitacode3.png" alt="Bootstrap" width="80" height="80">
     <div class="container-fluid">
         <a class="navbar-brand" href="./dashboard.php">Inicio</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

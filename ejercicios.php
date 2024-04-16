@@ -5,12 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ejercicios</title>
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
+    <link rel="stylesheet" href="./styles.css?v=1" id="themeStylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f8f9fa;
-            padding: 10px; /* Reducir el padding a 10px para menos espacio en los bordes */
+        }
+        .navbar {
+            padding-left: 0 !important; /* Eliminar el padding a la izquierda */
+            padding-right: 10px !important; /* Eliminar el padding a la derecha */
+            margin-top: 0 !important; /* Eliminar el margen superior */
+            margin-bottom: 10px !important; /* Añade margen inferior de 10px */
         }
         /* Estilos para el contenedor de ejercicios */
         .ejercicios-container {
@@ -19,18 +24,25 @@
             gap: 20px; /* Espacio entre los ejercicios */
             justify-content: space-evenly; /* Para distribuir el espacio disponible entre los ejercicios */
         }
-        
-        /* Estilos para el botón "Ver Solución" */
-        .card-body .btn-primary {
-            display: block;
-            margin: auto; /* Centrar horizontalmente */
+
+        .btn-eliminar {
+            background-color: red; /* Color para el botón de eliminar */
+            border-color: red; /* Color del borde */
+            color: white;
         }
 
-        /* Estilos para el botón de cerrar sesión */
-        .btn-cerrar-sesion {
-            display: inline-block;
-            margin-top: 10px; /* Espacio superior */
-            font-size: 14px; /* Tamaño de fuente más pequeño */
+        .btn-card {
+            background-color: #0df2f3; /* Color de fondo del botón */
+            border-color: #0df2f3; /* Color del borde del botón */
+            color: #4b4545; /* Color del texto del botón */
+        }
+
+        .btn-card:hover {
+            background-color: #00D5D6; /* Mantener el color de fondo */
+        }
+
+        .btn-eliminar:hover {
+            background-color: #dc3545;
         }
 
         /* Estilos para los diferentes colores de la dificultad */
@@ -102,7 +114,7 @@ function dificultad_en_espanol($dificultad) {
 ?>
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <img src="./img/ejercitacode.png" alt="Bootstrap" width="80" height="80">
+    <img src="./img/ejercitacode3.png" alt="Bootstrap" width="80" height="80">
     <div class="container-fluid">
         <a class="navbar-brand" href="./dashboard.php">Inicio</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -190,7 +202,7 @@ if ($result->num_rows > 0) {
         echo "<h5 class='card-title'>{$row['titulo']} <span class='$dificultad_class'>" . dificultad_en_espanol($row['dificultad']) . "</span></h5>";
         echo "<a href='solucion.php?id={$row['id_ejercicio']}' class='btn'><button type='button' class='btn btn-card'>Intentar</button></a> <br>";
         echo "<a href='ver_solucion.php?id={$row['id_ejercicio']}' class='btn'><button type='button' class='btn btn-card'>Ver Solución</button></a> <br>";
-        echo "<a href='eliminar_ejercicio.php?id={$row['id_ejercicio']}' class='btn'><button type='button' class='btn btn-eliminar'>Eliminar Ejercicio</button></a>";
+        echo "<a href='eliminar_ejercicio.php?id={$row['id_ejercicio']}' class='btn'><button type='button' class='btn btn-danger'>Eliminar Ejercicio</button></a>";
         echo "</div>";
         echo "</div>";
         

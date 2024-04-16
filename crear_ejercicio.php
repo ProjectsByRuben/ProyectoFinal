@@ -15,16 +15,18 @@ $tipo_usuario = $_SESSION['tipo'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=4" id="themeStylesheet">
+    <link rel="stylesheet" href="./styles.css?v=1" id="themeStylesheet">
     <title>Crear Ejercicio</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f8f9fa;
-            padding: 10px; /* Reducir el padding a 10px para menos espacio en los bordes */
         }
-        /* Estilos personalizados */
-        /* Puedes agregar estilos adicionales aquí según sea necesario */
+        .navbar {
+            padding-left: 0 !important; /* Eliminar el padding a la izquierda */
+            padding-right: 10px !important; /* Eliminar el padding a la derecha */
+            margin-top: 0 !important; /* Eliminar el margen superior */
+        }
 
         .form-container {
             margin: 50px auto;
@@ -37,19 +39,30 @@ $tipo_usuario = $_SESSION['tipo'];
             display: flex;
             justify-content: space-between;
         }
-        textarea.form-control:focus {
-            outline: none; /* Elimina el resaltado de foco */
-            background-color: #43494E !important; /* Establece el color de fondo como transparente */
+
+        /* Estilos para el textarea en el modo oscuro */
+        [data-theme="dark"] textarea {
+            background-color: #43494E !important; /* Color de fondo en modo oscuro */
+            color: #ffffff; /* Color del texto en modo oscuro */
+            border-style: none; /* Borde en modo oscuro */
         }
-        textarea.form-control {
+
+        /* Establece el color de fondo específico según el tema */
+        [data-theme="light"] textarea.form-control:focus {
+            background-color: #ffffff !important; /* Fondo blanco en modo claro */
+            color: black !important;
+        }
+
+        [data-theme="dark"] textarea.form-control:focus {
+            background-color: #43494E !important; /* Fondo oscuro en modo oscuro */
+            color: white;
             border-style: none;
-            color: white !important; /* Establece el color del texto en blanco */
         }
     </style>
 </head>
 <body>
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <img src="./img/ejercitacode.png" alt="Bootstrap" width="80" height="80">
+    <img src="./img/ejercitacode3.png" alt="Bootstrap" width="80" height="80">
     <div class="container-fluid">
         <a class="navbar-brand" href="./dashboard.php">Inicio</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

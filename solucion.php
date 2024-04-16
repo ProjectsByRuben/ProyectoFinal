@@ -87,7 +87,7 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Realizar Ejercicio</title>
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
+    <link rel="stylesheet" href="./styles.css?v=1" id="themeStylesheet">
     <style>
         #drop-area {
             border: 2px dashed #ccc;
@@ -110,7 +110,11 @@ $conn->close();
         body {
             font-family: Arial, sans-serif;
             background-color: #f8f9fa;
-            padding: 10px;
+        }
+        .navbar {
+            padding-left: 0 !important; /* Eliminar el padding a la izquierda */
+            padding-right: 10px !important; /* Eliminar el padding a la derecha */
+            margin-top: 0 !important; /* Eliminar el margen superior */
         }
         .code-container {
             background-color: #fff;
@@ -140,7 +144,7 @@ $conn->close();
 <body>
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <img src="./img/ejercitacode.png" alt="Bootstrap" width="80" height="80">
+    <img src="./img/ejercitacode3.png" alt="Bootstrap" width="80" height="80">
     <div class="container-fluid">
         <a class="navbar-brand" href="./dashboard.php">Inicio</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
