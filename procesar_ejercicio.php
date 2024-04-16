@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+include './scripts/conexion.php'; // Incluye el archivo de conexión
+
 // Verificar si el usuario no ha iniciado sesión
 if (!isset($_SESSION['usuario'])) {
     header("Location: index.php");
@@ -10,17 +12,6 @@ if (!isset($_SESSION['usuario'])) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Verificar si se recibieron los datos del formulario
     if (isset($_POST['titulo']) && isset($_POST['enunciado']) && isset($_POST['dificultad']) && isset($_POST['asignatura'])) {
-        // Conexión a la base de datos
-        $servername = "localhost";
-        $username = "root";
-        $password = "root";
-        $dbname = "proyecto_asignaturas";
-
-        $conn = new mysqli($servername, $username, $password, $dbname);
-
-        if ($conn->connect_error) {
-            die("Conexión fallida: " . $conn->connect_error);
-        }
 
         // Obtener datos del formulario
         $titulo = $_POST['titulo'];

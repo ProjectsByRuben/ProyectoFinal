@@ -143,7 +143,7 @@ body { /* Aplica los estilos según el tema */
 /* Estilos para el contenido del ejercicio en modo oscuro */
 [data-theme="dark"] .code-container {
     color: rgb(3, 3, 3); /* Hereda el color del texto */
-    background-color: #6b6f72; /* Hereda el color de fondo */
+    background-color: #5d6e7a; /* Hereda el color de fondo */
 }
 
 /* Estilos para la ventana modal en modo oscuro */

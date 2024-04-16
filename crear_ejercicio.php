@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+include './scripts/conexion.php'; // Incluye el archivo de conexión
+
 if (!isset($_SESSION['usuario'])) {
     header("Location: index.php");
     exit();
@@ -86,9 +88,7 @@ $tipo_usuario = $_SESSION['tipo'];
     </div>
 
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        Sesion
-    </button>
+    <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Sesion</button>
     <button id="themeButton" onclick="toggleTheme()" class="btn btn-primary">Cambiar Tema</button>
 </nav>
 
@@ -115,17 +115,6 @@ $tipo_usuario = $_SESSION['tipo'];
 <div class="container form-container">
     <h1>Crear Nuevo Ejercicio</h1>
     <?php
-    // Conexión a la base de datos
-    $servername = "localhost";
-    $username = "root";
-    $password = "root";
-    $dbname = "proyecto_asignaturas";
-
-    $conn = new mysqli($servername, $username, $password, $dbname);
-
-    if ($conn->connect_error) {
-        die("Conexión fallida: " . $conn->connect_error);
-    }
 
     // Obtener asignaturas disponibles
     $sql_asignaturas = "SELECT id_asignatura, nombre FROM asignaturas";
@@ -230,7 +219,6 @@ $tipo_usuario = $_SESSION['tipo'];
         </div>
     </form>
 </div>
-
 
 <script>
     function toggleTheme() {

@@ -15,7 +15,7 @@ $tipo_usuario = $_SESSION['tipo'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
+    <link rel="stylesheet" href="./styles.css?v=1" id="themeStylesheet">
     <title>Dashboard</title>
     <style>
         body {
@@ -80,9 +80,7 @@ $tipo_usuario = $_SESSION['tipo'];
     </div>
 
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        Sesion
-    </button>
+    <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Sesion</button>
     <button id="themeButton" onclick="toggleTheme()" class="btn btn-primary">Cambiar Tema</button>
 </nav>
 
@@ -119,19 +117,19 @@ $tipo_usuario = $_SESSION['tipo'];
         </div>
         <div class="carousel-inner">
             <div class="carousel-item active">
-                <img src="./img/aso.png" class="d-block w-100" alt="...">
+                <img src="./img/aso.png" class="d-block w-100">
             </div>
             <div class="carousel-item">
-                <img src="./img/iaw.png" class="d-block w-100" alt="...">
+                <img src="./img/iaw.png" class="d-block w-100">
             </div>
             <div class="carousel-item">
-                <img src="./img/asgbd.png" class="d-block w-100" alt="...">
+                <img src="./img/asgbd.png" class="d-block w-100">
             </div>
             <div class="carousel-item">
-                <img src="./img/sad.png" class="d-block w-100" alt="...">
+                <img src="./img/sad.png" class="d-block w-100">
             </div>
             <div class="carousel-item">
-                <img src="./img/sri.png" class="d-block w-100" alt="...">
+                <img src="./img/sri.png" class="d-block w-100">
             </div>
         </div>
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">

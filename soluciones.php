@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+include './scripts/conexion.php'; // Incluye el archivo de conexión
+
 $tipo_usuario = $_SESSION['tipo'];
 
 // Verificar si el usuario ha iniciado sesión
@@ -8,18 +10,6 @@ if (!isset($_SESSION['usuario'])) {
     // Si el usuario no ha iniciado sesión, redireccionar al formulario de inicio de sesión
     header("Location: index.php");
     exit();
-}
-
-// Conexión a la base de datos
-$servername = "localhost";
-$username = "root";
-$password = "root";
-$dbname = "proyecto_asignaturas";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
 }
 
 // Obtener el ID de usuario desde la sesión
@@ -88,10 +78,7 @@ $conn->close();
             </div>
         </div>
         <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal"
-            data-bs-target="#exampleModal">
-            Sesión
-        </button>
+        <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Sesión</button>
         <button id="themeButton" onclick="toggleTheme()" class="btn btn-primary">Cambiar Tema</button>
     </nav>
 
@@ -150,8 +137,6 @@ $conn->close();
             ?>
         </div>
     </div>
-
-    <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
     
     <script>
         function eliminarRespuesta(id_solucion) { // Cambiar el nombre de la variable a id_solucion
@@ -177,27 +162,28 @@ $conn->close();
             }
         }
 
-    function toggleTheme() {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme); // Guarda el tema seleccionado en el almacenamiento local
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme); // Guarda el tema seleccionado en el almacenamiento local
 
-        // Actualiza el texto del botón después de cambiar el tema
+            // Actualiza el texto del botón después de cambiar el tema
+            const themeButton = document.getElementById('themeButton');
+            themeButton.textContent = newTheme === 'dark' ? 'Claro' : 'Oscuro';
+        }
+
+        // Aplica el tema almacenado en localStorage al cargar la página
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme) {
+            document.documentElement.setAttribute('data-theme', currentTheme);
+        }
+
+        // Actualiza el texto del botón según el tema actual al cargar la página
         const themeButton = document.getElementById('themeButton');
-        themeButton.textContent = newTheme === 'dark' ? 'Claro' : 'Oscuro';
-    }
-
-    // Aplica el tema almacenado en localStorage al cargar la página
-    const currentTheme = localStorage.getItem('theme');
-    if (currentTheme) {
-        document.documentElement.setAttribute('data-theme', currentTheme);
-    }
-
-    // Actualiza el texto del botón según el tema actual al cargar la página
-    const themeButton = document.getElementById('themeButton');
-    themeButton.textContent = currentTheme === 'dark' ? 'Claro' : 'Oscuro';
+        themeButton.textContent = currentTheme === 'dark' ? 'Claro' : 'Oscuro';
     </script>
+    <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 </body>
 
 </html>

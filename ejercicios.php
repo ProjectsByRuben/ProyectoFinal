@@ -51,7 +51,7 @@
         }
 
         .dificultad-medio {
-            color: yellow;
+            color: #F4CA44;
         }
 
         .dificultad-dificil {
@@ -64,6 +64,8 @@
 <?php
 session_start();
 
+include './scripts/conexion.php'; // Incluye el archivo de conexión
+
 $tipo_usuario = $_SESSION['tipo'];
 
 // Verificar si el usuario ha iniciado sesión
@@ -71,18 +73,6 @@ if (!isset($_SESSION['usuario'])) {
     // Si el usuario no ha iniciado sesión, redireccionar al formulario de inicio de sesión
     header("Location: index.php");
     exit();
-}
-
-// Conexión a la base de datos
-$servername = "localhost";
-$username = "root";
-$password = "root";
-$dbname = "proyecto_asignaturas";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
 }
 
 // Consulta para obtener los ejercicios

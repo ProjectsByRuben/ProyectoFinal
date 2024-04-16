@@ -1,19 +1,9 @@
 <?php
 session_start();
 
+include './scripts/conexion.php'; // Incluye el archivo de conexión
+
 $tipo_usuario = $_SESSION['tipo'];
-
-// Conexión a la base de datos
-$servername = "localhost";
-$username = "root";
-$password = "root";
-$dbname = "proyecto_asignaturas";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
-}
 
 // Verificar si el usuario ha iniciado sesión
 if (!isset($_SESSION['usuario'])) {
@@ -98,7 +88,7 @@ if (file_exists($ruta_muestra_html)) {
     <title>Solución del Ejercicio</title>
     <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.7.2/styles/default.min.css">
-    <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
+    <link rel="stylesheet" href="./styles.css?v=1" id="themeStylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -165,9 +155,7 @@ if (file_exists($ruta_muestra_html)) {
     </div>
 
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        Sesion
-    </button>
+    <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Sesion</button>
     <button id="themeButton" onclick="toggleTheme()" class="btn btn-primary">Cambiar Tema</button>
 </nav>
 
@@ -274,19 +262,19 @@ if (file_exists($ruta_muestra_html)) {
 
             loadPdf();
 
-    function toggleTheme() {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme); // Guarda el tema seleccionado en el almacenamiento local
-    }
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme); // Guarda el tema seleccionado en el almacenamiento local
+        }
 
-    // Aplica el tema almacenado en localStorage al cargar la página
-    const currentTheme = localStorage.getItem('theme');
-    if (currentTheme) {
-        document.documentElement.setAttribute('data-theme', currentTheme);
-    }
-        </script>
+        // Aplica el tema almacenado en localStorage al cargar la página
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme) {
+            document.documentElement.setAttribute('data-theme', currentTheme);
+        }
+    </script>
     <?php elseif ($tipo_archivo === 'zip'): ?>
         <!-- Si es un archivo ZIP, mostrar un mensaje indicando que debe descargarse para verlo -->
         <div class="alert alert-info" role="alert">

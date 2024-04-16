@@ -1,6 +1,8 @@
 <?php
 session_start();
 
+include './scripts/conexion.php'; // Incluye el archivo de conexión
+
 $tipo_usuario = $_SESSION['tipo'];
 
 // Verificar si el usuario ha iniciado sesión
@@ -15,18 +17,6 @@ if (!isset($_GET['id'])) {
     // Si no se proporciona el ID del ejercicio, redireccionar a la página de ejercicios
     header("Location: ejercicios.php");
     exit();
-}
-
-// Conexión a la base de datos
-$servername = "localhost";
-$username = "root";
-$password = "root";
-$dbname = "proyecto_asignaturas";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Conexión fallida: " . $conn->connect_error);
 }
 
 // Obtener el ID del ejercicio desde el parámetro GET
@@ -167,9 +157,7 @@ $conn->close();
         </div>
     </div>
  <!-- Button trigger modal -->
- <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        Sesión
-    </button>
+ <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Sesión</button>
     <button id="themeButton" onclick="toggleTheme()" class="btn btn-primary">Cambiar Tema</button>
 </nav>
 
