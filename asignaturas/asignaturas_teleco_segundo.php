@@ -6,7 +6,11 @@ include '../scripts/conexion.php'; // Incluye el archivo de conexión
 $tipo_usuario = $_SESSION['tipo'];
 
 // Consulta para obtener las asignaturas de ASIR del primer curso
-$sql = "SELECT * FROM asignaturas WHERE id_modulo = 2 AND id_curso = 2";
+$sql = "SELECT a.id_asignatura, a.nombre, COUNT(e.id_ejercicio) AS num_ejercicios
+        FROM asignaturas a
+        LEFT JOIN ejercicios e ON a.id_asignatura = e.id_asignatura
+        WHERE a.id_modulo = 2 AND a.id_curso = 2
+        GROUP BY a.id_asignatura";
 $result = $conn->query($sql);
 ?>
 
@@ -18,13 +22,19 @@ $result = $conn->query($sql);
     <title>Asignaturas de TELECO - 2º Curso</title>
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../styles.css?v=1" id="themeStylesheet">
+    <style>
+        .small-text {
+            font-size: 12px;
+            color: pink;
+        }
+    </style>
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <img src="../img/ejercitacode3.png" alt="Bootstrap" width="80" height="80">
     <div class="container-fluid">
-        <a class="nav-link active" aria-current="page" href="../asignaturas/asignaturas_asir_primero.php">
+        <a class="nav-link active" aria-current="page" href="javascript:history.back()">
             <img src="../img/flecha.png" class="img-fluid" style="max-width: 30px;" alt="Flecha">
             <span style='margin: 0 10px;'></span>
         </a>
@@ -84,8 +94,8 @@ $result = $conn->query($sql);
             while ($row = $result->fetch_assoc()) {
                 echo "<div class='card mb-3'>";
                 echo "<div class='card-body'>";
-                echo "<h5 class='card-title'>{$row['nombre']}</h5>";
-                echo "<a href='../cursos/segundo_curso_teleco.php?asignatura_id={$row['id_asignatura']}' class='btn btn-primary'>Ver ejercicios</a>";
+                echo "<h5 class='card-title'>{$row['nombre']} <small class='small-text'>({$row['num_ejercicios']} ejercicio/s)</small></h5>";
+                echo "<a href='../cursos/primer_curso_asir.php?asignatura_id={$row['id_asignatura']}' class='btn btn-primary'>Ver ejercicios</a>";
                 echo "</div>";
                 echo "</div>";            
             }

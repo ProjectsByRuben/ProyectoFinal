@@ -38,6 +38,19 @@ if ($result->num_rows > 0) {
     exit();
 }
 
+// Consulta para obtener las pistas del ejercicio desde las columnas pista1, pista2 y pista3
+$sql_pistas = "SELECT pista1, pista2, pista3 FROM ejercicios WHERE id_ejercicio = $id_ejercicio";
+$result_pistas = $conn->query($sql_pistas);
+
+$pistas = [];
+if ($result_pistas->num_rows > 0) {
+    $row_pistas = $result_pistas->fetch_assoc();
+    // Agregar las rutas de las pistas al array
+    $pistas[] = $row_pistas['pista1'];
+    $pistas[] = $row_pistas['pista2'];
+    $pistas[] = $row_pistas['pista3'];
+}
+
 // Guardar la solución enviada por el usuario
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Verificar si se ha enviado un archivo
@@ -136,7 +149,7 @@ $conn->close();
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <img src="../img/ejercitacode3.png" alt="Bootstrap" width="80" height="80">
     <div class="container-fluid">
-        <a class="nav-link active" aria-current="page" href="./asignaturas/asignaturas_asir_primero.php">
+        <a class="nav-link active" aria-current="page" href="javascript:history.back()">
             <img src="./img/flecha.png" class="img-fluid" style="max-width: 30px;" alt="Flecha">
             <span style='margin: 0 10px;'></span>
         </a>
@@ -198,6 +211,42 @@ $conn->close();
 <?php if (!empty($row['enunciado_archivo'])): ?>
     <a href="<?php echo $row['enunciado_archivo']; ?>" class="btn btn-primary download-button" download>Descargar Enunciado</a>
 <?php endif; ?>
+
+<!-- Modales para las pistas -->
+<?php foreach ($pistas as $index => $pista): ?>
+    <?php if (!empty($pista)): ?>
+        <div class="modal fade" id="pistaModal<?php echo $index; ?>" tabindex="-1" aria-labelledby="pistaModalLabel<?php echo $index; ?>" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="pistaModalLabel<?php echo $index; ?>">Pista <?php echo $index + 1; ?></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <?php
+                            // Leer el contenido del archivo de la pista
+                            $pista_contenido = file_get_contents($pista);
+                            if ($pista_contenido !== false) {
+                                // Mostrar el contenido de la pista
+                                echo "<pre>" . htmlspecialchars($pista_contenido) . "</pre>";
+                            } else {
+                                // Manejar el caso de error al leer el archivo
+                                echo "Error al leer el contenido de la pista $index";
+                            }
+                        ?>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Botón para abrir la ventana modal de esta pista -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pistaModal<?php echo $index; ?>">Pista <?php echo $index + 1; ?></button>
+    <?php endif; ?>
+<?php endforeach; ?>
+
+<a href="./ver_solucion.php?id=<?php echo $id_ejercicio; ?>" class="btn btn-primary">Ver Solución</a>
 
 <div id="drop-area" onclick="document.getElementById('fileElem').click();" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
     <p>Haz clic aquí o arrastra tus archivos para subirlos</p>

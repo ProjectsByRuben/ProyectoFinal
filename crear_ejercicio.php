@@ -9,6 +9,11 @@ if (!isset($_SESSION['usuario'])) {
 }
 
 $tipo_usuario = $_SESSION['tipo'];
+
+// Obtener asignaturas disponibles
+$sql_asignaturas = "SELECT id_asignatura, nombre FROM asignaturas";
+$result_asignaturas = $conn->query($sql_asignaturas);
+
 ?>
 
 <!DOCTYPE html>
@@ -67,7 +72,7 @@ $tipo_usuario = $_SESSION['tipo'];
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <img src="../img/ejercitacode3.png" alt="Bootstrap" width="80" height="80">
     <div class="container-fluid">
-        <a class="nav-link active" aria-current="page" href="./asignaturas/asignaturas_asir_primero.php">
+        <a class="nav-link active" aria-current="page" href="javascript:history.back()">
             <img src="./img/flecha.png" class="img-fluid" style="max-width: 30px;" alt="Flecha">
             <span style='margin: 0 10px;'></span>
         </a>
@@ -77,7 +82,7 @@ $tipo_usuario = $_SESSION['tipo'];
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="./dashboard.php">Inicio</a>
+                    <a class="nav-link active" aria-current="page" href="./dashboard.php">Inicio</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="./modulos.php">Modulos</a>
@@ -122,10 +127,6 @@ $tipo_usuario = $_SESSION['tipo'];
     <h1>Crear Nuevo Ejercicio</h1>
     <?php
 
-    // Obtener asignaturas disponibles
-    $sql_asignaturas = "SELECT id_asignatura, nombre FROM asignaturas";
-    $result_asignaturas = $conn->query($sql_asignaturas);
-
     // Procesar la subida de archivos
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["archivo"]) && isset($_FILES["enunciado_archivo"])) {
         $asignatura_id = $_POST["asignatura"];
@@ -161,6 +162,30 @@ $tipo_usuario = $_SESSION['tipo'];
                 $sql_update_enunciado = "UPDATE ejercicios SET enunciado_archivo='$ruta_enunciado' WHERE id_ejercicio=$nuevo_id_ejercicio";
                 if ($conn->query($sql_update_enunciado) !== TRUE) {
                     echo '<div class="alert alert-danger" role="alert">Error al actualizar la ruta del archivo de enunciado: ' . $conn->error . '</div>';
+                }
+            }
+
+            // Procesar la subida de archivos de pistas
+            $pistas = array();
+            for ($i = 1; $i <= 3; $i++) {
+                if (isset($_FILES["pista$i"])) {
+                    $extension_pista = strtolower(pathinfo($_FILES["pista$i"]["name"], PATHINFO_EXTENSION));
+                    if (!empty($_FILES["pista$i"]["name"]) && in_array($extension_pista, array("html", "php", "pdf", "zip", "js", "css", "txt", "py"))) {
+                        // Construir el nombre del archivo de la pista
+                        $nombre_pista = $nuevo_id_ejercicio . "_pista$i." . $extension_pista;
+                        // Mover el archivo de la pista a la carpeta de pistas
+                        $ruta_pista = "pistas/" . $nombre_pista;
+                        move_uploaded_file($_FILES["pista$i"]["tmp_name"], $ruta_pista);
+                        // Agregar la ruta de la pista al array de pistas
+                        $pistas["pista$i"] = $ruta_pista;
+                    }
+                }
+            }
+            // Actualizar las rutas de las pistas en la base de datos
+            foreach ($pistas as $key => $value) {
+                $sql_update_pista = "UPDATE ejercicios SET $key='$value' WHERE id_ejercicio=$nuevo_id_ejercicio";
+                if ($conn->query($sql_update_pista) !== TRUE) {
+                    echo '<div class="alert alert-danger" role="alert">Error al actualizar la ruta del archivo de la pista: ' . $conn->error . '</div>';
                 }
             }
 
@@ -213,6 +238,22 @@ $tipo_usuario = $_SESSION['tipo'];
                     <option value="<?php echo $row_asignatura['id_asignatura']; ?>"><?php echo $row_asignatura['nombre']; ?></option>
                 <?php endwhile; ?>
             </select>
+        </div>
+        <!-- Campos para las pistas -->
+        <div class="mb-3">
+            <label for="pista1" class="form-label">Pista 1 (Opcional):</label>
+            <input type="file" class="form-control" id="pista1" name="pista1" accept=".html, .php, .pdf, .zip, .js, .css, .txt, .py">
+            <small><p>Solo se permiten archivos HTML, PHP, PDF, JS, CSS, TXT, PY o ZIP.</p></small>
+        </div>
+        <div class="mb-3">
+            <label for="pista2" class="form-label">Pista 2 (Opcional):</label>
+            <input type="file" class="form-control" id="pista2" name="pista2" accept=".html, .php, .pdf, .zip, .js, .css, .txt, .py">
+            <small><p>Solo se permiten archivos HTML, PHP, PDF, JS, CSS, TXT, PY o ZIP.</p></small>
+        </div>
+        <div class="mb-3">
+            <label for="pista3" class="form-label">Pista 3 (Opcional):</label>
+            <input type="file" class="form-control" id="pista3" name="pista3" accept=".html, .php, .pdf, .zip, .js, .css, .txt, .py">
+            <small><p>Solo se permiten archivos HTML, PHP, PDF, JS, CSS, TXT, PY o ZIP.</p></small>
         </div>
         <div class="mb-3">
             <label for="archivo" class="form-label">Archivo de la Solución:</label>

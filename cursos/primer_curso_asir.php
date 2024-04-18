@@ -9,6 +9,19 @@ $tipo_usuario = $_SESSION['tipo'];
 if (isset($_GET['asignatura_id']) && !empty($_GET['asignatura_id'])) {
     $asignatura_id = $_GET['asignatura_id'];
 
+    // Consulta para obtener los datos de la asignatura seleccionada
+    $sql_asignatura = "SELECT nombre FROM asignaturas WHERE id_asignatura = $asignatura_id";
+    $result_asignatura = $conn->query($sql_asignatura);
+
+    if ($result_asignatura->num_rows > 0) {
+        $row_asignatura = $result_asignatura->fetch_assoc();
+        $nombre_asignatura = $row_asignatura['nombre'];
+    } else {
+        // Si no se encuentra la asignatura, redirige
+        header("Location: asignaturas_asir_primero.php");
+        exit;
+    }
+
     // Consulta para obtener los ejercicios de la asignatura seleccionada
     $sql = "SELECT * FROM ejercicios WHERE id_asignatura = $asignatura_id";
     $result = $conn->query($sql);
@@ -24,7 +37,7 @@ if (isset($_GET['asignatura_id']) && !empty($_GET['asignatura_id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ejercicios de Asignatura - 1º Curso ASIR</title>
+    <title>Ejercicios de <?php echo $nombre_asignatura; ?> - 1º Curso ASIR</title>
     <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../styles.css?v=1" id="themeStylesheet">
 </head>
@@ -33,7 +46,7 @@ if (isset($_GET['asignatura_id']) && !empty($_GET['asignatura_id'])) {
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <img src="../img/ejercitacode3.png" alt="Bootstrap" width="80" height="80">
     <div class="container-fluid">
-        <a class="nav-link active" aria-current="page" href="../asignaturas/asignaturas_asir_primero.php">
+        <a class="nav-link active" aria-current="page" href="javascript:history.back()">
             <img src="../img/flecha.png" class="img-fluid" style="max-width: 30px;" alt="Flecha">
             <span style='margin: 0 10px;'></span>
         </a>
@@ -88,7 +101,7 @@ if (isset($_GET['asignatura_id']) && !empty($_GET['asignatura_id'])) {
 
 <!-- Contenido principal -->
 <div class="container mt-4">
-    <h2>Ejercicios de Asignatura - 1º Curso ASIR</h2>
+    <h2>Ejercicios de <?php echo $nombre_asignatura; ?> - 1º Curso ASIR</h2>
     <?php
     if ($result->num_rows > 0) {
         while ($row = $result->fetch_assoc()) {
@@ -115,8 +128,9 @@ if (isset($_GET['asignatura_id']) && !empty($_GET['asignatura_id'])) {
             echo "<p class='card-text'>{$row['enunciado']}</p>";
             echo "<a href='../solucion.php?id={$row['id_ejercicio']}' class='btn btn-primary'>Intentar</a>";
             echo "<span style='margin: 0 5px;'></span>"; // Espacio en blanco entre los botones
-            echo "<a href='../ver_solucion.php?id={$row['id_ejercicio']}' class='btn btn-primary'>Ver Solución</a>";
+            if ($tipo_usuario === 'profesor'):
             echo "<a href='../eliminar_ejercicio.php?id={$row['id_ejercicio']}' class='btn'><button type='button' class='btn btn-danger'>Eliminar Ejercicio</button></a>";
+            endif;
             echo "</div>";
             echo "</div>";
         }

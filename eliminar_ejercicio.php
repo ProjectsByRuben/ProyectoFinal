@@ -28,19 +28,22 @@ if ($conn->query($sql_delete_soluciones) === TRUE) {
     $sql_delete_ejercicio = "DELETE FROM ejercicios WHERE id_ejercicio = $id_ejercicio";
 
     if ($conn->query($sql_delete_ejercicio) === TRUE) {
-        // Directorios donde se encuentran los archivos de ejercicios y enunciados
+        // Directorios donde se encuentran los archivos de ejercicios, enunciados y pistas
         $directorio_ejercicios = 'ejercicios/';
         $directorio_enunciados = 'enunciados/';
+        $directorio_pistas = 'pistas/';
 
-        // Patrones para buscar archivos asociados al ejercicio y al enunciado
+        // Patrones para buscar archivos asociados al ejercicio, enunciado y pistas
         $patron_archivos_ejercicio = $directorio_ejercicios . $id_ejercicio . ".*";
         $patron_archivos_enunciado = $directorio_enunciados . $id_ejercicio . ".*";
+        $patron_archivos_pistas = $directorio_pistas . $id_ejercicio . "_pista*.*";
 
         // Obtener la lista de archivos que coinciden con los patrones
         $archivos_a_eliminar_ejercicio = glob($patron_archivos_ejercicio);
         $archivos_a_eliminar_enunciado = glob($patron_archivos_enunciado);
+        $archivos_a_eliminar_pistas = glob($patron_archivos_pistas);
 
-        // Eliminar cada archivo asociado al ejercicio y al enunciado
+        // Eliminar cada archivo asociado al ejercicio, enunciado y pistas
         foreach ($archivos_a_eliminar_ejercicio as $archivo) {
             if (file_exists($archivo)) {
                 unlink($archivo); // Eliminar el archivo
@@ -48,6 +51,12 @@ if ($conn->query($sql_delete_soluciones) === TRUE) {
         }
 
         foreach ($archivos_a_eliminar_enunciado as $archivo) {
+            if (file_exists($archivo)) {
+                unlink($archivo); // Eliminar el archivo
+            }
+        }
+
+        foreach ($archivos_a_eliminar_pistas as $archivo) {
             if (file_exists($archivo)) {
                 unlink($archivo); // Eliminar el archivo
             }

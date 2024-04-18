@@ -16,7 +16,19 @@ if (!isset($_SESSION['usuario'])) {
 $id_usuario = $_SESSION['id_usuario'];
 
 // Consulta para obtener las soluciones del usuario junto con el título y el ID del ejercicio correspondiente
-$sql = "SELECT soluciones.*, ejercicios.titulo, ejercicios.id_ejercicio AS id_ejercicio FROM soluciones INNER JOIN ejercicios ON soluciones.id_ejercicio = ejercicios.id_ejercicio WHERE soluciones.id_usuario = $id_usuario";
+// Consulta para obtener las soluciones basadas en el tipo de usuario
+if ($tipo_usuario === 'alumno') {
+    // Si es un alumno, obtener soluciones del usuario actual
+    $sql = "SELECT soluciones.*, ejercicios.titulo, ejercicios.id_ejercicio AS id_ejercicio FROM soluciones INNER JOIN ejercicios ON soluciones.id_ejercicio = ejercicios.id_ejercicio WHERE soluciones.id_usuario = $id_usuario";
+} elseif ($tipo_usuario === 'profesor') {
+    // Si es un profesor, obtener soluciones de todos los usuarios
+    $sql = "SELECT soluciones.*, ejercicios.titulo, ejercicios.id_ejercicio AS id_ejercicio FROM soluciones INNER JOIN ejercicios ON soluciones.id_ejercicio = ejercicios.id_ejercicio";
+} else {
+    // Manejar cualquier otro tipo de usuario (opcional)
+    // Puedes mostrar un mensaje de error o redireccionar a otra página
+    echo "Tipo de usuario no reconocido";
+    exit();
+}
 $result = $conn->query($sql);
 
 $conn->close();
@@ -56,7 +68,7 @@ $conn->close();
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <img src="../img/ejercitacode3.png" alt="Bootstrap" width="80" height="80">
     <div class="container-fluid">
-        <a class="nav-link active" aria-current="page" href="./asignaturas/asignaturas_asir_primero.php">
+        <a class="nav-link active" aria-current="page" href="javascript:history.back()">
             <img src="./img/flecha.png" class="img-fluid" style="max-width: 30px;" alt="Flecha">
             <span style='margin: 0 10px;'></span>
         </a>
