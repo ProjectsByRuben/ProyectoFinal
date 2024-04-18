@@ -65,7 +65,7 @@ $tipo_usuario = $_SESSION['tipo'];
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="./ejercicios.php">Ejercicios</a>
+                    <a class="nav-link active" aria-current="page" href="./modulos.php">Modulos</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>

@@ -53,8 +53,9 @@ if ($conn->query($sql_delete_soluciones) === TRUE) {
             }
         }
 
-        // Redireccionar a la página de ejercicios después de eliminar
-        header("Location: ejercicios.php");
+        // Redireccionar a la página de la que procediste después de eliminar
+        $pagina_anterior = $_SERVER['HTTP_REFERER'];
+        header("Location: $pagina_anterior");
         exit();
     } else {
         echo "Error al eliminar el ejercicio: " . $conn->error;

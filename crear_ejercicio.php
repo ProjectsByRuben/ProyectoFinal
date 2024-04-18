@@ -63,17 +63,24 @@ $tipo_usuario = $_SESSION['tipo'];
     </style>
 </head>
 <body>
+
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <img src="./img/ejercitacode3.png" alt="Bootstrap" width="80" height="80">
+    <img src="../img/ejercitacode3.png" alt="Bootstrap" width="80" height="80">
     <div class="container-fluid">
-        <a class="navbar-brand" href="./dashboard.php">Inicio</a>
+        <a class="nav-link active" aria-current="page" href="./asignaturas/asignaturas_asir_primero.php">
+            <img src="./img/flecha.png" class="img-fluid" style="max-width: 30px;" alt="Flecha">
+            <span style='margin: 0 10px;'></span>
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="./ejercicios.php">Ejercicios</a>
+                <a class="nav-link active" aria-current="page" href="./dashboard.php">Inicio</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="./modulos.php">Modulos</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>
@@ -84,12 +91,11 @@ $tipo_usuario = $_SESSION['tipo'];
                     </li>
                 <?php endif; ?>
             </ul>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Sesión</button>
+            <button id="themeButton" onclick="toggleTheme()" class="btn btn-primary">Cambiar Tema</button>
         </div>
     </div>
-
-    <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Sesion</button>
-    <button id="themeButton" onclick="toggleTheme()" class="btn btn-primary">Cambiar Tema</button>
 </nav>
 
 <!-- Modal -->
@@ -135,47 +141,46 @@ $tipo_usuario = $_SESSION['tipo'];
             mkdir($directorio, 0777, true);
         }
 
-        // Obtener la extensión del archivo subido
-        $extension = strtolower(pathinfo($_FILES["archivo"]["name"], PATHINFO_EXTENSION));
+        // Guardar la ruta de los archivos en la base de datos
+        $sql = "INSERT INTO ejercicios (id_asignatura, titulo, enunciado, enunciado_archivo, dificultad, solucion) VALUES ('$asignatura_id', '$titulo', '$enunciado', '', '$dificultad', '')";
+        if ($conn->query($sql) === TRUE) {
+            // Obtener el ID del ejercicio recién creado
+            $nuevo_id_ejercicio = $conn->insert_id;
 
-        // Verificar si la extensión es permitida
-        $extensiones_permitidas = array("html", "php", "pdf", "zip", "js", "css", "py");
-        if (!in_array($extension, $extensiones_permitidas)) {
-            echo '<div class="alert alert-danger" role="alert">Error: Solo se permiten archivos HTML, PHP, PDF, ZIP, JS, CSS o PY.</div>';
-        } else {
-            // Obtener el ID del último ejercicio guardado en la base de datos
-            $sql_ultimo_id = "SELECT MAX(id_ejercicio) AS ultimo_id FROM ejercicios";
-            $result_ultimo_id = $conn->query($sql_ultimo_id);
-            $row_ultimo_id = $result_ultimo_id->fetch_assoc();
-            $ultimo_id = $row_ultimo_id['ultimo_id'] ?? 0;
-            
+            // Procesar el archivo del enunciado después de haber obtenido $nuevo_id_ejercicio
+            $extension_enunciado = strtolower(pathinfo($_FILES["enunciado_archivo"]["name"], PATHINFO_EXTENSION));
+            if (in_array($extension_enunciado, array("jpg", "jpeg", "png", "gif", "pdf"))) {
+                // Obtener el nombre del archivo del enunciado
+                $nombre_enunciado = $nuevo_id_ejercicio . "." . $extension_enunciado;
+
+                // Mover el archivo del enunciado a la carpeta de enunciados
+                $ruta_enunciado = "enunciados/" . $nombre_enunciado;
+                move_uploaded_file($_FILES["enunciado_archivo"]["tmp_name"], $ruta_enunciado);
+
+                // Actualizar la ruta del archivo de enunciado en la base de datos
+                $sql_update_enunciado = "UPDATE ejercicios SET enunciado_archivo='$ruta_enunciado' WHERE id_ejercicio=$nuevo_id_ejercicio";
+                if ($conn->query($sql_update_enunciado) !== TRUE) {
+                    echo '<div class="alert alert-danger" role="alert">Error al actualizar la ruta del archivo de enunciado: ' . $conn->error . '</div>';
+                }
+            }
+
             // Construir el nombre del archivo de la solución
-            $nombre_archivo = ($ultimo_id + 1) . "." . $extension;
+            $extension = strtolower(pathinfo($_FILES["archivo"]["name"], PATHINFO_EXTENSION));
+            $nombre_archivo = $nuevo_id_ejercicio . "." . $extension;
 
             // Mover el archivo a la carpeta de ejercicios
             $ruta_archivo = $directorio . $nombre_archivo;
             move_uploaded_file($_FILES["archivo"]["tmp_name"], $ruta_archivo);
 
-            // Procesar el archivo del enunciado
-            $extension_enunciado = strtolower(pathinfo($_FILES["enunciado_archivo"]["name"], PATHINFO_EXTENSION));
-            if (in_array($extension_enunciado, array("jpg", "jpeg", "png", "gif", "pdf"))) {
-                // Obtener el nombre del archivo del enunciado
-                $nombre_enunciado = ($ultimo_id + 1) . "." . $extension_enunciado;
-
-                // Mover el archivo del enunciado a la carpeta de enunciados
-                $ruta_enunciado = "enunciados/" . $nombre_enunciado;
-                move_uploaded_file($_FILES["enunciado_archivo"]["tmp_name"], $ruta_enunciado);
+            // Actualizar la ruta de la solución en la base de datos
+            $sql_update_ruta = "UPDATE ejercicios SET solucion='$ruta_archivo' WHERE id_ejercicio=$nuevo_id_ejercicio";
+            if ($conn->query($sql_update_ruta) !== TRUE) {
+                echo '<div class="alert alert-danger" role="alert">Error al actualizar la ruta del archivo de solución: ' . $conn->error . '</div>';
             } else {
-                $ruta_enunciado = ""; // Si no se proporciona un archivo de enunciado válido
-            }
-
-            // Guardar la ruta de los archivos en la base de datos
-            $sql = "INSERT INTO ejercicios (id_asignatura, titulo, enunciado, enunciado_archivo, dificultad, solucion) VALUES ('$asignatura_id', '$titulo', '$enunciado', '$ruta_enunciado', '$dificultad', '$ruta_archivo')";
-            if ($conn->query($sql) === TRUE) {
                 echo '<div class="alert alert-success" role="alert">Ejercicio creado exitosamente.</div>';
-            } else {
-                echo '<div class="alert alert-danger" role="alert">Error al crear el ejercicio: ' . $conn->error . '</div>';
             }
+        } else {
+            echo '<div class="alert alert-danger" role="alert">Error al crear el ejercicio: ' . $conn->error . '</div>';
         }
     }
     ?>

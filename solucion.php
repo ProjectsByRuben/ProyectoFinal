@@ -134,19 +134,25 @@ $conn->close();
 <body>
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <img src="./img/ejercitacode3.png" alt="Bootstrap" width="80" height="80">
+    <img src="../img/ejercitacode3.png" alt="Bootstrap" width="80" height="80">
     <div class="container-fluid">
-        <a class="navbar-brand" href="./dashboard.php">Inicio</a>
+        <a class="nav-link active" aria-current="page" href="./asignaturas/asignaturas_asir_primero.php">
+            <img src="./img/flecha.png" class="img-fluid" style="max-width: 30px;" alt="Flecha">
+            <span style='margin: 0 10px;'></span>
+        </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="./ejercicios.php">Ejercicios</a>
+                <a class="nav-link active" aria-current="page" href="./dashboard.php">Inicio</a>
                 </li>
                 <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>
+                    <a class="nav-link active" aria-current="page" href="./modulos.php">Modulos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>
                 </li>
                 <?php if ($tipo_usuario === 'profesor'): ?>
                     <li class="nav-item">
@@ -154,11 +160,11 @@ $conn->close();
                     </li>
                 <?php endif; ?>
             </ul>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Sesión</button>
+            <button id="themeButton" onclick="toggleTheme()" class="btn btn-primary">Cambiar Tema</button>
         </div>
     </div>
- <!-- Button trigger modal -->
- <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Sesión</button>
-    <button id="themeButton" onclick="toggleTheme()" class="btn btn-primary">Cambiar Tema</button>
 </nav>
 
 <!-- Modal -->
