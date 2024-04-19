@@ -127,7 +127,6 @@ if (isset($_GET['asignatura_id']) && !empty($_GET['asignatura_id'])) {
             echo "<h5 class='card-title $dificultad_color'>{$row['titulo']}</h5>";
             echo "<p class='card-text'>{$row['enunciado']}</p>";
             echo "<a href='../solucion.php?id={$row['id_ejercicio']}' class='btn btn-primary'>Intentar</a>";
-            echo "<span style='margin: 0 5px;'></span>"; // Espacio en blanco entre los botones
             if ($tipo_usuario === 'profesor'):
             echo "<a href='../eliminar_ejercicio.php?id={$row['id_ejercicio']}' class='btn'><button type='button' class='btn btn-danger'>Eliminar Ejercicio</button></a>";
             endif;

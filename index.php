@@ -1,3 +1,10 @@
+<?php
+    session_start();
+    if (isset($_SESSION['error'])) {
+        echo '<div class="alert alert-danger" role="alert" style="color: red;">' . $_SESSION['error'] . '</div>';
+        unset($_SESSION['error']); // Limpiar el mensaje de error
+    }
+    ?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -20,13 +27,6 @@
             <input type="password" name="pass" size="30" required="">
             <label for="pass">Contraseña</label>
         </div>
-        <?php
-    session_start();
-    if (isset($_SESSION['error'])) {
-        echo '<div class="alert alert-danger" role="alert" style="color: red;">' . $_SESSION['error'] . '</div>';
-        unset($_SESSION['error']); // Limpiar el mensaje de error
-    }
-    ?>
         <a href="./login.php">
           <button type="submit" value="Añadir" class="boton"><span></span>Enviar</button>
           </a>

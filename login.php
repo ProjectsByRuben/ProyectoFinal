@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-include './scripts/conexion.php'; // Incluye el archivo de conexión
+include './scripts/conexion.php'; // Incluye el archivo de conexión utilizando una ruta relativa
 
 if (isset($_POST['usuario']) && isset($_POST['pass'])) {
 
