@@ -208,9 +208,19 @@ $conn->close();
     </div>
 </div>
 
+<div class="container">
+    <!-- Sección de pistas para resolver el ejercicio -->
+    <p class="text-center mt-4">
+        Presiona las pistas en caso de tener dificultades a la hora de resolver el ejercicio. Cada una proporcionará más información que la anterior. 
+        En caso de que aún así no puedas resolverlo, presiona en "Ver Solución" para visualizar el resultado correcto del ejercicio.
+    </p>
+</div>
+
 <?php if (!empty($row['enunciado_archivo'])): ?>
     <a href="<?php echo $row['enunciado_archivo']; ?>" class="btn btn-primary download-button" download>Descargar Enunciado</a>
 <?php endif; ?>
+
+
 
 <!-- Modales para las pistas -->
 <?php foreach ($pistas as $index => $pista): ?>
