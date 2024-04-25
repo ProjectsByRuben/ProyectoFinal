@@ -41,8 +41,8 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soluciones del Usuario</title>
-    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=1" id="themeStylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -54,11 +54,28 @@ $conn->close();
             margin-top: 0 !important; /* Eliminar el margen superior */
         }
         .btn-descarga {
-            background-color: #0df2f3;
+            background-color: #228182;
         }
         /* Estilo para el botón de descarga al pasar el ratón por encima */
         .btn-descarga:hover {
             background-color: #00d5d6; /* Mantener el color de fondo */
+        }
+        #themeIcon {
+            width: 28px; /* Ajustar el ancho */
+            height: 25px; /* Ajustar la altura */
+            margin-left: 11px;
+            margin-right: 10px;
+        }
+        /* Estilo para ocultar el botón y mostrar solo la imagen */
+        #themeButton {
+            background-color: transparent;
+            border: none;
+            padding: 0;
+        }
+
+        #themeButton img {
+            width: 28px;
+            height: 25px;
         }
     </style>
 </head>
@@ -80,8 +97,17 @@ $conn->close();
                 <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="./dashboard.php">Inicio</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="./modulos.php">Modulos</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Modulos
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="./modulos.php">Modulos</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Asir</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Asir</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Teleco</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Teleco</a></li>
+                    </ul>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>
@@ -93,8 +119,10 @@ $conn->close();
                 <?php endif; ?>
             </ul>
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Sesión</button>
-            <button id="themeButton" onclick="toggleTheme()" class="btn btn-primary">Cambiar Tema</button>
+            <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Sesion</button>
+            <button id="themeButton" onclick="toggleTheme()" class="btn">
+        <img id="themeIcon" src="./img/<?php echo $currentTheme === 'dark' ? 'sun' : 'moon'; ?>.png" alt="<?php echo $currentTheme === 'dark' ? 'moon' : 'sun'; ?>">
+    </button>
         </div>
     </div>
 </nav>
@@ -180,27 +208,27 @@ $conn->close();
         }
 
         function toggleTheme() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme); // Guarda el tema seleccionado en el almacenamiento local
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme); // Guarda el tema seleccionado en el almacenamiento local
 
-            // Actualiza el texto del botón después de cambiar el tema
-            const themeButton = document.getElementById('themeButton');
-            themeButton.textContent = newTheme === 'dark' ? 'Claro' : 'Oscuro';
-        }
+        // Actualiza la imagen del botón después de cambiar el tema
+        const themeIcon = document.getElementById('themeIcon');
+        themeIcon.src = `./img/${newTheme === 'dark' ? 'sun' : 'moon'}.png`;
+    }
 
-        // Aplica el tema almacenado en localStorage al cargar la página
-        const currentTheme = localStorage.getItem('theme');
-        if (currentTheme) {
-            document.documentElement.setAttribute('data-theme', currentTheme);
-        }
+    // Aplica el tema almacenado en localStorage al cargar la página
+    const currentTheme = localStorage.getItem('theme');
+    if (currentTheme) {
+        document.documentElement.setAttribute('data-theme', currentTheme);
+    }
 
-        // Actualiza el texto del botón según el tema actual al cargar la página
-        const themeButton = document.getElementById('themeButton');
-        themeButton.textContent = currentTheme === 'dark' ? 'Claro' : 'Oscuro';
+    // Actualiza la imagen del botón según el tema actual al cargar la página
+    const themeIcon = document.getElementById('themeIcon');
+    themeIcon.src = `./img/${currentTheme === 'dark' ? 'sun' : 'moon'}.png`;
     </script>
-    <script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-</body>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>

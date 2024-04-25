@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ejercicios</title>
-    <link rel="stylesheet" href="./node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=1" id="themeStylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -32,8 +32,8 @@
         }
 
         .btn-card {
-            background-color: #0df2f3; /* Color de fondo del botón */
-            border-color: #0df2f3; /* Color del borde del botón */
+            background-color: #228182; /* Color de fondo del botón */
+            border-color: #228182; /* Color del borde del botón */
             color: #4b4545; /* Color del texto del botón */
         }
 
@@ -56,6 +56,10 @@
 
         .dificultad-dificil {
             color: red;
+        }
+        #themeIcon {
+            width: 28px; /* Ajustar el ancho */
+            height: 25px; /* Ajustar la altura */
         }
     </style>
 </head>
@@ -112,8 +116,17 @@ function dificultad_en_espanol($dificultad) {
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="./modulos.php">Modulos</a>
+            <li class="nav-item dropdown">
+                    <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Modulos
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="./modulos.php">Modulos</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Asir</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Asir</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Teleco</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Teleco</a></li>
+                    </ul>
                 </li>
                 <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>
@@ -226,6 +239,6 @@ if ($result->num_rows > 0) {
     themeButton.textContent = currentTheme === 'dark' ? 'Claro' : 'Oscuro';
 </script>
 
-<script src="./node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

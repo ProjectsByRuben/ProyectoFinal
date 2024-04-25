@@ -1,6 +1,12 @@
 <?php
 session_start();
 
+if (!isset($_SESSION['usuario'])) {
+    // Si el usuario no ha iniciado sesión, redireccionar al formulario de inicio de sesión
+    header("Location: ../index.php");
+    exit();
+}
+
 include '../scripts/conexion.php'; // Incluye el archivo de conexión
 
 $tipo_usuario = $_SESSION['tipo'];
@@ -20,12 +26,39 @@ $result = $conn->query($sql);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asignaturas de ASIR - 1º Curso</title>
-    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../styles.css?v=1" id="themeStylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../styles.css?v=2" id="themeStylesheet">
     <style>
         .small-text {
-            font-size: 12px;
-            color: pink;
+            font-size: 16px;
+            color: #228182;
+        }
+        #themeIcon {
+            width: 28px; /* Ajustar el ancho */
+            height: 25px; /* Ajustar la altura */
+            margin-left: 10px;
+            margin-right: 20px;
+        }
+        /* Estilo para ocultar el botón y mostrar solo la imagen */
+        #themeButton {
+            background-color: transparent;
+            border: none;
+            padding: 0;
+        }
+
+        #themeButton img {
+            width: 28px;
+            height: 25px;
+        }
+        /* Estilo para el número de ejercicios */
+        .num-ejercicios {
+            font-weight: bold;
+        }
+        .num-ejercicios.rojo {
+            color: red;
+        }
+        .num-ejercicios.verde {
+            color: green;
         }
     </style>
 </head>
@@ -46,8 +79,17 @@ $result = $conn->query($sql);
                 <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="../dashboard.php">Inicio</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="../modulos.php">Modulos</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link active dropdown-toggle" href="../modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Modulos
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="../modulos.php">Modulos</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas_asir_primero.php">1º Asir</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas_asir_segundo.php">2º Asir</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas_teleco_primero.php">1º Teleco</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas_teleco_segundo.php">2º Teleco</a></li>
+                    </ul>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="../soluciones.php">Soluciones</a>
@@ -59,8 +101,10 @@ $result = $conn->query($sql);
                 <?php endif; ?>
             </ul>
             <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Sesión</button>
-            <button id="themeButton" onclick="toggleTheme()" class="btn btn-primary">Cambiar Tema</button>
+            <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Sesion</button>
+            <button id="themeButton" onclick="toggleTheme()" class="btn">
+        <img id="themeIcon" src="../img/<?php echo $currentTheme === 'dark' ? 'sun' : 'moon'; ?>.png" alt="<?php echo $currentTheme === 'dark' ? 'moon' : 'sun'; ?>">
+    </button>
         </div>
     </div>
 </nav>
@@ -87,15 +131,17 @@ $result = $conn->query($sql);
 
 <!-- Contenido principal -->
 <div class="container mt-4">
-    <h2>Asignaturas de ASIR - 1º Curso</h2>
+    <h2>Asignaturas de TELECO - 2º Curso</h2>
     <div class="list-group">
         <?php
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 echo "<div class='card mb-3'>";
                 echo "<div class='card-body'>";
-                echo "<h5 class='card-title'>{$row['nombre']} <small class='small-text'>({$row['num_ejercicios']} ejercicio/s)</small></h5>";
-                echo "<a href='../cursos/primer_curso_asir.php?asignatura_id={$row['id_asignatura']}' class='btn btn-primary'>Ver ejercicios</a>";
+                // Aquí aplicamos una clase condicional según el valor del número de ejercicios
+                $clase_ejercicios = $row['num_ejercicios'] == 0 ? 'rojo' : 'verde';
+                echo "<h5 class='card-title'>{$row['nombre']} <small class='small-text'>(<span class='num-ejercicios $clase_ejercicios'>{$row['num_ejercicios']}</span> ejercicio/s)</small></h5>";
+                echo "<a href='../cursos/segundo_curso_teleco.php?asignatura_id={$row['id_asignatura']}' class='btn btn-primary'>Ver ejercicios</a>";
                 echo "</div>";
                 echo "</div>";            
             }
@@ -113,9 +159,9 @@ $result = $conn->query($sql);
         document.documentElement.setAttribute('data-theme', newTheme);
         localStorage.setItem('theme', newTheme); // Guarda el tema seleccionado en el almacenamiento local
 
-        // Actualiza el texto del botón después de cambiar el tema
-        const themeButton = document.getElementById('themeButton');
-        themeButton.textContent = newTheme === 'dark' ? 'Claro' : 'Oscuro';
+        // Actualiza la imagen del botón después de cambiar el tema
+        const themeIcon = document.getElementById('themeIcon');
+        themeIcon.src = `../img/${newTheme === 'dark' ? 'sun' : 'moon'}.png`;
     }
 
     // Aplica el tema almacenado en localStorage al cargar la página
@@ -124,10 +170,11 @@ $result = $conn->query($sql);
         document.documentElement.setAttribute('data-theme', currentTheme);
     }
 
-    // Actualiza el texto del botón según el tema actual al cargar la página
-    const themeButton = document.getElementById('themeButton');
-    themeButton.textContent = currentTheme === 'dark' ? 'Claro' : 'Oscuro';
+    // Actualiza la imagen del botón según el tema actual al cargar la página
+    const themeIcon = document.getElementById('themeIcon');
+    themeIcon.src = `../img/${currentTheme === 'dark' ? 'sun' : 'moon'}.png`;
 </script>
-<script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

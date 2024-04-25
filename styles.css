@@ -35,8 +35,8 @@ body { /* Aplica los estilos según el tema */
 }
 
 .btn-primary {
-    background-color: #0df2f3; /* Color de fondo del botón */
-    border-color: #0df2f3; /* Color del borde del botón */
+    background-color: #228182; /* Color de fondo del botón */
+    border-color: #228182; /* Color del borde del botón */
     color: #4b4545; /* Color del texto del botón */
     border-style: none;
 }
@@ -161,13 +161,13 @@ body { /* Aplica los estilos según el tema */
 
 /* Estilos adicionales para los botones en las tarjetas en el modo claro */
 [data-theme="light"] .card-body .btn-card {
-    background-color: #0df2f3; /* Color para el botón de intentar */
-    border-color: #0df2f3; /* Color del borde */
-    color: black;
+    background-color: #228182; /* Color para el botón de intentar */
+    border-color: #228182; /* Color del borde */
+    color: white;
 }
 
 [data-theme="light"] .card-body .btn-card:hover {
-    background-color: #00D5D6; /* Color para el botón de intentar */
+    background-color: #2C7878; /* Color para el botón de intentar */
 }
 
 [data-theme="light"] .card-body .btn-eliminar {
@@ -177,13 +177,13 @@ body { /* Aplica los estilos según el tema */
 }
 
 [data-theme="light"] .btn-primary {
-    background-color: #0df2f3; /* Color de fondo del botón */
-    border-color: #0df2f3; /* Color del borde del botón */
-    color: black; /* Color del texto del botón */
+    background-color: #228182; /* Color de fondo del botón */
+    border-color: #228182; /* Color del borde del botón */
+    color: white; /* Color del texto del botón */
 }
 
 [data-theme="light"] .btn-primary:hover {
-    background-color: #00D5D6; /* Color de fondo del botón */
+    background-color: #2C7878; /* Color de fondo del botón */
 }
 
 /* Estilos para el modo oscuro */
