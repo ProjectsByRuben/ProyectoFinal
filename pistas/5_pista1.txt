@@ -1,0 +1,2 @@
+Utiliza las etiquetas HTML <table>, <thead> y <tbody> para 
+estructurar la tabla del horario.

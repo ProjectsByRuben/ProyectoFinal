@@ -1,1 +1,2 @@
-<ul></ul>
+Los componentes básicos de hardware incluyen la CPU, 
+la memoria RAM y el disco duro.

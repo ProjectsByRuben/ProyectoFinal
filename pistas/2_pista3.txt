@@ -1,1 +1,2 @@
-<ul></ul>
+Asegúrate de que el dispositivo firewall seleccionado tenga funcionalidades 
+de actualización de firmware para mantenerlo seguro frente a nuevas amenazas.

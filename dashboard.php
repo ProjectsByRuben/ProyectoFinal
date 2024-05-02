@@ -74,7 +74,7 @@ $tipo_usuario = $_SESSION['tipo'];
 <body>
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <img src="./img/ejercitacode3.png" alt="Bootstrap" width="80" height="80">
+    <img src="./img/logo.png" alt="Bootstrap" width="140" height="90">
     <div class="container-fluid">
         <a class="navbar-brand" href="./dashboard.php">Inicio</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">

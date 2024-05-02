@@ -13,7 +13,7 @@ if (!isset($_SESSION['usuario'])) {
 // Verificar si se proporciona el ID del ejercicio
 if (!isset($_GET['id'])) {
     // Si no se proporciona el ID del ejercicio, redireccionar a la página de ejercicios
-    header("Location: ejercicios.php");
+    header("Location: modulos.php");
     exit();
 }
 

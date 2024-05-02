@@ -1,0 +1,2 @@
+Usa subconsultas para calcular el promedio de préstamos 
+por libro y luego identificar al autor con el mayor promedio.

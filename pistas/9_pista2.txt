@@ -1,0 +1,2 @@
+Emplea funciones de agregación como COUNT() y SUM() 
+para calcular el número total de préstamos por usuario.

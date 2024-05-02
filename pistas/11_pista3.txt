@@ -1,0 +1,7 @@
+Resuelve las ecuaciones resultantes para encontrar las 
+corrientes desconocidas en cada rama del circuito.
+
+
+
+
+

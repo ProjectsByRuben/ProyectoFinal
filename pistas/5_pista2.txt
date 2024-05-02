@@ -1,0 +1,3 @@
+Organiza las horas en la primera columna y los días de la 
+semana en la primera fila para mantener una 
+estructura clara y ordenada.

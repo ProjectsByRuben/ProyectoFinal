@@ -69,7 +69,7 @@ if (isset($_GET['asignatura_id']) && !empty($_GET['asignatura_id'])) {
 <body>
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <img src="../img/ejercitacode3.png" alt="Bootstrap" width="80" height="80">
+    <img src="../img/logo.png" alt="Bootstrap" width="140" height="90">
     <div class="container-fluid">
         <a class="nav-link active" aria-current="page" href="javascript:history.back()">
             <img src="../img/flecha.png" class="img-fluid" style="max-width: 30px;" alt="Flecha">

@@ -1,1 +1,2 @@
-<ul></ul>
+En Windows Server, busca la herramienta "Administrador del servidor" 
+para configurar roles y características.

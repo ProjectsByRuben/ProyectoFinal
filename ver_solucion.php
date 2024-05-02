@@ -15,7 +15,7 @@ if (!isset($_SESSION['usuario'])) {
 // Verificar si se proporciona el ID del ejercicio
 if (!isset($_GET['id'])) {
     // Si no se proporciona el ID del ejercicio, redireccionar a la página de ejercicios
-    header("Location: ejercicios.php");
+    header("Location: modulos.php");
     exit();
 }
 
@@ -41,13 +41,14 @@ $ruta_muestra_php = $directorio_ejercicios . $id_ejercicio . '.php';
 $ruta_muestra_js = $directorio_ejercicios . $id_ejercicio . '.js';
 $ruta_muestra_css = $directorio_ejercicios . $id_ejercicio . '.css';
 $ruta_muestra_py = $directorio_ejercicios . $id_ejercicio . '.py';
+$ruta_muestra_sql = $directorio_ejercicios . $id_ejercicio . '.sql';
 $ruta_muestra_zip = $directorio_ejercicios . $id_ejercicio . '.zip';
 
 // Definir el tipo de archivo por defecto como HTML
 $tipo_archivo = 'html';
 $contenido = '';
 
-// Verificar si el archivo HTML, PDF, PHP, JS, CSS, PY o ZIP existe
+// Verificar si el archivo HTML, PDF, PHP, JS, CSS, PY, SQL o ZIP existe
 if (file_exists($ruta_muestra_html)) {
     // Si el archivo HTML existe, cargar su contenido
     $contenido = file_get_contents($ruta_muestra_html);
@@ -73,9 +74,13 @@ if (file_exists($ruta_muestra_html)) {
 } elseif (file_exists($ruta_muestra_zip)) {
     // Si el archivo ZIP existe, mostrar un mensaje indicando que debe descargarse para verlo
     $tipo_archivo = 'zip';
+} elseif (file_exists($ruta_muestra_sql)) {
+    // Si el archivo SQL existe, cargar su contenido y establecer el tipo de archivo como SQL
+    $tipo_archivo = 'sql';
+    $contenido = file_get_contents($ruta_muestra_sql);
 } else {
     // Si el archivo no existe, redireccionar a la página de ejercicios
-    header("Location: ejercicios.php");
+    header("Location: modulos.php");
     exit();
 }
 ?>
@@ -148,7 +153,7 @@ if (file_exists($ruta_muestra_html)) {
 <body>
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <img src="../img/ejercitacode3.png" alt="Bootstrap" width="80" height="80">
+    <img src="./img/logo.png" alt="Bootstrap" width="140" height="90">
     <div class="container-fluid">
         <a class="nav-link active" aria-current="page" href="javascript:history.back()">
             <img src="./img/flecha.png" class="img-fluid" style="max-width: 30px;" alt="Flecha">
@@ -219,7 +224,7 @@ if (file_exists($ruta_muestra_html)) {
         <h3 class="text-center"><?php echo $enunciado; ?></h3>
     </div>
 
-    <?php if ($tipo_archivo === 'php' || $tipo_archivo === 'js' || $tipo_archivo === 'css' || $tipo_archivo === 'py'): ?>
+    <?php if ($tipo_archivo === 'php' || $tipo_archivo === 'sql' || $tipo_archivo === 'js' || $tipo_archivo === 'css' || $tipo_archivo === 'py'): ?>
         <!-- Si es un archivo HTML, PHP, JS, CSS o PY, mostrar su contenido y su código -->
         <h2 class="text-center">Código del ejercicio</h2>
         <div class="code-container">

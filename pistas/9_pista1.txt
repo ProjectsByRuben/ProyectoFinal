@@ -1,0 +1,2 @@
+Utiliza la función YEAR() para filtrar los préstamos 
+realizados durante el año pasado.

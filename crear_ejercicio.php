@@ -87,7 +87,7 @@ $result_asignaturas = $conn->query($sql_asignaturas);
 <body>
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <img src="../img/ejercitacode3.png" alt="Bootstrap" width="80" height="80">
+    <img src="./img/logo.png" alt="Bootstrap" width="140" height="90">
     <div class="container-fluid">
         <a class="nav-link active" aria-current="page" href="javascript:history.back()">
             <img src="./img/flecha.png" class="img-fluid" style="max-width: 30px;" alt="Flecha">
@@ -198,7 +198,7 @@ $result_asignaturas = $conn->query($sql_asignaturas);
             for ($i = 1; $i <= 3; $i++) {
                 if (isset($_FILES["pista$i"])) {
                     $extension_pista = strtolower(pathinfo($_FILES["pista$i"]["name"], PATHINFO_EXTENSION));
-                    if (!empty($_FILES["pista$i"]["name"]) && in_array($extension_pista, array("html", "php", "pdf", "zip", "js", "css", "txt", "py"))) {
+                    if (!empty($_FILES["pista$i"]["name"]) && in_array($extension_pista, array("html", "php", "pdf", "zip", "js", "css", "txt", "py", "sql"))) {
                         // Construir el nombre del archivo de la pista
                         $nombre_pista = $nuevo_id_ejercicio . "_pista$i." . $extension_pista;
                         // Mover el archivo de la pista a la carpeta de pistas
@@ -270,23 +270,23 @@ $result_asignaturas = $conn->query($sql_asignaturas);
         <!-- Campos para las pistas -->
         <div class="mb-3">
             <label for="pista1" class="form-label">Pista 1 (Opcional):</label>
-            <input type="file" class="form-control" id="pista1" name="pista1" accept=".html, .php, .pdf, .zip, .js, .css, .txt, .py">
-            <small><p>Solo se permiten archivos HTML, PHP, PDF, JS, CSS, TXT, PY o ZIP.</p></small>
+            <input type="file" class="form-control" id="pista1" name="pista1" accept=".html, .php, .pdf, .zip, .js, .css, .txt, .py, .sql">
+            <small><p>Solo se permiten archivos HTML, PHP, PDF, JS, CSS, TXT, PY, SQL o ZIP.</p></small>
         </div>
         <div class="mb-3">
             <label for="pista2" class="form-label">Pista 2 (Opcional):</label>
-            <input type="file" class="form-control" id="pista2" name="pista2" accept=".html, .php, .pdf, .zip, .js, .css, .txt, .py">
-            <small><p>Solo se permiten archivos HTML, PHP, PDF, JS, CSS, TXT, PY o ZIP.</p></small>
+            <input type="file" class="form-control" id="pista2" name="pista2" accept=".html, .php, .pdf, .zip, .js, .css, .txt, .py, .sql">
+            <small><p>Solo se permiten archivos HTML, PHP, PDF, JS, CSS, TXT, PY, SQL o ZIP.</p></small>
         </div>
         <div class="mb-3">
             <label for="pista3" class="form-label">Pista 3 (Opcional):</label>
-            <input type="file" class="form-control" id="pista3" name="pista3" accept=".html, .php, .pdf, .zip, .js, .css, .txt, .py">
-            <small><p>Solo se permiten archivos HTML, PHP, PDF, JS, CSS, TXT, PY o ZIP.</p></small>
+            <input type="file" class="form-control" id="pista3" name="pista3" accept=".html, .php, .pdf, .zip, .js, .css, .txt, .py, .sql">
+            <small><p>Solo se permiten archivos HTML, PHP, PDF, JS, CSS, TXT, PY, SQL o ZIP.</p></small>
         </div>
         <div class="mb-3">
             <label for="archivo" class="form-label">Archivo de la Solución:</label>
-            <input type="file" class="form-control" id="archivo" name="archivo" accept=".html, .php, .pdf, .zip, .js, .css, .py" required>
-            <small><p>Solo se permiten archivos HTML, PHP, PDF, JS, CSS, PY o ZIP. Si la solución consiste en varios archivos, por favor, comprímalos en un archivo ZIP.</p></small>
+            <input type="file" class="form-control" id="archivo" name="archivo" accept=".html, .php, .pdf, .zip, .js, .css, .py, .sql" required>
+            <small><p>Solo se permiten archivos HTML, PHP, PDF, JS, CSS, PY, SQL o ZIP. Si la solución consiste en varios archivos, por favor, comprímalos en un archivo ZIP.</p></small>
         </div>
         <div class="btn-container">
             <button type="submit" class="btn btn-primary">Crear Ejercicio</button>

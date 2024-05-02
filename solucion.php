@@ -15,7 +15,7 @@ if (!isset($_SESSION['usuario'])) {
 // Verificar si se proporciona el ID del ejercicio
 if (!isset($_GET['id'])) {
     // Si no se proporciona el ID del ejercicio, redireccionar a la página de ejercicios
-    header("Location: ejercicios.php");
+    header("Location: modulos.php");
     exit();
 }
 
@@ -164,7 +164,7 @@ $conn->close();
 <body>
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <img src="../img/ejercitacode3.png" alt="Bootstrap" width="80" height="80">
+    <img src="./img/logo.png" alt="Bootstrap" width="140" height="90">
     <div class="container-fluid">
         <a class="nav-link active" aria-current="page" href="javascript:history.back()">
             <img src="./img/flecha.png" class="img-fluid" style="max-width: 30px;" alt="Flecha">
@@ -234,19 +234,13 @@ $conn->close();
     <div class="alert alert-dark" role="alert">
         <h3 class="text-center"><?php echo $enunciado; ?></h3>
     </div>
+    <?php if (!empty($row['enunciado_archivo'])): ?>
+        <div class="alert alert-info" role="alert">
+            <p>Este ejercicio tiene un archivo de enunciado adicional. Por favor, descárguelo para obtener más información sobre el ejercicio en cuestión.</p>
+            <a href="<?php echo $row['enunciado_archivo']; ?>" class="btn btn-primary download-button" download>Descargar Enunciado</a>
+        </div>
+    <?php endif; ?>
 </div>
-
-<div class="container">
-    <!-- Sección de pistas para resolver el ejercicio -->
-    <p class="text-center mt-4">
-        Presiona las pistas en caso de tener dificultades a la hora de resolver el ejercicio. Cada una proporcionará más información que la anterior. 
-        En caso de que aún así no puedas resolverlo, presiona en "Ver Solución" para visualizar el resultado correcto del ejercicio.
-    </p>
-</div>
-
-<?php if (!empty($row['enunciado_archivo'])): ?>
-    <a href="<?php echo $row['enunciado_archivo']; ?>" class="btn btn-primary download-button" download>Descargar Enunciado</a>
-<?php endif; ?>
 
 
 
