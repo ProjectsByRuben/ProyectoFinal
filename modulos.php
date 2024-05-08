@@ -10,6 +10,7 @@ include './scripts/conexion.php'; // Incluye el archivo de conexión
 
 $tipo_usuario = $_SESSION['tipo'];
 $id_modulo = $_SESSION['id_modulo'];
+$id_usuario = $_SESSION['id_usuario'];
 
 // Verifica si id_modulo es NULL
 if ($id_modulo === NULL) {
@@ -170,23 +171,45 @@ if ($id_modulo === NULL) {
     </div>
 </div>
 
+<?php
+// Consulta para obtener el número de ejercicios disponibles según el id_modulo del usuario
+$sql_ejercicios = "SELECT COUNT(e.id_ejercicio) AS num_ejercicios
+                   FROM asignaturas a
+                   LEFT JOIN ejercicios e ON a.id_asignatura = e.id_asignatura
+                   WHERE a.id_modulo = $id_modulo";
+
+$result_ejercicios = $conn->query($sql_ejercicios);
+
+// Verificar si se encontraron ejercicios y obtener el número
+if ($result_ejercicios && $result_ejercicios->num_rows > 0) {
+    $row_ejercicios = $result_ejercicios->fetch_assoc();
+    $num_ejercicios = $row_ejercicios['num_ejercicios'];
+} else {
+    $num_ejercicios = 0;
+}
+?>
+
 <div class="ejercicios-container">
     <?php if ($id_modulo == 1): ?>
-        <div class='card' style='width: 18rem;'>
-            <img src='./img/asir.png' class='card-img-top'>
-            <div class='card-body'>
-                <h5 class='card-title'>ASIR</h5>
-                <a href='./asignaturas/asignaturas_asir_primero.php' class='btn'><button type='button' class='btn btn-card'>1º Curso</button></a> <br>
-                <a href='./asignaturas/asignaturas_asir_segundo.php' class='btn'><button type='button' class='btn btn-card'>2º Curso</button></a> <br>
+        <div class="col">
+            <div class="card mb-3">
+                <div class="card-body text-center">
+                    <h2 class="mb-4" style="color: #007bff; font-weight: bold;">ASIR</h2>
+                    <h5 class='card-title'>Este modulo tiene disponibles <small class='small-text'>(<span class='num-ejercicios verde'><?php echo $num_ejercicios; ?></span> ejercicio/s)</small></h5><br>
+                    <a href="./asignaturas/asignaturas_asir_primero.php" class="btn btn-primary mb-2">Explorar 1º Curso</a><br>
+                    <a href="./asignaturas/asignaturas_asir_segundo.php" class="btn btn-primary mb-2">Explorar 2º Curso</a>
+                </div>
             </div>
         </div>
     <?php elseif ($id_modulo == 2): ?>
-        <div class='card' style='width: 18rem;'>
-            <img src='./img/teleco.png' class='card-img-top'>
-            <div class='card-body'>
-                <h5 class='card-title'>TELECO</h5>
-                <a href='./asignaturas/asignaturas_teleco_primero.php' class='btn'><button type='button' class='btn btn-card'>1º Curso</button></a> <br>
-                <a href='./asignaturas/asignaturas_teleco_segundo.php' class='btn'><button type='button' class='btn btn-card'>2º Curso</button></a> <br>
+        <div class="col">
+            <div class="card mb-3">
+                <div class="card-body text-center">
+                    <h2 class="mb-4" style="color: #007bff; font-weight: bold;">TELECO</h2>
+                    <h5 class='card-title'>Este modulo tiene disponibles <small class='small-text'>(<span class='num-ejercicios verde'><?php echo $num_ejercicios; ?></span> ejercicio/s)</small></h5><br>
+                    <a href="./asignaturas/asignaturas_teleco_primero.php" class="btn btn-primary mb-2">Explorar 1º Curso</a><br>
+                    <a href="./asignaturas/asignaturas_teleco_segundo.php" class="btn btn-primary mb-2">Explorar 2º Curso</a>
+                </div>
             </div>
         </div>
     <?php endif; ?>

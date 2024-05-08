@@ -1,2 +1,0 @@
-Identifica los elementos del circuito, incluyendo la 
-fuente de voltaje y las resistencias.

@@ -1,2 +1,2 @@
-Los componentes básicos de hardware incluyen la CPU, 
-la memoria RAM y el disco duro.
+Identifica las entidades principales involucradas 
+en el proceso de ventas en línea, como clientes, productos y pedidos.
