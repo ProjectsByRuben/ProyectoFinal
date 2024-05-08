@@ -1,3 +1,2 @@
-Organiza las horas en la primera columna y los días de la 
-semana en la primera fila para mantener una 
-estructura clara y ordenada.
+Define las relaciones entre estas entidades, como la relación entre 
+clientes y pedidos, y entre productos y categorías de productos.

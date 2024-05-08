@@ -1,2 +1,2 @@
-Identifica las entidades principales involucradas 
-en el proceso de ventas en línea, como clientes, productos y pedidos.
+Identifica los elementos del circuito, incluyendo la 
+fuente de voltaje y las resistencias.

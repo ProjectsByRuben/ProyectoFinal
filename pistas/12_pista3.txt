@@ -1,2 +1,0 @@
-Intenta reiniciar la computadora manteniendo presionado el botón de encendido 
-durante varios segundos hasta que se apague por completo, luego enciéndela nuevamente.

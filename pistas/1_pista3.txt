@@ -1,2 +1,3 @@
-Para compartir una carpeta en Windows Server, 
-necesitarás usar la herramienta "Administrador de archivos compartidos".
+Coloca las asignaturas correspondientes a cada hora 
+y día en las celdas adecuadas de la tabla para 
+completar el contenido del horario.

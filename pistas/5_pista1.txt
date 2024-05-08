@@ -1,2 +1,3 @@
-Utiliza las etiquetas HTML <table>, <thead> y <tbody> para 
-estructurar la tabla del horario.
+Verifica que todos los cables estén correctamente conectados, 
+incluyendo el cable de alimentación y el cable que conecta 
+el monitor a la computadora.

@@ -1,2 +1,2 @@
-Investiga sobre diferentes dispositivos firewall 
-que sean adecuados para su uso en redes domésticas.
+Los componentes básicos de hardware incluyen la CPU, 
+la memoria RAM y el disco duro.

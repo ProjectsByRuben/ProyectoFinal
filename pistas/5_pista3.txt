@@ -1,3 +1,2 @@
-Coloca las asignaturas correspondientes a cada hora 
-y día en las celdas adecuadas de la tabla para 
-completar el contenido del horario.
+Utiliza herramientas como diagramas entidad-relación (DER) para visualizar y 
+representar tu diseño de base de datos de manera clara y concisa.

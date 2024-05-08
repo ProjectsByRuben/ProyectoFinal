@@ -1,6 +1,7 @@
 <?php
-include './scripts/conexion.php'; // Incluye el archivo de conexión
 session_start();
+
+include './scripts/conexion.php'; // Incluye el archivo de conexión
 
 if (!isset($_SESSION['usuario'])) {
     header("Location: index.php");
@@ -27,16 +28,6 @@ if ($id_modulo === NULL) {
         $nombre_modulo = "Módulo Desconocido";
     }
 }
-
-// Consulta el número total de ejercicios disponibles
-$sql_total_ejercicios = "SELECT COUNT(*) AS total_ejercicios FROM ejercicios";
-$resultado_total_ejercicios = $conn->query($sql_total_ejercicios);
-$total_ejercicios = $resultado_total_ejercicios->fetch_assoc()['total_ejercicios'];
-
-// Consulta el número total de usuarios
-$sql_total_usuarios = "SELECT COUNT(*) AS total_usuarios FROM usuarios";
-$resultado_total_usuarios = $conn->query($sql_total_usuarios);
-$total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
 ?>
 
 <!DOCTYPE html>
@@ -45,50 +36,37 @@ $total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
-    <title>Dashboard</title>
+    <link rel="stylesheet" href="./styles.css?v=3" id="themeStylesheet">
+    <title>Crear Nuevo Usuario</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #F8F9FA;
+            background-color: #f8f9fa;
         }
         .navbar {
             padding-left: 0 !important; /* Eliminar el padding a la izquierda */
             padding-right: 10px !important; /* Eliminar el padding a la derecha */
             margin-top: 0 !important; /* Eliminar el margen superior */
         }
-        /* Estilos personalizados */
-        .carousel-container {
+
+        .form-container {
+            margin: 50px auto;
+            width: 80%;
+            max-width: 800px;
+        }
+
+        .btn-container {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 50px; /* Espacio arriba */
+            justify-content: space-between;
         }
 
-        .carousel-title {
-            font-size: 2rem; /* Tamaño del título */
-            margin-bottom: 20px; /* Espacio debajo del título */
-        }
-
-        .carousel-description {
-            font-size: 1.2rem; /* Tamaño de la descripción */
-            text-align: center; /* Alineación del texto */
-            max-width: 80%; /* Ancho máximo del contenedor de la descripción */
-            margin-bottom: 40px; /* Espacio debajo de la descripción */
-        }
-
-        /* Estilos personalizados para el botón de la ventana modal */
-        .modal-button {
-            margin-left: auto; /* Mover el botón hacia la derecha */
-        }
-        /* Estilo para la imagen del sol y la luna */
         #themeIcon {
             width: 28px; /* Ajustar el ancho */
             height: 25px; /* Ajustar la altura */
-            margin-left: 10px;
-            margin-right: 20px;
+            margin-left: 11px;
+            margin-right: 10px;
         }
-        /* Estilo para ocultar el botón y mostrar solo la imagen */
+
         #themeButton {
             background-color: transparent;
             border: none;
@@ -116,7 +94,7 @@ $total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
-            <?php if ($tipo_usuario === 'alumno'): ?>
+            <?php if ($tipo_usuario == 'alumno'): ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Asignatura
@@ -195,86 +173,74 @@ $total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
     </div>
 </div>
 
-<div class="jumbotron text-center">
-    <h1 class="display-3">¡Bienvenido a EjercitaCode!</h1>
-    <p class="lead">¡Bienvenido a nuestro portal educativo! Aquí los Profesores comparten ejercicios de asignaturas para que los alumnos practiquen y aprendan. Los ejercicios disponen de pistas y soluciones. Perfiles de alumno, profesor y administrador con funciones específicas para una experiencia personalizada.</p>
-    <hr class="my-4">
-    <p>¿Listo para empezar?</p>
-    <p class="lead">
-        <?php if ($tipo_usuario == 'profesor' || $tipo_usuario == 'alumno'): ?>
-            <a class="btn btn-primary btn-lg" href="./modulos.php" role="button">Ver Asignaturas</a>
-        <?php endif; ?>
-        <?php if ($tipo_usuario == 'profesor'): ?>
-            <a class="btn btn-primary btn-lg" href="./crear_ejercicio.php" role="button">Crear Ejercicio</a>
-        <?php endif; ?>
-        <?php if ($tipo_usuario == 'profesor' || $tipo_usuario == 'alumno'): ?>
-            <a class="btn btn-secondary btn-lg" href="./soluciones.php" role="button">Ver Soluciones</a>
-        <?php endif; ?>
-        <?php if ($tipo_usuario === 'admin'): ?>
-            <a class="btn btn-primary btn-lg" href="./crear_usuario.php" role="button">Crear Usuario</a>
-        <?php endif; ?>
-    </p>
-</div>
+<div class="container form-container">
+    <h1>Crear Nuevo Usuario</h1>
+    <?php
 
-<!-- Contenedor del gráfico -->
-<div class="container">
-    <h2 class="text-center mb-4">Estadísticas</h2>
-    <div class="row justify-content-center"> <!-- Centra horizontalmente -->
-        <div class="col-md-8">
-            <div class="text-center"> <!-- Centra verticalmente -->
-                <canvas id="barChart" width="1000" height="500"></canvas> <!-- Ajustado para que sea más grande -->
-            </div>
-        </div>
+    // Procesar la subida del formulario de creación de usuarios
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["usuario"]) && isset($_POST["contrasena"]) && isset($_POST["tipo"])) {
+    $usuario = $_POST["usuario"];
+    $contrasena = $_POST["contrasena"];
+    $tipo = $_POST["tipo"];
+
+    // Verificar si se seleccionó "Ninguno"
+    if ($_POST["id_modulo"] === "NULL") {
+        $id_modulo = "NULL";
+    } else {
+        $id_modulo = $_POST["id_modulo"];
+    }
+
+    // Insertar los datos del nuevo usuario en la base de datos
+    $sql = "INSERT INTO usuarios (usuario, id_modulo, contraseña, tipo) VALUES ('$usuario', $id_modulo, '$contrasena', '$tipo')";
+    if ($conn->query($sql) === TRUE) {
+        echo '<div class="alert alert-success" role="alert">Usuario creado exitosamente.</div>';
+    } else {
+        echo '<div class="alert alert-danger" role="alert">Error al crear el usuario: ' . $conn->error . '</div>';
+    }
+}
+    ?>
+    <?php
+// Consultar los módulos disponibles
+$sql_modulos = "SELECT id_modulo, nombre FROM modulos";
+$result_modulos = $conn->query($sql_modulos);
+?>
+
+<!-- Formulario para crear un nuevo usuario -->
+<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
+    <div class="mb-3">
+        <label for="usuario" class="form-label">Usuario:</label>
+        <input type="text" class="form-control" id="usuario" name="usuario" required>
     </div>
+    <div class="mb-3">
+        <label for="contrasena" class="form-label">Contraseña:</label>
+        <input type="password" class="form-control" id="contrasena" name="contrasena" required>
+    </div>
+    <div class="mb-3">
+    <label for="id_modulo" class="form-label">Módulo:</label>
+    <select class="form-select" id="id_modulo" name="id_modulo" required>
+    <option value="" disabled selected hidden>Seleccionar...</option>
+        <?php while ($row_modulo = $result_modulos->fetch_assoc()): ?>
+            <option value="<?php echo $row_modulo['id_modulo']; ?>"><?php echo $row_modulo['nombre']; ?></option>
+        <?php endwhile; ?>
+        <option value="NULL">Ninguno</option> <!-- Opción para NULL -->
+    </select>
+    </div>
+    <div class="mb-3">
+    <label for="tipo" class="form-label">Tipo:</label>
+    <select class="form-select" id="tipo" name="tipo" required>
+        <option value="" disabled selected hidden>Seleccionar...</option>
+        <option value="alumno">Alumno</option>
+        <option value="profesor">Profesor</option>
+        <option value="admin">Administrador</option>
+    </select>
 </div>
 
-<!-- Script para incluir la biblioteca Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <div class="btn-container">
+        <button type="submit" class="btn btn-primary">Crear Usuario</button>
+    </div>
+</form>
 
-<!-- Script para configurar y mostrar el gráfico -->
-<script>
-    // Datos del gráfico
-    var totalEjercicios = <?php echo $total_ejercicios; ?>;
-    var totalUsuarios = <?php echo $total_usuarios; ?>;
-
-    // Configuración del gráfico
-    var ctx = document.getElementById('barChart').getContext('2d');
-    var barChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Ejercicios Disponibles', 'Usuarios Totales'],
-            datasets: [{
-                label: 'Ejercicios', // Etiqueta para los ejercicios
-                data: [totalEjercicios, 0], // Se establece 0 para el total de usuarios para que no se muestre en la leyenda
-                backgroundColor: '#007bff',
-                borderWidth: 1
-            }, {
-                label: 'Usuarios', // Etiqueta para los usuarios
-                data: [0, totalUsuarios], // Se establece 0 para el total de ejercicios para que no se muestre en la leyenda
-                backgroundColor: '#28a745',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            },
-            plugins: {
-                legend: {
-                    display: true,
-                    labels: {
-                        // Filtrar las etiquetas para que solo muestre las de ejercicios y usuarios
-                        filter: function(item, chart) {
-                            return item.text === 'Ejercicios' || item.text === 'Usuarios';
-                        }
-                    }
-                }
-            }
-        }
-    });
-</script>
+</div>
 
 <script>
     function toggleTheme() {
@@ -298,7 +264,6 @@ $total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
     const themeIcon = document.getElementById('themeIcon');
     themeIcon.src = `./img/${currentTheme === 'dark' ? 'sun' : 'moon'}.png`;
 </script>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

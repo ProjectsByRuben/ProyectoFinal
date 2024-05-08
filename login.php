@@ -10,7 +10,7 @@ if (isset($_POST['usuario']) && isset($_POST['pass'])) {
     $password = $_POST['pass'];
 
     // Consulta para verificar las credenciales del usuario
-    $sql = "SELECT id_usuario, tipo FROM usuarios WHERE usuario = '$username' AND contraseña = '$password'";
+    $sql = "SELECT id_usuario, tipo, id_modulo FROM usuarios WHERE usuario = '$username' AND contraseña = '$password'";
     $result = $conn->query($sql);
 
     if ($result->num_rows == 1) {
@@ -20,6 +20,7 @@ if (isset($_POST['usuario']) && isset($_POST['pass'])) {
         $_SESSION['pass'] = $password;
         $_SESSION['id_usuario'] = $row['id_usuario'];
         $_SESSION['tipo'] = $row['tipo']; // Guardar el tipo de usuario en la sesión
+        $_SESSION['id_modulo'] = $row['id_modulo']; // Guardar el id del módulo en la sesión
         header("Location: dashboard.php");
         exit();
     } else {

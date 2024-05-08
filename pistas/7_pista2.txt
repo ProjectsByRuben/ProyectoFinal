@@ -1,2 +1,0 @@
-Utiliza comandos como "sudo apt-get install isc-dhcp-server" 
-en Ubuntu para instalar el servidor DHCP.

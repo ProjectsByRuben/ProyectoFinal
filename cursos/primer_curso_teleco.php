@@ -10,6 +10,25 @@ if (!isset($_SESSION['usuario'])) {
 include '../scripts/conexion.php'; // Incluye el archivo de conexión
 
 $tipo_usuario = $_SESSION['tipo'];
+$id_modulo = $_SESSION['id_modulo'];
+
+// Verifica si id_modulo es NULL
+if ($id_modulo === NULL) {
+    $nombre_modulo = "Módulo Desconocido";
+} else {
+    // Consulta el nombre del módulo si id_modulo no es NULL
+    $sql = "SELECT nombre FROM modulos WHERE id_modulo = $id_modulo";
+    $resultado = $conn->query($sql);
+
+    // Verificar si se encontró el módulo y obtener su nombre
+    if ($resultado->num_rows > 0) {
+        $fila = $resultado->fetch_assoc();
+        $nombre_modulo = $fila["nombre"];
+    } else {
+        // Si no se encuentra el módulo, mostrar un mensaje de error
+        $nombre_modulo = "Módulo Desconocido";
+    }
+}
 
 // Verifica si se proporcionó un ID de asignatura en la URL
 if (isset($_GET['asignatura_id']) && !empty($_GET['asignatura_id'])) {
@@ -43,7 +62,7 @@ if (isset($_GET['asignatura_id']) && !empty($_GET['asignatura_id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ejercicios de <?php echo $nombre_asignatura; ?> - 1º Curso ASIR</title>
+    <title>Ejercicios de <?php echo $nombre_asignatura; ?> - 1º Curso TELECO</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../styles.css?v=2" id="themeStylesheet">
     <style>
@@ -75,42 +94,69 @@ if (isset($_GET['asignatura_id']) && !empty($_GET['asignatura_id'])) {
             <img src="../img/flecha.png" class="img-fluid" style="max-width: 30px;" alt="Flecha">
             <span style='margin: 0 10px;'></span>
         </a>
+        <a class="navbar-brand" href="../dashboard.php">Inicio</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
-                <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="../dashboard.php">Inicio</a>
-                </li>
+            <?php if ($tipo_usuario === 'alumno'): ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link active dropdown-toggle" href="../modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Modulos
+                        Asignatura
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="../modulos.php">Modulos</a></li>
+                        <li><a class="dropdown-item" href="../modulos.php"><?php echo $nombre_modulo; ?></a></li>
+                        <?php if ($id_modulo == 1): ?>
                         <li><a class="dropdown-item" href="../asignaturas/asignaturas_asir_primero.php">1º Asir</a></li>
                         <li><a class="dropdown-item" href="../asignaturas/asignaturas_asir_segundo.php">2º Asir</a></li>
+                        <?php elseif ($id_modulo == 2): ?>
                         <li><a class="dropdown-item" href="../asignaturas/asignaturas_teleco_primero.php">1º Teleco</a></li>
                         <li><a class="dropdown-item" href="../asignaturas/asignaturas_teleco_segundo.php">2º Teleco</a></li>
+                        <?php endif; ?>
                     </ul>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="../soluciones.php">Soluciones</a>
                 </li>
+                <?php endif; ?>
                 <?php if ($tipo_usuario === 'profesor'): ?>
+                    <li class="nav-item dropdown">
+                    <a class="nav-link active dropdown-toggle" href="../modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Asignatura
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="../modulos.php"><?php echo $nombre_modulo; ?></a></li>
+                        <?php if ($id_modulo == 1): ?>
+                        <li><a class="dropdown-item" href="../asignaturas/asignaturas_asir_primero.php">1º Asir</a></li>
+                        <li><a class="dropdown-item" href="../asignaturas/asignaturas_asir_segundo.php">2º Asir</a></li>
+                        <?php elseif ($id_modulo == 2): ?>
+                        <li><a class="dropdown-item" href="../asignaturas/asignaturas_teleco_primero.php">1º Teleco</a></li>
+                        <li><a class="dropdown-item" href="../asignaturas/asignaturas_teleco_segundo.php">2º Teleco</a></li>
+                        <?php endif; ?>
+                    </ul>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="../soluciones.php">Soluciones</a>
+                </li>
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="../crear_ejercicio.php">Crear Ejercicio</a>
                     </li>
                 <?php endif; ?>
+                <?php if ($tipo_usuario === 'admin'): ?>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="../crear_usuario.php">Crear Usuario</a>
+                    </li>
+                <?php endif; ?>
             </ul>
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Sesion</button>
-            <button id="themeButton" onclick="toggleTheme()" class="btn">
-        <img id="themeIcon" src="../img/<?php echo $currentTheme === 'dark' ? 'sun' : 'moon'; ?>.png" alt="<?php echo $currentTheme === 'dark' ? 'moon' : 'sun'; ?>">
-    </button>
         </div>
     </div>
+
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Sesion</button>
+    <button id="themeButton" onclick="toggleTheme()" class="btn">
+        <img id="themeIcon" src="./img/<?php echo $currentTheme === 'dark' ? 'sun' : 'moon'; ?>.png" alt="<?php echo $currentTheme === 'dark' ? 'moon' : 'sun'; ?>">
+    </button>
 </nav>
 
 

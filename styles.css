@@ -195,3 +195,41 @@ body { /* Aplica los estilos según el tema */
     color: rgb(3, 3, 3); /* Hereda el color del texto */
     background-color: #cedeecd0; /* Hereda el color de fondo */
 }
+
+/* Estilos adicionales para el input de contraseña en modo oscuro */
+[data-theme="dark"] #contrasena {
+    background-color: #43494E !important; /* Color de fondo en modo oscuro */
+    color: #ffffff; /* Color del texto en modo oscuro */
+    border-style: none; /* Borde en modo oscuro */
+}
+
+/* Establece el color de fondo específico según el tema */
+[data-theme="light"] #contrasena:focus {
+    background-color: #ffffff !important; /* Fondo blanco en modo claro */
+    color: black !important;
+}
+
+[data-theme="dark"] #contrasena:focus {
+    background-color: #43494E !important; /* Fondo oscuro en modo oscuro */
+    color: white;
+    border-style: none;
+}
+
+/* Estilos adicionales para el input de email en modo oscuro */
+[data-theme="dark"] #email {
+    background-color: #43494E !important; /* Color de fondo en modo oscuro */
+    color: #ffffff; /* Color del texto en modo oscuro */
+    border-style: none; /* Borde en modo oscuro */
+}
+
+/* Establece el color de fondo específico según el tema */
+[data-theme="light"] #email:focus {
+    background-color: #ffffff !important; /* Fondo blanco en modo claro */
+    color: black !important;
+}
+
+[data-theme="dark"] #email:focus {
+    background-color: #43494E !important; /* Fondo oscuro en modo oscuro */
+    color: white;
+    border-style: none;
+}

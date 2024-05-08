@@ -118,14 +118,17 @@ function dificultad_en_espanol($dificultad) {
             <ul class="navbar-nav">
             <li class="nav-item dropdown">
                     <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Modulos
+                        Asignatura
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="./modulos.php">Modulos</a></li>
+                        <?php if ($id_modulo == 1): ?>
                         <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Asir</a></li>
                         <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Asir</a></li>
+                        <?php elseif ($id_modulo == 2): ?>
                         <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Teleco</a></li>
                         <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Teleco</a></li>
+                        <?php endif; ?>
                     </ul>
                 </li>
                 <li class="nav-item">

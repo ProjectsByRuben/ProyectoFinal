@@ -1,2 +1,0 @@
-Investiga sobre el servicio de archivos Samba y cómo se utiliza 
-para compartir archivos entre sistemas Linux y Windows en una red.
