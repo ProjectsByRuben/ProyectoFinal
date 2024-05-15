@@ -210,7 +210,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <h1 class="text-center">Modificar Usuario</h1>
     <form method="post">
         <div class="mb-3">
-            <label for="usuario" class="form-label">Usuario</label>
+            <label for="usuario" class="form-label">Nombre</label>
             <input type="text" class="form-control" id="usuario" name="usuario" value="<?php echo $usuario['usuario']; ?>">
         </div>
         <div class="mb-3">
