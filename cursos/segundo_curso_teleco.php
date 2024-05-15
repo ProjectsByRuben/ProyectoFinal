@@ -66,6 +66,10 @@ if (isset($_GET['asignatura_id']) && !empty($_GET['asignatura_id'])) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../styles.css?v=2" id="themeStylesheet">
     <style>
+        body {
+            font-family: 'Bangers', cursive;
+            background-color: #f8f9fa;
+        }
         #themeIcon {
             width: 28px; /* Ajustar el ancho */
             height: 25px; /* Ajustar la altura */
@@ -103,16 +107,16 @@ if (isset($_GET['asignatura_id']) && !empty($_GET['asignatura_id'])) {
             <?php if ($tipo_usuario === 'alumno'): ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link active dropdown-toggle" href="../modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Asignatura
+                        Módulo
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="../modulos.php"><?php echo $nombre_modulo; ?></a></li>
                         <?php if ($id_modulo == 1): ?>
-                        <li><a class="dropdown-item" href="../asignaturas/asignaturas_asir_primero.php">1º Asir</a></li>
-                        <li><a class="dropdown-item" href="../asignaturas/asignaturas_asir_segundo.php">2º Asir</a></li>
+                        <li><a class="dropdown-item" href="../asignaturas/asignaturas_asir_primero.php">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="../asignaturas/asignaturas_asir_segundo.php">2º Curso</a></li>
                         <?php elseif ($id_modulo == 2): ?>
-                        <li><a class="dropdown-item" href="../asignaturas/asignaturas_teleco_primero.php">1º Teleco</a></li>
-                        <li><a class="dropdown-item" href="../asignaturas/asignaturas_teleco_segundo.php">2º Teleco</a></li>
+                        <li><a class="dropdown-item" href="../asignaturas/asignaturas_teleco_primero.php">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="../asignaturas/asignaturas_teleco_segundo.php">2º Curso</a></li>
                         <?php endif; ?>
                     </ul>
                 </li>
@@ -123,16 +127,16 @@ if (isset($_GET['asignatura_id']) && !empty($_GET['asignatura_id'])) {
                 <?php if ($tipo_usuario === 'profesor'): ?>
                     <li class="nav-item dropdown">
                     <a class="nav-link active dropdown-toggle" href="../modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Asignatura
+                        Módulo
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="../modulos.php"><?php echo $nombre_modulo; ?></a></li>
                         <?php if ($id_modulo == 1): ?>
-                        <li><a class="dropdown-item" href="../asignaturas/asignaturas_asir_primero.php">1º Asir</a></li>
-                        <li><a class="dropdown-item" href="../asignaturas/asignaturas_asir_segundo.php">2º Asir</a></li>
+                        <li><a class="dropdown-item" href="../asignaturas/asignaturas_asir_primero.php">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="../asignaturas/asignaturas_asir_segundo.php">2º Curso</a></li>
                         <?php elseif ($id_modulo == 2): ?>
-                        <li><a class="dropdown-item" href="../asignaturas/asignaturas_teleco_primero.php">1º Teleco</a></li>
-                        <li><a class="dropdown-item" href="../asignaturas/asignaturas_teleco_segundo.php">2º Teleco</a></li>
+                        <li><a class="dropdown-item" href="../asignaturas/asignaturas_teleco_primero.php">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="../asignaturas/asignaturas_teleco_segundo.php">2º Curso</a></li>
                         <?php endif; ?>
                     </ul>
                 </li>

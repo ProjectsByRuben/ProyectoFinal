@@ -20,14 +20,29 @@ if (!isset($_GET['id'])) {
 // Obtener el ID de la solución a eliminar
 $id_solucion = $_GET['id'];
 
-// Consulta para eliminar la respuesta de la base de datos
-$sql = "DELETE FROM soluciones WHERE id_solucion = $id_solucion";
+// Consulta para obtener la ruta del archivo de la solución
+$sql = "SELECT solucion FROM soluciones WHERE id_solucion = $id_solucion";
+$result = $conn->query($sql);
 
-if ($conn->query($sql) === TRUE) {
-    // Redireccionar a la página actual para recargarla
-    echo "<script>window.location.reload();</script>";
+if ($result->num_rows > 0) {
+    $row = $result->fetch_assoc();
+    $ruta_archivo = $row['solucion'];
+    
+    // Eliminar el archivo físico de la carpeta "soluciones"
+    if (unlink($ruta_archivo)) {
+        // Si se elimina el archivo correctamente, procede a eliminar la entrada de la base de datos
+        $sql_delete = "DELETE FROM soluciones WHERE id_solucion = $id_solucion";
+        if ($conn->query($sql_delete) === TRUE) {
+            // Redireccionar a la página actual para recargarla
+            echo "<script>window.location.reload();</script>";
+        } else {
+            echo "Error al eliminar la entrada de la base de datos: " . $conn->error;
+        }
+    } else {
+        echo "Error al eliminar el archivo físico.";
+    }
 } else {
-    echo "Error al eliminar la respuesta: " . $conn->error;
+    echo "No se encontró la solución con el ID proporcionado.";
 }
 
 $conn->close();

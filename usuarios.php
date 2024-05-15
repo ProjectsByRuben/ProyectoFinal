@@ -8,43 +8,10 @@ if (!isset($_SESSION['usuario'])) {
 }
 
 $tipo_usuario = $_SESSION['tipo'];
-$id_modulo = $_SESSION['id_modulo'];
 
-// Verifica si id_modulo es NULL
-if ($id_modulo == NULL) {
-    $nombre_modulo = "Módulo Desconocido";
-} else {
-    // Consulta el nombre del módulo si id_modulo no es NULL
-    $sql = "SELECT nombre FROM modulos WHERE id_modulo = $id_modulo";
-    $resultado = $conn->query($sql);
-
-    // Verificar si se encontró el módulo y obtener su nombre
-    if ($resultado->num_rows > 0) {
-        $fila = $resultado->fetch_assoc();
-        $nombre_modulo = $fila["nombre"];
-    } else {
-        // Si no se encuentra el módulo, mostrar un mensaje de error
-        $nombre_modulo = "Módulo Desconocido";
-    }
-}
-
-// Consulta el número total de ejercicios disponibles (solo si el tipo de usuario no es admin)
-if ($tipo_usuario !== 'admin') {
-    $sql_total_ejercicios = "SELECT COUNT(e.id_ejercicio) AS total_ejercicios
-    FROM asignaturas a
-    LEFT JOIN ejercicios e ON a.id_asignatura = e.id_asignatura
-    WHERE a.id_modulo = $id_modulo";
-    $resultado_total_ejercicios = $conn->query($sql_total_ejercicios);
-    $total_ejercicios = $resultado_total_ejercicios->fetch_assoc()['total_ejercicios'];
-} else {
-    // Establecer el número total de ejercicios como 0 para administradores
-    $total_ejercicios = 0;
-}
-
-// Consulta el número total de usuarios
-$sql_total_usuarios = "SELECT COUNT(*) AS total_usuarios FROM usuarios";
-$resultado_total_usuarios = $conn->query($sql_total_usuarios);
-$total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
+// Consulta todos los usuarios disponibles en la base de datos agrupados por tipo
+$sql_usuarios = "SELECT * FROM usuarios ORDER BY tipo";
+$resultado_usuarios = $conn->query($sql_usuarios);
 ?>
 
 <!DOCTYPE html>
@@ -52,13 +19,14 @@ $total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuarios</title>
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
-    <title>Dashboard</title>
     <style>
         body {
             font-family: 'Bangers', cursive;
-            background-color: #F8F9FA;
+            background-color: #f8f9fa;
         }
         .navbar {
             padding-left: 0 !important; /* Eliminar el padding a la izquierda */
@@ -87,6 +55,25 @@ $total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
             width: 28px;
             height: 25px;
         }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .btn {
+            border-radius: 10px;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
     </style>
 </head>
 <body>
@@ -94,6 +81,10 @@ $total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <img src="./img/logo.png" alt="Bootstrap" width="140" height="90">
     <div class="container-fluid">
+        <a class="nav-link active" aria-current="page" href="javascript:history.back()">
+            <img src="../img/flecha.png" class="img-fluid" style="max-width: 30px;" alt="Flecha">
+            <span style='margin: 0 10px;'></span>
+        </a>
         <a class="navbar-brand" href="./dashboard.php">Inicio</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -182,90 +173,47 @@ $total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
     </div>
 </div>
 
-<div class="jumbotron text-center">
-<div class="card2 mb-3">
-    <h1 class="display-3">¡Bienvenido a EjercitaCode!</h1>
-    <p class="lead">¡Bienvenido a nuestro portal educativo! Aquí los Profesores comparten ejercicios de asignaturas para que los alumnos practiquen y aprendan. Los ejercicios disponen de pistas y soluciones. Perfiles de alumno, profesor y administrador con funciones específicas para una experiencia personalizada.</p>
-    <p>¿Listo para empezar?</p>
-    <p class="lead">
-        <?php if ($tipo_usuario == 'profesor' || $tipo_usuario == 'alumno'): ?>
-            <a class="btn btn-primary btn-lg" href="./modulos.php" role="button">Ver Asignaturas</a>
-        <?php endif; ?>
-        <?php if ($tipo_usuario == 'profesor'): ?>
-            <a class="btn btn-primary btn-lg" href="./crear_ejercicio.php" role="button">Crear Ejercicio</a>
-        <?php endif; ?>
-        <?php if ($tipo_usuario == 'profesor' || $tipo_usuario == 'alumno'): ?>
-            <a class="btn btn-secondary btn-lg" href="./soluciones.php" role="button">Ver Soluciones</a>
-        <?php endif; ?>
-        <?php if ($tipo_usuario === 'admin'): ?>
-            <a class="btn btn-primary btn-lg" href="./modificar_usuario.php" role="button">Usuarios</a>
-        <?php endif; ?>
-        <?php if ($tipo_usuario === 'admin'): ?>
-            <a class="btn btn-primary btn-lg" href="./crear_usuario.php" role="button">Crear Usuario</a>
-        <?php endif; ?>
-    </p>
-        </div>
-</div>
-
-<!-- Contenedor del gráfico -->
-<div class="container">
-    <h2 class="text-center mb-4">Estadísticas</h2>
-    <div class="row justify-content-center"> <!-- Centra horizontalmente -->
-        <div class="col-md-8">
-            <div class="text-center"> <!-- Centra verticalmente -->
-                <canvas id="barChart" width="1000" height="500"></canvas> <!-- Ajustado para que sea más grande -->
+<div class="container mt-4">
+    <h1 class="mb-4">Usuarios</h1>
+    <!-- Verifica si hay usuarios en la base de datos -->
+    <?php if ($resultado_usuarios->num_rows > 0): ?>
+        <!-- Itera sobre cada tipo de usuario y muestra los usuarios agrupados -->
+        <?php $tipo_anterior = ''; ?>
+        <?php while ($fila = $resultado_usuarios->fetch_assoc()): ?>
+            <?php if ($fila['tipo'] !== $tipo_anterior): ?>
+                <?php if ($tipo_anterior !== ''): ?>
+                    </div><!-- Cierra el contenedor de usuarios -->
+                <?php endif; ?>
+                <!-- Cambia los nombres de los tipos de usuarios -->
+                <h2>
+                    <?php if ($fila['tipo'] === 'alumno'): ?>
+                        Alumnos
+                    <?php elseif ($fila['tipo'] === 'profesor'): ?>
+                        Profesores
+                    <?php elseif ($fila['tipo'] === 'admin'): ?>
+                        Administradores
+                    <?php endif; ?>
+                </h2>
+                <div class="row row-cols-1 row-cols-md-3 g-4"><!-- Abre un nuevo contenedor de usuarios -->
+            <?php endif; ?>
+            <div class="col">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title"><?php echo $fila['usuario']; ?></h5>
+                        <!-- Botón para modificar el usuario -->
+                        <a href="modificar_usuario.php?id=<?php echo $fila['id_usuario']; ?>" class="btn btn-primary">Modificar</a>
+                        <!-- Botón para eliminar el usuario -->
+                        <a href="eliminar_usuario.php?id=<?php echo $fila['id_usuario']; ?>" class="btn btn-danger">Eliminar</a>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
+            <?php $tipo_anterior = $fila['tipo']; ?>
+        <?php endwhile; ?>
+        </div><!-- Cierra el último contenedor de usuarios -->
+    <?php else: ?>
+        <p class="mt-4">No hay usuarios disponibles.</p>
+    <?php endif; ?>
 </div>
-
-<!-- Script para incluir la biblioteca Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- Script para configurar y mostrar el gráfico -->
-<script>
-    // Datos del gráfico
-    var totalEjercicios = <?php echo $total_ejercicios; ?>;
-    var totalUsuarios = <?php echo $total_usuarios; ?>;
-
-    // Configuración del gráfico
-    var ctx = document.getElementById('barChart').getContext('2d');
-    var barChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Ejercicios Disponibles', 'Usuarios Totales'],
-            datasets: [{
-                label: 'Ejercicios', // Etiqueta para los ejercicios
-                data: [totalEjercicios, 0], // Se establece 0 para el total de usuarios para que no se muestre en la leyenda
-                backgroundColor: '#007bff',
-                borderWidth: 1
-            }, {
-                label: 'Usuarios', // Etiqueta para los usuarios
-                data: [0, totalUsuarios], // Se establece 0 para el total de ejercicios para que no se muestre en la leyenda
-                backgroundColor: '#28a745',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            },
-            plugins: {
-                legend: {
-                    display: true,
-                    labels: {
-                        // Filtrar las etiquetas para que solo muestre las de ejercicios y usuarios
-                        filter: function(item, chart) {
-                            return item.text === 'Ejercicios' || item.text === 'Usuarios';
-                        }
-                    }
-                }
-            }
-        }
-    });
-</script>
 
 <script>
     function toggleTheme() {

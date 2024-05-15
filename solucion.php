@@ -13,6 +13,24 @@ if (!isset($_SESSION['usuario'])) {
     exit();
 }
 
+// Verifica si id_modulo es NULL
+if ($id_modulo === NULL) {
+    $nombre_modulo = "Módulo Desconocido";
+} else {
+    // Consulta el nombre del módulo si id_modulo no es NULL
+    $sql = "SELECT nombre FROM modulos WHERE id_modulo = $id_modulo";
+    $resultado = $conn->query($sql);
+
+    // Verificar si se encontró el módulo y obtener su nombre
+    if ($resultado->num_rows > 0) {
+        $fila = $resultado->fetch_assoc();
+        $nombre_modulo = $fila["nombre"];
+    } else {
+        // Si no se encuentra el módulo, mostrar un mensaje de error
+        $nombre_modulo = "Módulo Desconocido";
+    }
+}
+
 // Verificar si se proporciona el ID del ejercicio
 if (!isset($_GET['id'])) {
     // Si no se proporciona el ID del ejercicio, redireccionar a la página de ejercicios
@@ -57,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Verificar si se ha enviado un archivo
     if (isset($_FILES["archivo"]) && $_FILES["archivo"]["error"] == 0) {
         // Obtener la ruta donde se guardará el archivo
-        $ruta = 'downloads/' . $_FILES['archivo']['name'];
+        $ruta = 'soluciones/' . $_FILES['archivo']['name'];
 
         // Mover el archivo al directorio de descargas
         move_uploaded_file($_FILES['archivo']['tmp_name'], $ruta);
@@ -93,6 +111,10 @@ $conn->close();
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
     <style>
+        body {
+            font-family: 'Bangers', cursive;
+            background-color: #f8f9fa;
+        }
         #drop-area {
             border: 2px dashed #ccc;
             border-radius: 20px;
@@ -110,10 +132,6 @@ $conn->close();
         }
         .file-item button {
             margin-left: 10px;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
         }
         .navbar {
             padding-left: 0 !important; /* Eliminar el padding a la izquierda */
@@ -160,6 +178,9 @@ $conn->close();
             width: 28px;
             height: 25px;
         }
+        .text-center{
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -180,16 +201,16 @@ $conn->close();
             <?php if ($tipo_usuario === 'alumno'): ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Asignatura
+                        Módulo
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="./modulos.php">Modulos</a></li>
+                        <li><a class="dropdown-item" href="./modulos.php"><?php echo $nombre_modulo; ?></a></li>
                         <?php if ($id_modulo == 1): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Asir</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Asir</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Curso</a></li>
                         <?php elseif ($id_modulo == 2): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Teleco</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Teleco</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Curso</a></li>
                         <?php endif; ?>
                     </ul>
                 </li>
@@ -200,16 +221,16 @@ $conn->close();
                 <?php if ($tipo_usuario === 'profesor'): ?>
                     <li class="nav-item dropdown">
                     <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Asignatura
+                        Módulo
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="./modulos.php">Modulos</a></li>
+                        <li><a class="dropdown-item" href="./modulos.php"><?php echo $nombre_modulo; ?></a></li>
                         <?php if ($id_modulo == 1): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Asir</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Asir</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Curso</a></li>
                         <?php elseif ($id_modulo == 2): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Teleco</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Teleco</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Curso</a></li>
                         <?php endif; ?>
                     </ul>
                 </li>
@@ -257,7 +278,6 @@ $conn->close();
 </div>
 
 <div class="container">
-    <h1 class="text-center mt-4">Solución del Ejercicio:</h1>
     <h2 class="text-center"><?php echo $titulo; ?></h2>
     <div class="alert alert-dark" role="alert">
         <h3 class="text-center"><?php echo $enunciado; ?></h3>
@@ -318,114 +338,101 @@ $conn->close();
 </div>
 
 <script>
-    document.getElementById('fileElem').onchange = function(event) {
-        var fileList = event.target.files;
-        var filesContainer = document.getElementById('file-list');
-        filesContainer.innerHTML = '';
+    function createFileItem(file, filesContainer) {
+    var fileItemContainer = document.createElement('div');
+    fileItemContainer.className = 'container'; // Agregar la clase container al contenedor
+    fileItemContainer.style.marginTop = '20px'; // Agregar margen superior para separación
 
-        for (var i = 0; i < fileList.length; i++) {
-            var file = fileList[i];
-            var fileItem = document.createElement('div');
-            fileItem.className = 'file-item';
-            fileItem.textContent = file.name;
+    var fileAlert = document.createElement('div');
+    fileAlert.className = 'alert alert-dark'; // Agregar clases de Bootstrap para alerta
+    fileAlert.setAttribute('role', 'alert'); // Añadir atributo role
 
-            var sendButton = document.createElement('button');
-            sendButton.textContent = 'Enviar';
-            sendButton.onclick = function(file) {
-                return function() {
-                    var formData = new FormData();
-                    formData.append('archivo', file);
+    var fileName = document.createElement('h3');
+    fileName.className = 'text-center'; // Agregar la clase text-center al nombre del archivo
+    fileName.textContent = file.name;
+    fileName.style.fontWeight = 'bold'; // Aplicar negrita al nombre del archivo
+    fileName.style.color = '#343a40'; // Cambiar el color del texto
 
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('POST', '<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . '?id=' . $id_ejercicio; ?>', true);
-                    xhr.onload = function() {
-                        if (xhr.status === 200) {
-                            alert('Respuesta enviada correctamente.');
-                            console.log('Archivo enviado correctamente');
-                            location.reload();
-                        } else {
-                            alert('Error al enviar la respuesta.');
-                            console.error('Error al enviar el archivo');
-                        }
-                    };
-                    xhr.send(formData);
-                };
-            }(file);
+    fileAlert.appendChild(fileName); // Añadir el nombre del archivo a la alerta
+    fileItemContainer.appendChild(fileAlert); // Añadir la alerta al contenedor general
 
-            fileItem.appendChild(sendButton);
-            filesContainer.appendChild(fileItem);
-        }
+    var sendButtonContainer = document.createElement('div'); // Nuevo contenedor para el botón
+    sendButtonContainer.className = 'text-center'; // Clase text-center para centrar el botón
+
+    var sendButton = document.createElement('button');
+    sendButton.textContent = 'Enviar';
+    sendButton.className = 'btn btn-primary'; // Agregar clases de Bootstrap al botón
+    sendButton.onclick = function() {
+        var formData = new FormData();
+        formData.append('archivo', file);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . '?id=' . $id_ejercicio; ?>', true);
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                alert('Respuesta enviada correctamente.');
+                console.log('Archivo enviado correctamente');
+                location.reload();
+            } else {
+                alert('Error al enviar la respuesta.');
+                console.error('Error al enviar el archivo');
+            }
+        };
+        xhr.send(formData);
     };
 
-    function dragOverHandler(event) {
-        event.preventDefault();
-        document.getElementById('drop-area').classList.add('highlight');
+    sendButtonContainer.appendChild(sendButton); // Agregar el botón al contenedor del botón
+    fileItemContainer.appendChild(sendButtonContainer); // Agregar el contenedor del botón al contenedor general
+
+    // Añadir el contenedor del archivo al contenedor general de archivos
+    filesContainer.appendChild(fileItemContainer);
+}
+
+document.getElementById('fileElem').onchange = function(event) {
+    var fileList = event.target.files;
+    var filesContainer = document.getElementById('file-list');
+    filesContainer.innerHTML = '';
+
+    for (var i = 0; i < fileList.length; i++) {
+        createFileItem(fileList[i], filesContainer);
+    }
+};
+
+function dropHandler(event) {
+    event.preventDefault();
+    document.getElementById('drop-area').classList.remove('highlight');
+
+    var fileList = event.dataTransfer.files;
+    var filesContainer = document.getElementById('file-list');
+    filesContainer.innerHTML = '';
+
+    for (var i = 0; i < fileList.length; i++) {
+        createFileItem(fileList[i], filesContainer);
     }
 
-    function dropHandler(event) {
-        event.preventDefault();
-        document.getElementById('drop-area').classList.remove('highlight');
+    document.getElementById('file-form').style.display = 'block';
+}
 
-        var fileList = event.dataTransfer.files;
-        var filesContainer = document.getElementById('file-list');
-        filesContainer.innerHTML = '';
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme); // Guarda el tema seleccionado en el almacenamiento local
 
-        for (var i = 0; i < fileList.length; i++) {
-            var file = fileList[i];
-            var fileItem = document.createElement('div');
-            fileItem.className = 'file-item';
-            fileItem.textContent = file.name;
-
-            var sendButton = document.createElement('button');
-            sendButton.textContent = 'Enviar';
-            sendButton.onclick = function(file) {
-                return function() {
-                    var formData = new FormData();
-                    formData.append('archivo', file);
-
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('POST', '<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) . '?id=' . $id_ejercicio; ?>', true);
-                    xhr.onload = function() {
-                        if (xhr.status === 200) {
-                            alert('Respuesta enviada correctamente.');
-                            console.log('Archivo enviado correctamente');
-                            location.reload();
-                        } else {
-                            alert('Error al enviar la respuesta.');
-                            console.error('Error al enviar el archivo');
-                        }
-                    };
-                    xhr.send(formData);
-                };
-            }(file);
-
-            fileItem.appendChild(sendButton);
-            filesContainer.appendChild(fileItem);
-        }
-
-        document.getElementById('file-form').style.display = 'block';
-    }
-
-    function toggleTheme() {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme); // Guarda el tema seleccionado en el almacenamiento local
-
-        // Actualiza la imagen del botón después de cambiar el tema
-        const themeIcon = document.getElementById('themeIcon');
-        themeIcon.src = `./img/${newTheme === 'dark' ? 'sun' : 'moon'}.png`;
-    }
-
-    // Aplica el tema almacenado en localStorage al cargar la página
-    const currentTheme = localStorage.getItem('theme');
-    if (currentTheme) {
-        document.documentElement.setAttribute('data-theme', currentTheme);
-    }
-
-    // Actualiza la imagen del botón según el tema actual al cargar la página
+    // Actualiza la imagen del botón después de cambiar el tema
     const themeIcon = document.getElementById('themeIcon');
-    themeIcon.src = `./img/${currentTheme === 'dark' ? 'sun' : 'moon'}.png`;
+    themeIcon.src = `./img/${newTheme === 'dark' ? 'sun' : 'moon'}.png`;
+}
+
+// Aplica el tema almacenado en localStorage al cargar la página
+const currentTheme = localStorage.getItem('theme');
+if (currentTheme) {
+    document.documentElement.setAttribute('data-theme', currentTheme);
+}
+
+// Actualiza la imagen del botón según el tema actual al cargar la página
+const themeIcon = document.getElementById('themeIcon');
+themeIcon.src = `./img/${currentTheme === 'dark' ? 'sun' : 'moon'}.png`;
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

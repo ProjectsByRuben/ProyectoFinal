@@ -1,2 +1,0 @@
-Utiliza herramientas como diagramas entidad-relación (DER) para visualizar y 
-representar tu diseño de base de datos de manera clara y concisa.

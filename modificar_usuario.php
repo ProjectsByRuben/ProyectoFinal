@@ -1,50 +1,65 @@
 <?php
-include './scripts/conexion.php'; // Incluye el archivo de conexión
 session_start();
+include './scripts/conexion.php';
 
-if (!isset($_SESSION['usuario'])) {
+// Verificar si el usuario está autenticado y es admin
+if (!isset($_SESSION['usuario']) || $_SESSION['tipo'] !== 'admin') {
     header("Location: index.php");
     exit();
 }
 
 $tipo_usuario = $_SESSION['tipo'];
-$id_modulo = $_SESSION['id_modulo'];
 
-// Verifica si id_modulo es NULL
-if ($id_modulo == NULL) {
-    $nombre_modulo = "Módulo Desconocido";
-} else {
-    // Consulta el nombre del módulo si id_modulo no es NULL
-    $sql = "SELECT nombre FROM modulos WHERE id_modulo = $id_modulo";
-    $resultado = $conn->query($sql);
+// Verificar si se ha proporcionado un ID de usuario para editar
+if (!isset($_GET['id'])) {
+    header("Location: usuarios.php");
+    exit();
+}
 
-    // Verificar si se encontró el módulo y obtener su nombre
-    if ($resultado->num_rows > 0) {
-        $fila = $resultado->fetch_assoc();
-        $nombre_modulo = $fila["nombre"];
+$id_usuario = $_GET['id'];
+
+// Obtener los datos del usuario actual
+$sql_usuario = "SELECT * FROM usuarios WHERE id_usuario = $id_usuario";
+$resultado_usuario = $conn->query($sql_usuario);
+
+if ($resultado_usuario->num_rows == 0) {
+    header("Location: usuarios.php");
+    exit();
+}
+
+$usuario = $resultado_usuario->fetch_assoc();
+
+// Procesar el formulario de edición cuando se envíe
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Recopilar los datos del formulario
+    $nuevo_usuario = $_POST['usuario'];
+    $nueva_contrasena = $_POST['contrasena'];
+    $nuevo_tipo = $_POST['tipo'];
+    
+    // Verificar si el tipo es admin
+    if ($nuevo_tipo === 'admin') {
+        $nuevo_modulo = null; // Si el tipo es admin, el módulo se establece en null
     } else {
-        // Si no se encuentra el módulo, mostrar un mensaje de error
-        $nombre_modulo = "Módulo Desconocido";
+        // Si el tipo no es admin, verificar si se seleccionó un módulo
+        if (isset($_POST['modulo']) && $_POST['modulo'] !== '') {
+            $nuevo_modulo = $_POST['modulo'];
+        } else {
+            $nuevo_modulo = null;
+        }
+    }
+
+    // Validar y actualizar los datos en la base de datos
+    $update_sql = "UPDATE usuarios SET usuario = '$nuevo_usuario', contraseña = '$nueva_contrasena', tipo = '$nuevo_tipo', id_modulo = " . ($nuevo_modulo !== null ? "'$nuevo_modulo'" : "NULL") . " WHERE id_usuario = $id_usuario";
+    if ($conn->query($update_sql) === TRUE) {
+        // Redireccionar al usuario de vuelta a la página de usuarios después de la edición
+        header("Location: usuarios.php");
+        exit();
+    } else {
+        // En caso de error, puedes redirigir a una página de error o mostrar un mensaje al usuario
+        echo "Error al actualizar el usuario: " . $conn->error;
     }
 }
 
-// Consulta el número total de ejercicios disponibles (solo si el tipo de usuario no es admin)
-if ($tipo_usuario !== 'admin') {
-    $sql_total_ejercicios = "SELECT COUNT(e.id_ejercicio) AS total_ejercicios
-    FROM asignaturas a
-    LEFT JOIN ejercicios e ON a.id_asignatura = e.id_asignatura
-    WHERE a.id_modulo = $id_modulo";
-    $resultado_total_ejercicios = $conn->query($sql_total_ejercicios);
-    $total_ejercicios = $resultado_total_ejercicios->fetch_assoc()['total_ejercicios'];
-} else {
-    // Establecer el número total de ejercicios como 0 para administradores
-    $total_ejercicios = 0;
-}
-
-// Consulta el número total de usuarios
-$sql_total_usuarios = "SELECT COUNT(*) AS total_usuarios FROM usuarios";
-$resultado_total_usuarios = $conn->query($sql_total_usuarios);
-$total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
 ?>
 
 <!DOCTYPE html>
@@ -52,13 +67,13 @@ $total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modificar Usuario</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
-    <title>Dashboard</title>
     <style>
         body {
             font-family: 'Bangers', cursive;
-            background-color: #F8F9FA;
+            background-color: #f8f9fa;
         }
         .navbar {
             padding-left: 0 !important; /* Eliminar el padding a la izquierda */
@@ -86,6 +101,16 @@ $total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
         #themeButton img {
             width: 28px;
             height: 25px;
+        }
+        .container {
+            margin-top: 50px;
+            max-width: 400px;
+        }
+        .form-label {
+            font-weight: bold;
+        }
+        .btn-primary {
+            color: white;
         }
     </style>
 </head>
@@ -159,8 +184,7 @@ $total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
     <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Sesion</button>
     <button id="themeButton" onclick="toggleTheme()" class="btn">
         <img id="themeIcon" src="./img/<?php echo $currentTheme === 'dark' ? 'sun' : 'moon'; ?>.png" alt="<?php echo $currentTheme === 'dark' ? 'moon' : 'sun'; ?>">
-    </button>
-</nav>
+    </button></nav>
 
 <!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -182,87 +206,53 @@ $total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
     </div>
 </div>
 
-<div class="jumbotron text-center">
-<div class="card2 mb-3">
-    <h1 class="display-3">¡Bienvenido a EjercitaCode!</h1>
-    <p class="lead">¡Bienvenido a nuestro portal educativo! Aquí los Profesores comparten ejercicios de asignaturas para que los alumnos practiquen y aprendan. Los ejercicios disponen de pistas y soluciones. Perfiles de alumno, profesor y administrador con funciones específicas para una experiencia personalizada.</p>
-    <p>¿Listo para empezar?</p>
-    <p class="lead">
-        <?php if ($tipo_usuario == 'profesor' || $tipo_usuario == 'alumno'): ?>
-            <a class="btn btn-primary btn-lg" href="./modulos.php" role="button">Ver Asignaturas</a>
-        <?php endif; ?>
-        <?php if ($tipo_usuario == 'profesor'): ?>
-            <a class="btn btn-primary btn-lg" href="./crear_ejercicio.php" role="button">Crear Ejercicio</a>
-        <?php endif; ?>
-        <?php if ($tipo_usuario == 'profesor' || $tipo_usuario == 'alumno'): ?>
-            <a class="btn btn-secondary btn-lg" href="./soluciones.php" role="button">Ver Soluciones</a>
-        <?php endif; ?>
-        <?php if ($tipo_usuario === 'admin'): ?>
-            <a class="btn btn-primary btn-lg" href="./modificar_usuario.php" role="button">Usuarios</a>
-        <?php endif; ?>
-        <?php if ($tipo_usuario === 'admin'): ?>
-            <a class="btn btn-primary btn-lg" href="./crear_usuario.php" role="button">Crear Usuario</a>
-        <?php endif; ?>
-    </p>
-        </div>
-</div>
-
-<!-- Contenedor del gráfico -->
 <div class="container">
-    <h2 class="text-center mb-4">Estadísticas</h2>
-    <div class="row justify-content-center"> <!-- Centra horizontalmente -->
-        <div class="col-md-8">
-            <div class="text-center"> <!-- Centra verticalmente -->
-                <canvas id="barChart" width="1000" height="500"></canvas> <!-- Ajustado para que sea más grande -->
+    <h1 class="text-center">Modificar Usuario</h1>
+    <form method="post">
+        <div class="mb-3">
+            <label for="usuario" class="form-label">Usuario</label>
+            <input type="text" class="form-control" id="usuario" name="usuario" value="<?php echo $usuario['usuario']; ?>">
+        </div>
+        <div class="mb-3">
+            <label for="contrasena" class="form-label">Contraseña</label>
+            <div class="input-group">
+                <input type="password" class="form-control" id="contrasena" name="contrasena" value="<?php echo $usuario['contraseña']; ?>">
+                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                    <img id="eyeIcon" src="./img/abierto.png" alt="Mostrar" style="width: 25px; height: 25px;">
+                </button>
             </div>
         </div>
-    </div>
+        <div class="mb-3">
+            <label for="tipo" class="form-label">Tipo de Usuario</label>
+            <select class="form-select" id="tipo" name="tipo">
+                <option value="alumno" <?php if($usuario['tipo'] === 'alumno') echo 'selected'; ?>>Alumno</option>
+                <option value="profesor" <?php if($usuario['tipo'] === 'profesor') echo 'selected'; ?>>Profesor</option>
+                <option value="admin" <?php if($usuario['tipo'] === 'admin') echo 'selected'; ?>>Admin</option>
+            </select>
+            <small><p>(Si es admin, el módulo debe estar en "Ninguno")</p></small>
+        </div>
+        <div class="mb-3">
+            <label for="modulo" class="form-label">Módulo</label>
+            <select class="form-select" id="modulo" name="modulo">
+                <option value="" <?php if($usuario['id_modulo'] === null) echo 'selected'; ?>>Ninguno</option>
+                <option value="1" <?php if($usuario['id_modulo'] == 1) echo 'selected'; ?>>Asir</option>
+                <option value="2" <?php if($usuario['id_modulo'] == 2) echo 'selected'; ?>>Teleco</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    </form>
 </div>
 
-<!-- Script para incluir la biblioteca Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- Script para configurar y mostrar el gráfico -->
 <script>
-    // Datos del gráfico
-    var totalEjercicios = <?php echo $total_ejercicios; ?>;
-    var totalUsuarios = <?php echo $total_usuarios; ?>;
-
-    // Configuración del gráfico
-    var ctx = document.getElementById('barChart').getContext('2d');
-    var barChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Ejercicios Disponibles', 'Usuarios Totales'],
-            datasets: [{
-                label: 'Ejercicios', // Etiqueta para los ejercicios
-                data: [totalEjercicios, 0], // Se establece 0 para el total de usuarios para que no se muestre en la leyenda
-                backgroundColor: '#007bff',
-                borderWidth: 1
-            }, {
-                label: 'Usuarios', // Etiqueta para los usuarios
-                data: [0, totalUsuarios], // Se establece 0 para el total de ejercicios para que no se muestre en la leyenda
-                backgroundColor: '#28a745',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            },
-            plugins: {
-                legend: {
-                    display: true,
-                    labels: {
-                        // Filtrar las etiquetas para que solo muestre las de ejercicios y usuarios
-                        filter: function(item, chart) {
-                            return item.text === 'Ejercicios' || item.text === 'Usuarios';
-                        }
-                    }
-                }
-            }
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        var passwordInput = document.getElementById('contrasena');
+        var eyeIcon = document.getElementById('eyeIcon');
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.src = './img/cerrado.png';
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.src = './img/abierto.png';
         }
     });
 </script>

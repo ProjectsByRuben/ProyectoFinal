@@ -39,7 +39,7 @@ if ($resultado->num_rows > 0) {
     <title>Crear Ejercicio</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Bangers', cursive;
             background-color: #f8f9fa;
         }
         .navbar {
@@ -115,7 +115,7 @@ if ($resultado->num_rows > 0) {
             <?php if ($tipo_usuario === 'alumno'): ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Asignatura
+                        Módulo
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="./modulos.php"><?php echo $nombre_modulo; ?></a></li>
@@ -135,7 +135,7 @@ if ($resultado->num_rows > 0) {
                 <?php if ($tipo_usuario === 'profesor'): ?>
                     <li class="nav-item dropdown">
                     <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Asignatura
+                        Módulo
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="./modulos.php"><?php echo $nombre_modulo; ?></a></li>

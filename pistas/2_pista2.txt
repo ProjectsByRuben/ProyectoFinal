@@ -1,2 +1,0 @@
-Define las relaciones entre estas entidades, como la relación entre 
-clientes y pedidos, y entre productos y categorías de productos.

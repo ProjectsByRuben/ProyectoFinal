@@ -152,6 +152,33 @@ body { /* Aplica los estilos según el tema */
     color: #FFFFFF; /* Cambia el color del texto en modo oscuro */
 }
 
+/* Estilos adicionales para el input de contraseña en modo oscuro */
+[data-theme="dark"] #contrasena {
+    background-color: #43494E !important; /* Color de fondo en modo oscuro */
+    color: #ffffff; /* Color del texto en modo oscuro */
+    border-style: none; /* Borde en modo oscuro */
+}
+
+[data-theme="dark"] #contrasena:focus {
+    background-color: #43494E !important; /* Fondo oscuro en modo oscuro */
+    color: white;
+    border-style: none;
+}
+
+/* Aplica el border-radius a los elementos internos de la tarjeta */
+[data-theme="dark"] .card-body {
+    border-radius: 15px; /* Aplica el border-radius a los elementos internos que lo necesiten */
+    background-color: #43494e;
+}
+
+[data-theme="dark"] .btn, .btn-outline-secondary {
+    border: 0.3px solid #43494E;
+}
+
+/* Estilos específicos para el modo oscuro */
+[data-theme="dark"] .card-text-solution {
+    color: #ffffff; /* Color blanco en modo oscuro */
+}
 /* ---------------------------------------------------------------  Estilos de Tema Light  --------------------------------------------------------------- */
 
 [data-theme="light"] {
@@ -188,19 +215,12 @@ body { /* Aplica los estilos según el tema */
 
 /* Estilos para el modo oscuro */
 [data-theme="light"] .navbar.bg-body-tertiary {
-    background-color: #8d949428   !important; /* Color de fondo del navbar en modo oscuro */
+    background-color: #cacccc   !important; /* Color de fondo del navbar en modo oscuro */
 }
 
 [data-theme="light"] .code-container {
     color: rgb(3, 3, 3); /* Hereda el color del texto */
     background-color: #cedeecd0; /* Hereda el color de fondo */
-}
-
-/* Estilos adicionales para el input de contraseña en modo oscuro */
-[data-theme="dark"] #contrasena {
-    background-color: #43494E !important; /* Color de fondo en modo oscuro */
-    color: #ffffff; /* Color del texto en modo oscuro */
-    border-style: none; /* Borde en modo oscuro */
 }
 
 /* Establece el color de fondo específico según el tema */
@@ -209,27 +229,47 @@ body { /* Aplica los estilos según el tema */
     color: black !important;
 }
 
-[data-theme="dark"] #contrasena:focus {
-    background-color: #43494E !important; /* Fondo oscuro en modo oscuro */
-    color: white;
-    border-style: none;
+/* Estilos adicionales para el color de fondo del div dentro de .card-body en modo claro */
+[data-theme="light"] .card-body {
+    border: none;
+    background-color: #cacccc; /* Cambia el color de fondo en modo claro */
 }
 
-/* Estilos adicionales para el input de email en modo oscuro */
-[data-theme="dark"] #email {
-    background-color: #43494E !important; /* Color de fondo en modo oscuro */
-    color: #ffffff; /* Color del texto en modo oscuro */
-    border-style: none; /* Borde en modo oscuro */
+[data-theme="light"] .card {
+    background-color: #cacccc; /* Cambia el color de fondo en modo claro */
+    border: none;
 }
 
-/* Establece el color de fondo específico según el tema */
-[data-theme="light"] #email:focus {
-    background-color: #ffffff !important; /* Fondo blanco en modo claro */
-    color: black !important;
+/* Aplica el border-radius a los elementos internos de la tarjeta */
+[data-theme="light"] .card-body, .card-title {
+    border-radius: 15px; /* Aplica el border-radius a los elementos internos que lo necesiten */
 }
 
-[data-theme="dark"] #email:focus {
-    background-color: #43494E !important; /* Fondo oscuro en modo oscuro */
-    color: white;
-    border-style: none;
+[data-theme="light"] .btn, .btn-outline-secondary {
+    border: 0.2px solid #CACCCC;
+}
+
+/* Estilos específicos para el modo claro */
+[data-theme="light"] .card-text-solution {
+    color: #000000; /* Color negro en modo claro */
+}
+/* ---------------------------------------------------------------  Estilos de las Tarjetas de las Soluciones  --------------------------------------------------------------- */
+
+/* Estilos para todas las tarjetas en ambos temas */
+.card {
+    border-radius: 15px; /* Asegura que el border-radius se aplique a todas las tarjetas */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+/* Estilos para los títulos de las tarjetas */
+.card-title-solution {
+    font-size: 25px; /* Tamaño de fuente ligeramente mayor */
+    color: #228182; /* Color azul para los títulos */
+}
+
+/* Estilos para el texto dentro de las tarjetas */
+.card-text-solution {
+    font-size: 18px; /* Tamaño de fuente predeterminado */
+    color: #000000; /* Color negro predeterminado */
 }

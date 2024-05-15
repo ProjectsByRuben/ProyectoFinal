@@ -34,7 +34,7 @@ if ($id_modulo === NULL) {
 $sql = "SELECT a.id_asignatura, a.nombre, COUNT(e.id_ejercicio) AS num_ejercicios
         FROM asignaturas a
         LEFT JOIN ejercicios e ON a.id_asignatura = e.id_asignatura
-        WHERE a.id_modulo = 2 AND a.id_curso = 2
+        WHERE a.id_modulo = $id_modulo AND a.id_curso = 2
         GROUP BY a.id_asignatura";
 $result = $conn->query($sql);
 ?>
@@ -48,6 +48,10 @@ $result = $conn->query($sql);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="../styles.css?v=2" id="themeStylesheet">
     <style>
+        body {
+            font-family: 'Bangers', cursive;
+            background-color: #f8f9fa;
+        }
         .small-text {
             font-size: 16px;
             color: #228182;
@@ -69,15 +73,11 @@ $result = $conn->query($sql);
             width: 28px;
             height: 25px;
         }
-        /* Estilo para el número de ejercicios */
-        .num-ejercicios {
-            font-weight: bold;
-        }
         .num-ejercicios.rojo {
             color: red;
         }
-        .num-ejercicios.verde {
-            color: green;
+        .num-ejercicios.naranja {
+            color: orange;
         }
     </style>
 </head>
@@ -99,16 +99,16 @@ $result = $conn->query($sql);
             <?php if ($tipo_usuario === 'alumno'): ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link active dropdown-toggle" href="../modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Asignatura
+                        Módulo
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="../modulos.php"><?php echo $nombre_modulo; ?></a></li>
                         <?php if ($id_modulo == 1): ?>
-                        <li><a class="dropdown-item" href="./asignaturas_asir_primero.php">1º Asir</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas_asir_segundo.php">2º Asir</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas_asir_primero.php">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas_asir_segundo.php">2º Curso</a></li>
                         <?php elseif ($id_modulo == 2): ?>
-                        <li><a class="dropdown-item" href="./asignaturas_teleco_primero.php">1º Teleco</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas_teleco_segundo.php">2º Teleco</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas_teleco_primero.php">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas_teleco_segundo.php">2º Curso</a></li>
                         <?php endif; ?>
                     </ul>
                 </li>
@@ -119,16 +119,16 @@ $result = $conn->query($sql);
                 <?php if ($tipo_usuario === 'profesor'): ?>
                     <li class="nav-item dropdown">
                     <a class="nav-link active dropdown-toggle" href="../modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Asignatura
+                        Módulo
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="../modulos.php"><?php echo $nombre_modulo; ?></a></li>
                         <?php if ($id_modulo == 1): ?>
-                        <li><a class="dropdown-item" href="./asignaturas_asir_primero.php">1º Asir</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas_asir_segundo.php">2º Asir</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas_asir_primero.php">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas_asir_segundo.php">2º Curso</a></li>
                         <?php elseif ($id_modulo == 2): ?>
-                        <li><a class="dropdown-item" href="./asignaturas_teleco_primero.php">1º Teleco</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas_teleco_segundo.php">2º Teleco</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas_teleco_primero.php">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas_teleco_segundo.php">2º Curso</a></li>
                         <?php endif; ?>
                     </ul>
                 </li>
@@ -177,7 +177,7 @@ $result = $conn->query($sql);
 
 <!-- Contenido principal -->
 <div class="container mt-4">
-    <h2>Asignaturas de TELECO - 2º Curso</h2>
+    <h2>Asignaturas de <?php echo $nombre_modulo; ?> - 2º Curso</h2>
     <div class="list-group">
         <?php
         if ($result->num_rows > 0) {

@@ -13,6 +13,24 @@ if (!isset($_SESSION['usuario'])) {
     exit();
 }
 
+// Verifica si id_modulo es NULL
+if ($id_modulo === NULL) {
+    $nombre_modulo = "Módulo Desconocido";
+} else {
+    // Consulta el nombre del módulo si id_modulo no es NULL
+    $sql = "SELECT nombre FROM modulos WHERE id_modulo = $id_modulo";
+    $resultado = $conn->query($sql);
+
+    // Verificar si se encontró el módulo y obtener su nombre
+    if ($resultado->num_rows > 0) {
+        $fila = $resultado->fetch_assoc();
+        $nombre_modulo = $fila["nombre"];
+    } else {
+        // Si no se encuentra el módulo, mostrar un mensaje de error
+        $nombre_modulo = "Módulo Desconocido";
+    }
+}
+
 // Verificar si se proporciona el ID del ejercicio
 if (!isset($_GET['id'])) {
     // Si no se proporciona el ID del ejercicio, redireccionar a la página de ejercicios
@@ -97,7 +115,7 @@ if (file_exists($ruta_muestra_html)) {
     <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Bangers', cursive;
             background-color: #f8f9fa;
         }
         .navbar {
@@ -169,16 +187,16 @@ if (file_exists($ruta_muestra_html)) {
             <?php if ($tipo_usuario === 'alumno'): ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Asignatura
+                        Módulo
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="./modulos.php">Modulos</a></li>
+                        <li><a class="dropdown-item" href="./modulos.php"><?php echo $nombre_modulo; ?></a></li>
                         <?php if ($id_modulo == 1): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Asir</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Asir</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Curso</a></li>
                         <?php elseif ($id_modulo == 2): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Teleco</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Teleco</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Curso</a></li>
                         <?php endif; ?>
                     </ul>
                 </li>
@@ -189,16 +207,16 @@ if (file_exists($ruta_muestra_html)) {
                 <?php if ($tipo_usuario === 'profesor'): ?>
                     <li class="nav-item dropdown">
                     <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Asignatura
+                        Módulo
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="./modulos.php">Modulos</a></li>
+                        <li><a class="dropdown-item" href="./modulos.php"><?php echo $nombre_modulo; ?></a></li>
                         <?php if ($id_modulo == 1): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Asir</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Asir</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Curso</a></li>
                         <?php elseif ($id_modulo == 2): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Teleco</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Teleco</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Curso</a></li>
                         <?php endif; ?>
                     </ul>
                 </li>
@@ -244,13 +262,6 @@ if (file_exists($ruta_muestra_html)) {
         </div>
     </div>
 </div>
-
-<div class="container">
-    <h1 class="text-center mt-4">Solución del Ejercicio</h1>
-    <h2 class="text-center"><?php echo $titulo_ejercicio; ?></h2>
-    <div class="alert alert-dark" role="alert">
-        <h3 class="text-center"><?php echo $enunciado; ?></h3>
-    </div>
 
     <?php if ($tipo_archivo === 'php' || $tipo_archivo === 'sql' || $tipo_archivo === 'js' || $tipo_archivo === 'css' || $tipo_archivo === 'py'): ?>
         <!-- Si es un archivo HTML, PHP, JS, CSS o PY, mostrar su contenido y su código -->

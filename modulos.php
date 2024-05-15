@@ -31,7 +31,6 @@ if ($id_modulo === NULL) {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -39,10 +38,10 @@ if ($id_modulo === NULL) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ejercicios</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
+    <link rel="stylesheet" href="./styles.css?v=3" id="themeStylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Bangers', cursive;
             background-color: #f8f9fa;
         }
         .navbar {
@@ -51,12 +50,18 @@ if ($id_modulo === NULL) {
             margin-top: 0 !important; /* Eliminar el margen superior */
             margin-bottom: 10px !important; /* Añade margen inferior de 10px */
         }
-        /* Estilos para el contenedor de ejercicios */
-        .ejercicios-container {
-            display: flex;
-            flex-wrap: wrap; /* Para que los elementos se envuelvan en múltiples líneas si no hay suficiente espacio */
-            gap: 20px; /* Espacio entre los ejercicios */
-            justify-content: space-evenly; /* Para distribuir el espacio disponible entre los ejercicios */
+        /* Estilos para la tarjeta de ejercicios */
+        .ejercicios-card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            max-width: 400px; /* Tamaño máximo de la tarjeta */
+            margin: 0 auto; /* Centrar la tarjeta */
+        }
+        .ejercicios-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
         }
         #themeIcon {
             width: 28px; /* Ajustar el ancho */
@@ -70,10 +75,18 @@ if ($id_modulo === NULL) {
             border: none;
             padding: 0;
         }
-
         #themeButton img {
             width: 28px;
             height: 25px;
+        }
+        .color {
+            color: orange;
+        }
+        .small-text {
+            font-size: 0.8rem;
+        }
+        .card-text {
+            font-size: 18px;
         }
     </style>
 </head>
@@ -92,45 +105,26 @@ if ($id_modulo === NULL) {
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
-            <?php if ($tipo_usuario === 'alumno'): ?>
+            <?php if ($tipo_usuario === 'alumno' || $tipo_usuario === 'profesor'): ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Asignatura
+                        Módulo
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="./modulos.php"><?php echo $nombre_modulo; ?></a></li>
                         <?php if ($id_modulo == 1): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Asir</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Asir</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Curso</a></li>
                         <?php elseif ($id_modulo == 2): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Teleco</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Teleco</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Curso</a></li>
                         <?php endif; ?>
                     </ul>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>
                 </li>
-                <?php endif; ?>
                 <?php if ($tipo_usuario === 'profesor'): ?>
-                    <li class="nav-item dropdown">
-                    <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Asignatura
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="./modulos.php"><?php echo $nombre_modulo; ?></a></li>
-                        <?php if ($id_modulo == 1): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Asir</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Asir</a></li>
-                        <?php elseif ($id_modulo == 2): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Teleco</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Teleco</a></li>
-                        <?php endif; ?>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>
-                </li>
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="./crear_ejercicio.php">Crear Ejercicio</a>
                     </li>
@@ -140,6 +134,7 @@ if ($id_modulo === NULL) {
                         <a class="nav-link active" aria-current="page" href="./crear_usuario.php">Crear Usuario</a>
                     </li>
                 <?php endif; ?>
+            <?php endif; ?>
             </ul>
         </div>
     </div>
@@ -187,32 +182,64 @@ if ($result_ejercicios && $result_ejercicios->num_rows > 0) {
 } else {
     $num_ejercicios = 0;
 }
+
+// Consulta para obtener el número de ejercicios disponibles según el id_modulo del usuario y el id_curso = 1
+$sql_ejercicios_curso1 = "SELECT COUNT(e.id_ejercicio) AS num_ejercicios_curso1
+                          FROM asignaturas a
+                          LEFT JOIN ejercicios e ON a.id_asignatura = e.id_asignatura
+                          WHERE a.id_modulo = $id_modulo AND a.id_curso = 1";
+
+$result_ejercicios_curso1 = $conn->query($sql_ejercicios_curso1);
+
+// Verificar si se encontraron ejercicios y obtener el número
+if ($result_ejercicios_curso1 && $result_ejercicios_curso1->num_rows > 0) {
+    $row_ejercicios_curso1 = $result_ejercicios_curso1->fetch_assoc();
+    $num_ejercicios_curso1 = $row_ejercicios_curso1['num_ejercicios_curso1'];
+} else {
+    $num_ejercicios_curso1 = 0;
+}
+
+// Consulta para obtener el número de ejercicios disponibles según el id_modulo del usuario y el id_curso = 2
+$sql_ejercicios_curso2 = "SELECT COUNT(e.id_ejercicio) AS num_ejercicios_curso2
+                          FROM asignaturas a
+                          LEFT JOIN ejercicios e ON a.id_asignatura = e.id_asignatura
+                          WHERE a.id_modulo = $id_modulo AND a.id_curso = 2";
+
+$result_ejercicios_curso2 = $conn->query($sql_ejercicios_curso2);
+
+// Verificar si se encontraron ejercicios y obtener el número
+if ($result_ejercicios_curso2 && $result_ejercicios_curso2->num_rows > 0) {
+    $row_ejercicios_curso2 = $result_ejercicios_curso2->fetch_assoc();
+    $num_ejercicios_curso2 = $row_ejercicios_curso2['num_ejercicios_curso2'];
+} else {
+    $num_ejercicios_curso2 = 0;
+}
+
 ?>
 
-<div class="ejercicios-container">
-    <?php if ($id_modulo == 1): ?>
-        <div class="col">
-            <div class="card mb-3">
-                <div class="card-body text-center">
-                    <h2 class="mb-4" style="color: #007bff; font-weight: bold;">ASIR</h2>
-                    <h5 class='card-title'>Este modulo tiene disponibles <small class='small-text'>(<span class='num-ejercicios verde'><?php echo $num_ejercicios; ?></span> ejercicio/s)</small></h5><br>
-                    <a href="./asignaturas/asignaturas_asir_primero.php" class="btn btn-primary mb-2">Explorar 1º Curso</a><br>
-                    <a href="./asignaturas/asignaturas_asir_segundo.php" class="btn btn-primary mb-2">Explorar 2º Curso</a>
+<?php
+// Determina qué imagen mostrar según el valor de $id_modulo
+$imagen_modulo = ($id_modulo == 1) ? "asir.png" : "teleco.png";
+?>
+
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card ejercicios-card">
+                <img src="./img/<?php echo $imagen_modulo; ?>" class="card-img-top" alt="Imagen del módulo">
+                <div class="card-body">
+                <p class="card-text">Este módulo tiene disponibles <span class="color"><?php echo $num_ejercicios; ?></span> ejercicio/s en total.</p>
+                    <?php if ($id_modulo == 1): ?>
+                        <a href="./asignaturas/asignaturas_asir_primero.php" class="btn btn-primary mb-2">Explorar 1º Curso (<span class="color"><?php echo $num_ejercicios_curso1; ?></span> ejercicios)</a>
+                        <a href="./asignaturas/asignaturas_asir_segundo.php" class="btn btn-primary mb-2">Explorar 2º Curso (<span class="color"><?php echo $num_ejercicios_curso2; ?></span> ejercicios)</a>
+                    <?php elseif ($id_modulo == 2): ?>
+                        <a href="./asignaturas/asignaturas_teleco_primero.php" class="btn btn-primary mb-2">Explorar 1º Curso (<span class="color"><?php echo $num_ejercicios_curso1; ?></span> ejercicios)</a>
+                        <a href="./asignaturas/asignaturas_teleco_segundo.php" class="btn btn-primary mb-2">Explorar 2º Curso (<span class="color"><?php echo $num_ejercicios_curso2; ?></span> ejercicios)</a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
-    <?php elseif ($id_modulo == 2): ?>
-        <div class="col">
-            <div class="card mb-3">
-                <div class="card-body text-center">
-                    <h2 class="mb-4" style="color: #007bff; font-weight: bold;">TELECO</h2>
-                    <h5 class='card-title'>Este modulo tiene disponibles <small class='small-text'>(<span class='num-ejercicios verde'><?php echo $num_ejercicios; ?></span> ejercicio/s)</small></h5><br>
-                    <a href="./asignaturas/asignaturas_teleco_primero.php" class="btn btn-primary mb-2">Explorar 1º Curso</a><br>
-                    <a href="./asignaturas/asignaturas_teleco_segundo.php" class="btn btn-primary mb-2">Explorar 2º Curso</a>
-                </div>
-            </div>
-        </div>
-    <?php endif; ?>
+    </div>
 </div>
 
 <script>

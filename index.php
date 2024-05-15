@@ -12,7 +12,7 @@
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center;
-            font-family: Arial, sans-serif;
+            font-family: 'Bangers', cursive;
         }
 
         .login-container {
@@ -85,8 +85,7 @@
             width: 300%;
             height: 300%;
             background-color: rgba(255, 255, 255, 0.3);
-            transition: width 0.3s ease, height 0.3s ease;
-            border-radius: 50%;
+            transition: width 2s ease, height 0.3s ease;
             z-index: -1;
             transform: translate(-50%, -50%);
         }

@@ -36,12 +36,22 @@ $id_usuario = $_SESSION['id_usuario'];
 
 // Consulta para obtener las soluciones del usuario junto con el título y el ID del ejercicio correspondiente
 // Consulta para obtener las soluciones basadas en el tipo de usuario
-if ($tipo_usuario === 'alumno') {
+if ($tipo_usuario == 'alumno') {
     // Si es un alumno, obtener soluciones del usuario actual
-    $sql = "SELECT soluciones.*, ejercicios.titulo, ejercicios.id_ejercicio AS id_ejercicio FROM soluciones INNER JOIN ejercicios ON soluciones.id_ejercicio = ejercicios.id_ejercicio WHERE soluciones.id_usuario = $id_usuario";
-} elseif ($tipo_usuario === 'profesor') {
+    $sql = "SELECT soluciones.*, ejercicios.titulo, ejercicios.id_ejercicio AS id_ejercicio, usuarios.usuario AS nombre_usuario, asignaturas.nombre AS nombre_asignatura
+            FROM soluciones 
+            INNER JOIN ejercicios ON soluciones.id_ejercicio = ejercicios.id_ejercicio 
+            INNER JOIN usuarios ON soluciones.id_usuario = usuarios.id_usuario
+            INNER JOIN asignaturas ON ejercicios.id_asignatura = asignaturas.id_asignatura
+            WHERE soluciones.id_usuario = $id_usuario";
+} elseif ($tipo_usuario == 'profesor') {
     // Si es un profesor, obtener soluciones de todos los usuarios
-    $sql = "SELECT soluciones.*, ejercicios.titulo, ejercicios.id_ejercicio AS id_ejercicio FROM soluciones INNER JOIN ejercicios ON soluciones.id_ejercicio = ejercicios.id_ejercicio";
+    $sql = "SELECT soluciones.*, ejercicios.titulo, ejercicios.id_ejercicio AS id_ejercicio, usuarios.usuario AS nombre_usuario, asignaturas.nombre AS nombre_asignatura
+        FROM soluciones 
+        INNER JOIN ejercicios ON soluciones.id_ejercicio = ejercicios.id_ejercicio 
+        INNER JOIN usuarios ON soluciones.id_usuario = usuarios.id_usuario
+        INNER JOIN asignaturas ON ejercicios.id_asignatura = asignaturas.id_asignatura
+        WHERE asignaturas.id_modulo = $id_modulo";
 } else {
     // Manejar cualquier otro tipo de usuario (opcional)
     // Puedes mostrar un mensaje de error o redireccionar a otra página
@@ -50,7 +60,6 @@ if ($tipo_usuario === 'alumno') {
 }
 $result = $conn->query($sql);
 
-$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -64,7 +73,7 @@ $conn->close();
     <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Bangers', cursive;
             background-color: #f8f9fa;
         }
         .navbar {
@@ -74,6 +83,7 @@ $conn->close();
         }
         .btn-descarga {
             background-color: #228182;
+            color: white;
         }
         /* Estilo para el botón de descarga al pasar el ratón por encima */
         .btn-descarga:hover {
@@ -117,16 +127,16 @@ $conn->close();
             <?php if ($tipo_usuario === 'alumno'): ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Asignatura
+                        Módulo
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="./modulos.php"><?php echo $nombre_modulo; ?></a></li>
                         <?php if ($id_modulo == 1): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Asir</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Asir</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Curso</a></li>
                         <?php elseif ($id_modulo == 2): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Teleco</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Teleco</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Curso</a></li>
                         <?php endif; ?>
                     </ul>
                 </li>
@@ -137,16 +147,16 @@ $conn->close();
                 <?php if ($tipo_usuario === 'profesor'): ?>
                     <li class="nav-item dropdown">
                     <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Asignatura
+                        Módulo
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="./modulos.php"><?php echo $nombre_modulo; ?></a></li>
                         <?php if ($id_modulo == 1): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Asir</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Asir</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Curso</a></li>
                         <?php elseif ($id_modulo == 2): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Teleco</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Teleco</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Curso</a></li>
                         <?php endif; ?>
                     </ul>
                 </li>
@@ -195,63 +205,65 @@ $conn->close();
     </div>
 
     <div class="container mt-4">
-        <h1>Soluciones del Usuario</h1>
-        <div class="row row-cols-1 row-cols-md-2 g-4">
-            <?php
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    $ruta_archivo = $row['solucion'];
-                    $titulo = $row['titulo']; // Cambio de $enunciado a $titulo
-                    $id_ejercicio = $row['id_ejercicio'];
-                    $id_solucion = $row['id_solucion']; // Obtener id_solucion
-                    ?>
-                    <div class="col" data-id="<?php echo $id_solucion; ?>"> <!-- Usar id_solucion como data-id -->
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">ID del Ejercicio</h5>
-                                <p class="card-text"><?php echo $id_ejercicio; ?></p>
-                                <h5 class="card-title">Título del Ejercicio</h5> <!-- Cambio de Enunciado a Título -->
-                                <p class="card-text"><?php echo $titulo; ?></p> <!-- Cambio de Enunciado a Título -->
-                                <h5 class="card-title">Archivo</h5>
-                                <p class="card-text"><?php echo basename($ruta_archivo); ?></p>
-                                <a href="<?php echo $ruta_archivo; ?>" class="btn btn-descarga" download>Descargar</a>
-                                <!-- Botón de eliminar -->
-                                <button class="btn btn-danger btn-delete" onclick="eliminarRespuesta(<?php echo $id_solucion; ?>)">Eliminar</button>
-                            </div>
-                        </div>
+    <h1>Soluciones del Usuario</h1>
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        <?php
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $ruta_archivo = $row['solucion'];
+                $titulo = $row['titulo']; // Cambio de $enunciado a $titulo
+                $id_ejercicio = $row['id_ejercicio'];
+                $id_solucion = $row['id_solucion']; // Obtener id_solucion
+                ?>
+                <div class="col" data-id="<?php echo $id_solucion; ?>"> <!-- Usar id_solucion como data-id -->
+                <div class="card">
+                    <div class="card-body">
+                    <h5 class="card-title-solution">Nombre del Usuario</h5>
+                        <p class="card-text-solution"><?php echo $row['nombre_usuario']; ?></p>
+                        <h5 class="card-title-solution">Nombre de la Asignatura</h5>
+                        <p class="card-text-solution"><?php echo $row['nombre_asignatura']; ?></p>
+                        <h5 class="card-title-solution">Título del Ejercicio</h5> <!-- Cambio de Enunciado a Título -->
+                        <p class="card-text-solution"><?php echo $titulo; ?></p> <!-- Cambio de Enunciado a Título -->
+                        <h5 class="card-title-solution">Archivo</h5>
+                        <p class="card-text-solution"><?php echo basename($ruta_archivo); ?></p>
+                        <a href="<?php echo $ruta_archivo; ?>" class="btn btn-descarga" download>Descargar</a>
+                        <!-- Botón de eliminar -->
+                        <button class="btn btn-danger btn-delete" onclick="eliminarRespuesta(<?php echo $id_solucion; ?>, '<?php echo $ruta_archivo; ?>')">Eliminar</button>
                     </div>
-                    <?php
-                }
-            } else {
-                echo "<p>No hay soluciones disponibles.</p>";
+                </div>
+            </div>
+                <?php
             }
-            ?>
-        </div>
+        } else {
+            echo "<p>No hay soluciones disponibles.</p>";
+        }
+        ?>
     </div>
+</div>
     
     <script>
-        function eliminarRespuesta(id_solucion) { // Cambiar el nombre de la variable a id_solucion
-            if (confirm("¿Estás seguro de que deseas eliminar esta respuesta?")) {
-                // Realiza una solicitud al servidor para eliminar la respuesta
-                fetch('eliminar_respuesta.php?id=' + id_solucion, { // Pasar id_solucion en la URL
-                    method: 'GET'
-                })
-                .then(response => {
-                    if (response.ok) {
-                        // Elimina la tarjeta de respuesta de la interfaz de usuario
-                        const cardToRemove = document.querySelector(`[data-id="${id_solucion}"]`); // Usar id_solucion
-                        if (cardToRemove) {
-                            cardToRemove.parentNode.removeChild(cardToRemove);
-                        }
-                    } else {
-                        throw new Error('Error al eliminar la respuesta');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+        function eliminarRespuesta(id_solucion, ruta_archivo) {
+    if (confirm("¿Estás seguro de que deseas eliminar esta respuesta?")) {
+        fetch('eliminar_respuesta.php?id=' + id_solucion, {
+            method: 'GET'
+        })
+        .then(response => {
+            if (response.ok) {
+                const cardToRemove = document.querySelector(`[data-id="${id_solucion}"]`);
+                if (cardToRemove) {
+                    cardToRemove.parentNode.removeChild(cardToRemove);
+                }
+                // Eliminar el archivo de la carpeta "soluciones"
+                eliminarArchivoDescarga(ruta_archivo);
+            } else {
+                throw new Error('Error al eliminar la respuesta');
             }
-        }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+}
 
         function toggleTheme() {
         const currentTheme = document.documentElement.getAttribute('data-theme');

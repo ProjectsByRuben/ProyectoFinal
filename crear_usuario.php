@@ -40,7 +40,7 @@ if ($id_modulo === NULL) {
     <title>Crear Nuevo Usuario</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Bangers', cursive;
             background-color: #f8f9fa;
         }
         .navbar {
@@ -97,7 +97,7 @@ if ($id_modulo === NULL) {
             <?php if ($tipo_usuario == 'alumno'): ?>
                 <li class="nav-item dropdown">
                     <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Asignatura
+                        Módulo
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="./modulos.php"><?php echo $nombre_modulo; ?></a></li>
@@ -117,7 +117,7 @@ if ($id_modulo === NULL) {
                 <?php if ($tipo_usuario === 'profesor'): ?>
                     <li class="nav-item dropdown">
                     <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Asignatura
+                        Módulo
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="./modulos.php"><?php echo $nombre_modulo; ?></a></li>
@@ -138,6 +138,9 @@ if ($id_modulo === NULL) {
                     </li>
                 <?php endif; ?>
                 <?php if ($tipo_usuario === 'admin'): ?>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./usuarios.php">Usuarios</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="./crear_usuario.php">Crear Usuario</a>
                     </li>
@@ -175,29 +178,24 @@ if ($id_modulo === NULL) {
 
 <div class="container form-container">
     <h1>Crear Nuevo Usuario</h1>
+    <!-- Procesar la subida del formulario de creación de usuarios -->
     <?php
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["usuario"]) && isset($_POST["contrasena"]) && isset($_POST["tipo"])) {
+        $usuario = $_POST["usuario"];
+        $contrasena = $_POST["contrasena"];
+        $tipo = $_POST["tipo"];
 
-    // Procesar la subida del formulario de creación de usuarios
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["usuario"]) && isset($_POST["contrasena"]) && isset($_POST["tipo"])) {
-    $usuario = $_POST["usuario"];
-    $contrasena = $_POST["contrasena"];
-    $tipo = $_POST["tipo"];
+        // Verificar si el tipo de usuario es administrador y establecer el id_modulo en NULL si es así
+        $id_modulo = ($tipo === 'admin') ? 'NULL' : $_POST["id_modulo"];
 
-    // Verificar si se seleccionó "Ninguno"
-    if ($_POST["id_modulo"] === "NULL") {
-        $id_modulo = "NULL";
-    } else {
-        $id_modulo = $_POST["id_modulo"];
+        // Insertar los datos del nuevo usuario en la base de datos
+        $sql = "INSERT INTO usuarios (usuario, id_modulo, contraseña, tipo) VALUES ('$usuario', $id_modulo, '$contrasena', '$tipo')";
+        if ($conn->query($sql) === TRUE) {
+            echo '<div class="alert alert-success" role="alert">Usuario creado exitosamente.</div>';
+        } else {
+            echo '<div class="alert alert-danger" role="alert">Error al crear el usuario: ' . $conn->error . '</div>';
+        }
     }
-
-    // Insertar los datos del nuevo usuario en la base de datos
-    $sql = "INSERT INTO usuarios (usuario, id_modulo, contraseña, tipo) VALUES ('$usuario', $id_modulo, '$contrasena', '$tipo')";
-    if ($conn->query($sql) === TRUE) {
-        echo '<div class="alert alert-success" role="alert">Usuario creado exitosamente.</div>';
-    } else {
-        echo '<div class="alert alert-danger" role="alert">Error al crear el usuario: ' . $conn->error . '</div>';
-    }
-}
     ?>
     <?php
 // Consultar los módulos disponibles
@@ -216,24 +214,25 @@ $result_modulos = $conn->query($sql_modulos);
         <input type="password" class="form-control" id="contrasena" name="contrasena" required>
     </div>
     <div class="mb-3">
-    <label for="id_modulo" class="form-label">Módulo:</label>
-    <select class="form-select" id="id_modulo" name="id_modulo" required>
-    <option value="" disabled selected hidden>Seleccionar...</option>
-        <?php while ($row_modulo = $result_modulos->fetch_assoc()): ?>
-            <option value="<?php echo $row_modulo['id_modulo']; ?>"><?php echo $row_modulo['nombre']; ?></option>
-        <?php endwhile; ?>
-        <option value="NULL">Ninguno</option> <!-- Opción para NULL -->
-    </select>
+        <label for="tipo" class="form-label">Tipo:</label>
+        <select class="form-select" id="tipo" name="tipo" required>
+            <option value="" disabled selected hidden>Seleccionar...</option>
+            <option value="alumno">Alumno</option>
+            <option value="profesor">Profesor</option>
+            <option value="admin">Administrador</option>
+        </select>
+        <small><p>(Si es admin, el módulo debe estar en "Ninguno")</p></small>
     </div>
     <div class="mb-3">
-    <label for="tipo" class="form-label">Tipo:</label>
-    <select class="form-select" id="tipo" name="tipo" required>
+        <label for="id_modulo" class="form-label">Módulo:</label>
+        <select class="form-select" id="id_modulo" name="id_modulo" required>
         <option value="" disabled selected hidden>Seleccionar...</option>
-        <option value="alumno">Alumno</option>
-        <option value="profesor">Profesor</option>
-        <option value="admin">Administrador</option>
-    </select>
-</div>
+            <?php while ($row_modulo = $result_modulos->fetch_assoc()): ?>
+                <option value="<?php echo $row_modulo['id_modulo']; ?>"><?php echo $row_modulo['nombre']; ?></option>
+            <?php endwhile; ?>
+            <option value="NULL">Ninguno</option> <!-- Opción para NULL -->
+        </select>
+    </div>
 
     <div class="btn-container">
         <button type="submit" class="btn btn-primary">Crear Usuario</button>

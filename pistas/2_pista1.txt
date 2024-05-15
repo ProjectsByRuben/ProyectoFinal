@@ -1,2 +1,0 @@
-Identifica las entidades principales involucradas 
-en el proceso de ventas en línea, como clientes, productos y pedidos.
