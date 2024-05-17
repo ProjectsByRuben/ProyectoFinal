@@ -140,7 +140,7 @@ if ($id_modulo === NULL) {
     </div>
 
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Sesion</button>
+    <button type="button" class="btn modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal" style="border: none;"><img src="./img/usuario.png" style="width: 25px; height: 25px;"></button>
     <button id="themeButton" onclick="toggleTheme()" class="btn">
         <img id="themeIcon" src="./img/<?php echo $currentTheme === 'dark' ? 'sun' : 'moon'; ?>.png" alt="<?php echo $currentTheme === 'dark' ? 'moon' : 'sun'; ?>">
     </button>
@@ -230,11 +230,11 @@ $imagen_modulo = ($id_modulo == 1) ? "asir.png" : "teleco.png";
                 <div class="card-body">
                 <p class="card-text">Este módulo tiene disponibles <span class="color"><?php echo $num_ejercicios; ?></span> ejercicio/s en total.</p>
                     <?php if ($id_modulo == 1): ?>
-                        <a href="./asignaturas/asignaturas_asir_primero.php" class="btn btn-primary mb-2">Explorar 1º Curso (<span class="color"><?php echo $num_ejercicios_curso1; ?></span> ejercicios)</a>
-                        <a href="./asignaturas/asignaturas_asir_segundo.php" class="btn btn-primary mb-2">Explorar 2º Curso (<span class="color"><?php echo $num_ejercicios_curso2; ?></span> ejercicios)</a>
+                        <a href="./asignaturas/asignaturas_asir_primero.php" class="btn btn-primary mb-2">Explorar 1º Curso (<span class="color"><?php echo $num_ejercicios_curso1; ?></span> ejercicio/s)</a>
+                        <a href="./asignaturas/asignaturas_asir_segundo.php" class="btn btn-primary mb-2">Explorar 2º Curso (<span class="color"><?php echo $num_ejercicios_curso2; ?></span> ejercicio/s)</a>
                     <?php elseif ($id_modulo == 2): ?>
-                        <a href="./asignaturas/asignaturas_teleco_primero.php" class="btn btn-primary mb-2">Explorar 1º Curso (<span class="color"><?php echo $num_ejercicios_curso1; ?></span> ejercicios)</a>
-                        <a href="./asignaturas/asignaturas_teleco_segundo.php" class="btn btn-primary mb-2">Explorar 2º Curso (<span class="color"><?php echo $num_ejercicios_curso2; ?></span> ejercicios)</a>
+                        <a href="./asignaturas/asignaturas_teleco_primero.php" class="btn btn-primary mb-2">Explorar 1º Curso (<span class="color"><?php echo $num_ejercicios_curso1; ?></span> ejercicio/s)</a>
+                        <a href="./asignaturas/asignaturas_teleco_segundo.php" class="btn btn-primary mb-2">Explorar 2º Curso (<span class="color"><?php echo $num_ejercicios_curso2; ?></span> ejercicio/s)</a>
                     <?php endif; ?>
                 </div>
             </div>

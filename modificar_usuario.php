@@ -69,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modificar Usuario</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
+    <link rel="stylesheet" href="./styles.css?v=8" id="themeStylesheet">
     <style>
         body {
             font-family: 'Bangers', cursive;
@@ -105,12 +105,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .container {
             margin-top: 50px;
             max-width: 400px;
+            background-color: #CACCCC;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
         }
         .form-label {
             font-weight: bold;
         }
         .btn-primary {
             color: white;
+        }
+        .form-control {
+            margin-bottom: 15px;
+        }
+        .input-group {
+            position: relative;
+        }
+        #togglePassword {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
+        /* Estilos para el mensaje de advertencia */
+        .warning-message {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #dc3545;
         }
     </style>
 </head>
@@ -181,7 +207,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Sesion</button>
+    <button type="button" class="btn modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal" style="border: none;"><img src="./img/usuario.png" style="width: 25px; height: 25px;"></button>
     <button id="themeButton" onclick="toggleTheme()" class="btn">
         <img id="themeIcon" src="./img/<?php echo $currentTheme === 'dark' ? 'sun' : 'moon'; ?>.png" alt="<?php echo $currentTheme === 'dark' ? 'moon' : 'sun'; ?>">
     </button></nav>
@@ -207,10 +233,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </div>
 
 <div class="container">
-    <h1 class="text-center">Modificar Usuario</h1>
     <form method="post">
+    <h1 class="text-center">Modificar Usuario</h1>
         <div class="mb-3">
-            <label for="usuario" class="form-label">Nombre</label>
+            <label for="usuario" class="form-label">Usuario</label>
             <input type="text" class="form-control" id="usuario" name="usuario" value="<?php echo $usuario['usuario']; ?>">
         </div>
         <div class="mb-3">
@@ -218,7 +244,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="input-group">
                 <input type="password" class="form-control" id="contrasena" name="contrasena" value="<?php echo $usuario['contraseña']; ?>">
                 <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                    <img id="eyeIcon" src="./img/abierto.png" alt="Mostrar" style="width: 25px; height: 25px;">
+                    <img id="eyeIcon" src="./img/cerrado.png" alt="Mostrar" style="width: 28px; height: 42px; padding-top: 0px; padding-bottom: 15px;">
                 </button>
             </div>
         </div>
@@ -235,8 +261,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <label for="modulo" class="form-label">Módulo</label>
             <select class="form-select" id="modulo" name="modulo">
                 <option value="" <?php if($usuario['id_modulo'] === null) echo 'selected'; ?>>Ninguno</option>
-                <option value="1" <?php if($usuario['id_modulo'] == 1) echo 'selected'; ?>>Asir</option>
-                <option value="2" <?php if($usuario['id_modulo'] == 2) echo 'selected'; ?>>Teleco</option>
+                <option value="1" <?php if($usuario['id_modulo'] == 1) echo 'selected'; ?>>ASIR</option>
+                <option value="2" <?php if($usuario['id_modulo'] == 2) echo 'selected'; ?>>TELECO</option>
             </select>
         </div>
         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
@@ -249,10 +275,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         var eyeIcon = document.getElementById('eyeIcon');
         if (passwordInput.type === 'password') {
             passwordInput.type = 'text';
-            eyeIcon.src = './img/cerrado.png';
+            eyeIcon.src = './img/abierto.png';
         } else {
             passwordInput.type = 'password';
-            eyeIcon.src = './img/abierto.png';
+            eyeIcon.src = './img/cerrado.png';
         }
     });
 </script>

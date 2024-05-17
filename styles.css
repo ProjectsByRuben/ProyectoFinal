@@ -171,13 +171,27 @@ body { /* Aplica los estilos según el tema */
     background-color: #43494e;
 }
 
-[data-theme="dark"] .btn, .btn-outline-secondary {
-    border: 0.3px solid #43494E;
-}
-
 /* Estilos específicos para el modo oscuro */
 [data-theme="dark"] .card-text-solution {
     color: #ffffff; /* Color blanco en modo oscuro */
+}
+
+[data-theme="dark"] .form-container {
+    margin-top: 50px;
+    max-width: 400px;
+    background-color: #31363b;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+}
+
+[data-theme="dark"] .container {
+    margin-top: 50px;
+    max-width: 400px;
+    background-color: #31363b;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
 }
 /* ---------------------------------------------------------------  Estilos de Tema Light  --------------------------------------------------------------- */
 

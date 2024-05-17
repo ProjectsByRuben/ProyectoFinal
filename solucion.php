@@ -126,9 +126,11 @@ $conn->close();
         }
         #file-list {
             margin-top: 20px;
+            margin-left: 10px;
         }
         .file-item {
             margin-bottom: 10px;
+            padding-left: 10px; /* Agregar padding-left a los archivos seleccionados */
         }
         .file-item button {
             margin-left: 10px;
@@ -179,7 +181,10 @@ $conn->close();
             height: 25px;
         }
         .text-center{
-            margin-top: 20px;
+            margin-top: 15px;
+        }
+        .btn-pista-1 {
+            margin-left: 10px;
         }
     </style>
 </head>
@@ -251,7 +256,7 @@ $conn->close();
     </div>
 
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Sesion</button>
+    <button type="button" class="btn modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal" style="border: none;"><img src="./img/usuario.png" style="width: 25px; height: 25px;"></button>
     <button id="themeButton" onclick="toggleTheme()" class="btn">
         <img id="themeIcon" src="./img/<?php echo $currentTheme === 'dark' ? 'sun' : 'moon'; ?>.png" alt="<?php echo $currentTheme === 'dark' ? 'moon' : 'sun'; ?>">
     </button>
@@ -290,8 +295,6 @@ $conn->close();
     <?php endif; ?>
 </div>
 
-
-
 <!-- Modales para las pistas -->
 <?php foreach ($pistas as $index => $pista): ?>
     <?php if (!empty($pista)): ?>
@@ -322,7 +325,7 @@ $conn->close();
             </div>
         </div>
         <!-- Botón para abrir la ventana modal de esta pista -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pistaModal<?php echo $index; ?>">Pista <?php echo $index + 1; ?></button>
+        <button type="button" class="btn btn-primary <?php echo $index === 0 ? 'btn-pista-1' : ''; ?>" data-bs-toggle="modal" data-bs-target="#pistaModal<?php echo $index; ?>">Pista <?php echo $index + 1; ?></button>
     <?php endif; ?>
 <?php endforeach; ?>
 

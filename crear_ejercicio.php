@@ -1,4 +1,5 @@
 <?php
+ob_start(); // Inicia el búfer de salida
 session_start();
 
 include './scripts/conexion.php'; // Incluye el archivo de conexión
@@ -165,7 +166,7 @@ if ($resultado->num_rows > 0) {
     </div>
 
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Sesion</button>
+    <button type="button" class="btn modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal" style="border: none;"><img src="./img/usuario.png" style="width: 25px; height: 25px;"></button>
     <button id="themeButton" onclick="toggleTheme()" class="btn">
         <img id="themeIcon" src="./img/<?php echo $currentTheme === 'dark' ? 'sun' : 'moon'; ?>.png" alt="<?php echo $currentTheme === 'dark' ? 'moon' : 'sun'; ?>">
     </button>
@@ -210,6 +211,14 @@ if ($resultado->num_rows > 0) {
             mkdir($directorio, 0777, true);
         }
 
+        // Verificar la extensión del archivo de la solución
+        $extension_permitida = array("html", "php", "pdf", "zip", "js", "css", "py", "sql");
+        $extension_archivo = strtolower(pathinfo($_FILES["archivo"]["name"], PATHINFO_EXTENSION));
+        if (!in_array($extension_archivo, $extension_permitida)) {
+            header("Location: error.php");
+            exit; // Detiene la ejecución del script
+        }
+                
         // Guardar la ruta de los archivos en la base de datos
         $sql = "INSERT INTO ejercicios (id_asignatura, titulo, enunciado, enunciado_archivo, dificultad, solucion) VALUES ('$asignatura_id', '$titulo', '$enunciado', '', '$dificultad', '')";
         if ($conn->query($sql) === TRUE) {

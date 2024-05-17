@@ -36,7 +36,7 @@ if ($id_modulo === NULL) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=3" id="themeStylesheet">
+    <link rel="stylesheet" href="./styles.css?v=5" id="themeStylesheet">
     <title>Crear Nuevo Usuario</title>
     <style>
         body {
@@ -50,9 +50,21 @@ if ($id_modulo === NULL) {
         }
 
         .form-container {
-            margin: 50px auto;
-            width: 80%;
-            max-width: 800px;
+            background-color: #CACCCC;
+            margin-top: 50px;
+            max-width: 400px;
+            padding: 20px;
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+        }
+
+        .form-label {
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            color: white;
         }
 
         .btn-container {
@@ -76,6 +88,16 @@ if ($id_modulo === NULL) {
         #themeButton img {
             width: 28px;
             height: 25px;
+        }
+        #togglePassword {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
         }
     </style>
 </head>
@@ -150,7 +172,7 @@ if ($id_modulo === NULL) {
     </div>
 
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-primary modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal">Sesion</button>
+    <button type="button" class="btn modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal" style="border: none;"><img src="./img/usuario.png" style="width: 25px; height: 25px;"></button>
     <button id="themeButton" onclick="toggleTheme()" class="btn">
         <img id="themeIcon" src="./img/<?php echo $currentTheme === 'dark' ? 'sun' : 'moon'; ?>.png" alt="<?php echo $currentTheme === 'dark' ? 'moon' : 'sun'; ?>">
     </button>
@@ -175,9 +197,9 @@ if ($id_modulo === NULL) {
         </div>
     </div>
 </div>
-
+    
 <div class="container form-container">
-    <h1>Crear Nuevo Usuario</h1>
+    <h1 class="text-center">Crear Nuevo Usuario</h1>
     <!-- Procesar la subida del formulario de creación de usuarios -->
     <?php
     if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["usuario"]) && isset($_POST["contrasena"]) && isset($_POST["tipo"])) {
@@ -202,44 +224,60 @@ if ($id_modulo === NULL) {
 $sql_modulos = "SELECT id_modulo, nombre FROM modulos";
 $result_modulos = $conn->query($sql_modulos);
 ?>
-
-<!-- Formulario para crear un nuevo usuario -->
-<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
-    <div class="mb-3">
-        <label for="usuario" class="form-label">Usuario:</label>
-        <input type="text" class="form-control" id="usuario" name="usuario" required>
-    </div>
-    <div class="mb-3">
-        <label for="contrasena" class="form-label">Contraseña:</label>
-        <input type="password" class="form-control" id="contrasena" name="contrasena" required>
-    </div>
-    <div class="mb-3">
-        <label for="tipo" class="form-label">Tipo:</label>
-        <select class="form-select" id="tipo" name="tipo" required>
+    <form method="post">
+        <div class="mb-3">
+            <label for="usuario" class="form-label">Usuario:</label>
+            <input type="text" class="form-control" id="usuario" name="usuario" required>
+        </div>
+        <div class="mb-3">
+            <label for="contrasena" class="form-label">Contraseña:</label>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="contrasena" name="contrasena" required>
+                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                    <img id="eyeIcon" src="./img/cerrado.png" alt="Mostrar" style="width: 28px; height: 42px; padding-top: 0px; padding-bottom: 15px;">
+                    </button>
+                </div>
+        </div>
+        <div class="mb-3">
+            <label for="tipo" class="form-label">Tipo:</label>
+            <select class="form-select" id="tipo" name="tipo" required>
+                <option value="" disabled selected hidden>Seleccionar...</option>
+                <option value="alumno">Alumno</option>
+                <option value="profesor">Profesor</option>
+                <option value="admin">Administrador</option>
+            </select>
+            <small><p>(Si es admin, el módulo debe estar en "Ninguno")</p></small>
+        </div>
+        <div class="mb-3">
+            <label for="id_modulo" class="form-label">Módulo:</label>
+            <select class="form-select" id="id_modulo" name="id_modulo" required>
             <option value="" disabled selected hidden>Seleccionar...</option>
-            <option value="alumno">Alumno</option>
-            <option value="profesor">Profesor</option>
-            <option value="admin">Administrador</option>
-        </select>
-        <small><p>(Si es admin, el módulo debe estar en "Ninguno")</p></small>
-    </div>
-    <div class="mb-3">
-        <label for="id_modulo" class="form-label">Módulo:</label>
-        <select class="form-select" id="id_modulo" name="id_modulo" required>
-        <option value="" disabled selected hidden>Seleccionar...</option>
-            <?php while ($row_modulo = $result_modulos->fetch_assoc()): ?>
-                <option value="<?php echo $row_modulo['id_modulo']; ?>"><?php echo $row_modulo['nombre']; ?></option>
-            <?php endwhile; ?>
-            <option value="NULL">Ninguno</option> <!-- Opción para NULL -->
-        </select>
-    </div>
+                <?php while ($row_modulo = $result_modulos->fetch_assoc()): ?>
+                    <option value="<?php echo $row_modulo['id_modulo']; ?>"><?php echo $row_modulo['nombre']; ?></option>
+                <?php endwhile; ?>
+                <option value="NULL">Ninguno</option> <!-- Opción para NULL -->
+            </select>
+        </div>
 
-    <div class="btn-container">
-        <button type="submit" class="btn btn-primary">Crear Usuario</button>
-    </div>
-</form>
-
+        <div class="btn-container">
+            <button type="submit" class="btn btn-primary">Crear Usuario</button>
+        </div>
+    </form>
 </div>
+
+<script>
+    document.getElementById('togglePassword').addEventListener('click', function() {
+        var passwordInput = document.getElementById('contrasena');
+        var eyeIcon = document.getElementById('eyeIcon');
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            eyeIcon.src = './img/abierto.png';
+        } else {
+            passwordInput.type = 'password';
+            eyeIcon.src = './img/cerrado.png';
+        }
+    });
+</script>
 
 <script>
     function toggleTheme() {
