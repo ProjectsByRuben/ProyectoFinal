@@ -185,7 +185,7 @@ $result = $conn->query($sql);
                 echo "<div class='card mb-3'>";
                 echo "<div class='card-body'>";
                 // Aquí aplicamos una clase condicional según el valor del número de ejercicios
-                $clase_ejercicios = $row['num_ejercicios'] == 0 ? 'rojo' : 'verde';
+                $clase_ejercicios = $row['num_ejercicios'] == 0 ? 'rojo' : 'naranja';
                 echo "<h5 class='card-title'>{$row['nombre']} <small class='small-text'>(<span class='num-ejercicios $clase_ejercicios'>{$row['num_ejercicios']}</span> ejercicio/s)</small></h5>";
                 echo "<a href='../cursos/primer_curso_teleco.php?asignatura_id={$row['id_asignatura']}' class='btn btn-primary'>Ver ejercicios</a>";
                 echo "</div>";

@@ -5,25 +5,6 @@ body { /* Aplica los estilos según el tema */
     color: var(--text-color) !important;
 }
 
-.carousel-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-top: 50px; /* Espacio arriba */
-}
-
-.carousel-title {
-    font-size: 2rem; /* Tamaño del título */
-    margin-bottom: 20px; /* Espacio debajo del título */
-}
-
-.carousel-description {
-    font-size: 1.2rem; /* Tamaño de la descripción */
-    text-align: center; /* Alineación del texto */
-    max-width: 80%; /* Ancho máximo del contenedor de la descripción */
-    margin-bottom: 40px; /* Espacio debajo de la descripción */
-}
-
 /* ---------------------------------------------------------------  Estilos de Botones  --------------------------------------------------------------- */
 
 .modal-button { /* Estilos personalizados para el botón de la ventana modal */
@@ -176,22 +157,14 @@ body { /* Aplica los estilos según el tema */
     color: #ffffff; /* Color blanco en modo oscuro */
 }
 
-[data-theme="dark"] .form-container {
-    margin-top: 50px;
+[data-theme="dark"] .form-container2,
+[data-theme="dark"] .container2 {
+    margin: 50px auto;  /* Combina el margen superior y centraliza horizontalmente */
     max-width: 400px;
     background-color: #31363b;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
-}
-
-[data-theme="dark"] .container {
-    margin-top: 50px;
-    max-width: 400px;
-    background-color: #31363b;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
 }
 /* ---------------------------------------------------------------  Estilos de Tema Light  --------------------------------------------------------------- */
 
@@ -266,6 +239,16 @@ body { /* Aplica los estilos según el tema */
 /* Estilos específicos para el modo claro */
 [data-theme="light"] .card-text-solution {
     color: #000000; /* Color negro en modo claro */
+}
+
+[data-theme="light"] .form-container2,
+[data-theme="light"] .container2 {
+    margin: 50px auto;  /* Combina el margen superior y centraliza horizontalmente */
+    max-width: 400px;
+    background-color: #CACCCC;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
 }
 /* ---------------------------------------------------------------  Estilos de las Tarjetas de las Soluciones  --------------------------------------------------------------- */
 

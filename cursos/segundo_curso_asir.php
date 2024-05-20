@@ -87,6 +87,27 @@ if (isset($_GET['asignatura_id']) && !empty($_GET['asignatura_id'])) {
             width: 28px;
             height: 25px;
         }
+
+        .text-success {
+            color: green !important; /* Cambiar el color a naranja */
+            background-color: #959999;
+            display: inline-block; /* Ajusta el ancho al tamaño del texto */
+            padding: 5px; /* Espacio alrededor del texto */
+        }
+
+        .text-danger {
+            color: red !important; /* Cambiar el color a naranja */
+            background-color: #959999;
+            display: inline-block; /* Ajusta el ancho al tamaño del texto */
+            padding: 5px; /* Espacio alrededor del texto */
+        }
+
+        .text-medium {
+            color: orange !important; /* Cambiar el color a naranja */
+            background-color: #959999;
+            display: inline-block; /* Ajusta el ancho al tamaño del texto */
+            padding: 5px; /* Espacio alrededor del texto */
+        }
     </style>
 </head>
 <body>
@@ -198,7 +219,7 @@ if (isset($_GET['asignatura_id']) && !empty($_GET['asignatura_id'])) {
                     $dificultad_color = 'text-success'; // Verde
                     break;
                 case 'medio':
-                    $dificultad_color = 'text-warning'; // Amarillo
+                    $dificultad_color = 'text-medium'; // Amarillo
                     break;
                 case 'dificil':
                     $dificultad_color = 'text-danger'; // Rojo

@@ -69,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modificar Usuario</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=8" id="themeStylesheet">
+    <link rel="stylesheet" href="./styles.css?v=10" id="themeStylesheet">
     <style>
         body {
             font-family: 'Bangers', cursive;
@@ -102,7 +102,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             width: 28px;
             height: 25px;
         }
-        .container {
+        .container2 {
             margin-top: 50px;
             max-width: 400px;
             background-color: #CACCCC;
@@ -145,6 +145,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <img src="./img/logo.png" alt="Bootstrap" width="140" height="90">
     <div class="container-fluid">
+        <a class="nav-link active" aria-current="page" href="javascript:history.back()">
+            <img src="../img/flecha.png" class="img-fluid" style="max-width: 30px;" alt="Flecha">
+            <span style='margin: 0 10px;'></span>
+        </a>
         <a class="navbar-brand" href="./dashboard.php">Inicio</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -232,7 +236,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
 </div>
 
-<div class="container">
+<div class="container2">
     <form method="post">
     <h1 class="text-center">Modificar Usuario</h1>
         <div class="mb-3">

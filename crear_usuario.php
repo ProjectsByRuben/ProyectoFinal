@@ -36,7 +36,7 @@ if ($id_modulo === NULL) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=5" id="themeStylesheet">
+    <link rel="stylesheet" href="./styles.css?v=6" id="themeStylesheet">
     <title>Crear Nuevo Usuario</title>
     <style>
         body {
@@ -49,7 +49,7 @@ if ($id_modulo === NULL) {
             margin-top: 0 !important; /* Eliminar el margen superior */
         }
 
-        .form-container {
+        .form-container2 {
             background-color: #CACCCC;
             margin-top: 50px;
             max-width: 400px;
@@ -198,7 +198,7 @@ if ($id_modulo === NULL) {
     </div>
 </div>
     
-<div class="container form-container">
+<div class="container2 form-container2">
     <h1 class="text-center">Crear Nuevo Usuario</h1>
     <!-- Procesar la subida del formulario de creación de usuarios -->
     <?php
