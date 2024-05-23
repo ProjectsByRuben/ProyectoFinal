@@ -1,6 +1,6 @@
 <?php
-include './scripts/conexion.php'; // Incluye el archivo de conexión
 session_start();
+include './scripts/conexion.php'; // Incluye el archivo de conexión
 
 if (!isset($_SESSION['usuario'])) {
     header("Location: index.php");
@@ -11,40 +11,42 @@ $tipo_usuario = $_SESSION['tipo'];
 $id_modulo = $_SESSION['id_modulo'];
 
 // Verifica si id_modulo es NULL
-if ($id_modulo == NULL) {
-    $nombre_modulo = "Módulo Desconocido";
-} else {
-    // Consulta el nombre del módulo si id_modulo no es NULL
-    $sql = "SELECT nombre FROM modulos WHERE id_modulo = $id_modulo";
-    $resultado = $conn->query($sql);
-
-    // Verificar si se encontró el módulo y obtener su nombre
-    if ($resultado->num_rows > 0) {
-        $fila = $resultado->fetch_assoc();
-        $nombre_modulo = $fila["nombre"];
-    } else {
-        // Si no se encuentra el módulo, mostrar un mensaje de error
-        $nombre_modulo = "Módulo Desconocido";
+$nombre_modulo = "Módulo Desconocido";
+if ($id_modulo !== NULL) {
+    $sql = "SELECT nombre FROM modulos WHERE id_modulo = ?";
+    if ($stmt = $conn->prepare($sql)) {
+        $stmt->bind_param("i", $id_modulo);
+        $stmt->execute();
+        $stmt->bind_result($nombre_modulo);
+        $stmt->fetch();
+        $stmt->close();
     }
 }
 
 // Consulta el número total de ejercicios disponibles (solo si el tipo de usuario no es admin)
+$total_ejercicios = 0;
 if ($tipo_usuario !== 'admin') {
     $sql_total_ejercicios = "SELECT COUNT(e.id_ejercicio) AS total_ejercicios
-    FROM asignaturas a
-    LEFT JOIN ejercicios e ON a.id_asignatura = e.id_asignatura
-    WHERE a.id_modulo = $id_modulo";
-    $resultado_total_ejercicios = $conn->query($sql_total_ejercicios);
-    $total_ejercicios = $resultado_total_ejercicios->fetch_assoc()['total_ejercicios'];
-} else {
-    // Establecer el número total de ejercicios como 0 para administradores
-    $total_ejercicios = 0;
+                             FROM asignaturas a
+                             LEFT JOIN ejercicios e ON a.id_asignatura = e.id_asignatura
+                             WHERE a.id_modulo = ?";
+    if ($stmt = $conn->prepare($sql_total_ejercicios)) {
+        $stmt->bind_param("i", $id_modulo);
+        $stmt->execute();
+        $stmt->bind_result($total_ejercicios);
+        $stmt->fetch();
+        $stmt->close();
+    }
 }
 
 // Consulta el número total de usuarios
+$total_usuarios = 0;
 $sql_total_usuarios = "SELECT COUNT(*) AS total_usuarios FROM usuarios";
-$resultado_total_usuarios = $conn->query($sql_total_usuarios);
-$total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
+if ($resultado_total_usuarios = $conn->query($sql_total_usuarios)) {
+    $total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
+}
+
+$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -61,36 +63,57 @@ $total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
             background-color: #F8F9FA;
         }
         .navbar {
-            padding-left: 0 !important; /* Eliminar el padding a la izquierda */
-            padding-right: 10px !important; /* Eliminar el padding a la derecha */
-            margin-top: 0 !important; /* Eliminar el margen superior */
+            padding-left: 0 !important;
+            padding-right: 10px !important;
+            margin-top: 0 !important;
         }
         .jumbotron {
             padding-top: 5px;
             padding-left: 5px;
             padding-right: 5px;
         }
-        /* Estilos personalizados para el botón de la ventana modal */
         .modal-button {
-            margin-left: auto; /* Mover el botón hacia la derecha */
+            margin-left: auto;
         }
-        /* Estilo para la imagen del sol y la luna */
         #themeIcon {
-            width: 28px; /* Ajustar el ancho */
-            height: 25px; /* Ajustar la altura */
+            width: 28px;
+            height: 25px;
             margin-left: 10px;
             margin-right: 20px;
         }
-        /* Estilo para ocultar el botón y mostrar solo la imagen */
         #themeButton {
             background-color: transparent;
             border: none;
             padding: 0;
         }
-
         #themeButton img {
             width: 28px;
             height: 25px;
+        }
+        #notification {
+            display: none;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 5px;
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 300px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        #progressBar {
+            width: 100%;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        #progressBar div {
+            height: 10px;
+            width: 0;
+            background-color: #007bff;
         }
     </style>
 </head>
@@ -105,45 +128,45 @@ $total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
-            <?php if ($tipo_usuario === 'alumno'): ?>
-                <li class="nav-item dropdown">
-                    <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Módulo
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="./modulos.php"><?php echo $nombre_modulo; ?></a></li>
-                        <?php if ($id_modulo == 1): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Curso</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Curso</a></li>
-                        <?php elseif ($id_modulo == 2): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Curso</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Curso</a></li>
-                        <?php endif; ?>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>
-                </li>
+                <?php if ($tipo_usuario === 'alumno'): ?>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Módulo
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="./modulos.php"><?php echo $nombre_modulo; ?></a></li>
+                            <?php if ($id_modulo == 1): ?>
+                                <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Curso</a></li>
+                                <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Curso</a></li>
+                            <?php elseif ($id_modulo == 2): ?>
+                                <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Curso</a></li>
+                                <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Curso</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>
+                    </li>
                 <?php endif; ?>
                 <?php if ($tipo_usuario === 'profesor'): ?>
                     <li class="nav-item dropdown">
-                    <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Módulo
-                    </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="./modulos.php"><?php echo $nombre_modulo; ?></a></li>
-                        <?php if ($id_modulo == 1): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Curso</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Curso</a></li>
-                        <?php elseif ($id_modulo == 2): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Curso</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Curso</a></li>
-                        <?php endif; ?>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>
-                </li>
+                        <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Módulo
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="./modulos.php"><?php echo $nombre_modulo; ?></a></li>
+                            <?php if ($id_modulo == 1): ?>
+                                <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Curso</a></li>
+                                <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Curso</a></li>
+                            <?php elseif ($id_modulo == 2): ?>
+                                <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Curso</a></li>
+                                <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Curso</a></li>
+                            <?php endif; ?>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="./crear_ejercicio.php">Crear Ejercicio</a>
                     </li>
@@ -160,9 +183,20 @@ $total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
         </div>
     </div>
 
+    <!-- Contenedor de la notificación -->
+    <?php if (isset($_SESSION['showNotification']) && $_SESSION['showNotification']): ?>
+        <div id="notification">
+            Inicio de sesión correcto
+            <div id="progressBar"><div></div></div>
+        </div>
+        <?php unset($_SESSION['showNotification']); ?>
+    <?php endif; ?>
+
     <!-- Button trigger modal -->
-    <button type="button" class="btn modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal" style="border: none;"><img src="./img/usuario.png" style="width: 25px; height: 25px;"></button>
-    <button id="themeButton" onclick="toggleTheme()" class="btn">
+    <button type="button" class="btn modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal" style="border: none;">
+        <img src="./img/usuario.png" style="width: 25px; height: 25px;">
+    </button>
+    <button id="themeButton" onclick="toggleTheme()">
         <img id="themeIcon" src="./img/<?php echo $currentTheme === 'dark' ? 'sun' : 'moon'; ?>.png" alt="<?php echo $currentTheme === 'dark' ? 'moon' : 'sun'; ?>">
     </button>
 </nav>
@@ -188,28 +222,28 @@ $total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
 </div>
 
 <div class="jumbotron text-center">
-<div class="card2 mb-3">
-    <h1 class="display-3">¡Bienvenido a EjercitaCode!</h1>
-    <p class="lead">¡Bienvenido a nuestro portal educativo! Aquí los Profesores comparten ejercicios de asignaturas para que los alumnos practiquen y aprendan. Los ejercicios disponen de pistas y soluciones. Perfiles de alumno, profesor y administrador con funciones específicas para una experiencia personalizada.</p>
-    <p>¿Listo para empezar?</p>
-    <p class="lead">
-        <?php if ($tipo_usuario == 'profesor' || $tipo_usuario == 'alumno'): ?>
-            <a class="btn btn-primary btn-lg" href="./modulos.php" role="button">Ver Asignaturas</a>
-        <?php endif; ?>
-        <?php if ($tipo_usuario == 'profesor'): ?>
-            <a class="btn btn-primary btn-lg" href="./crear_ejercicio.php" role="button">Crear Ejercicio</a>
-        <?php endif; ?>
-        <?php if ($tipo_usuario == 'profesor' || $tipo_usuario == 'alumno'): ?>
-            <a class="btn btn-secondary btn-lg" href="./soluciones.php" role="button">Ver Soluciones</a>
-        <?php endif; ?>
-        <?php if ($tipo_usuario === 'admin'): ?>
-            <a class="btn btn-primary btn-lg" href="./modificar_usuario.php" role="button">Usuarios</a>
-        <?php endif; ?>
-        <?php if ($tipo_usuario === 'admin'): ?>
-            <a class="btn btn-primary btn-lg" href="./crear_usuario.php" role="button">Crear Usuario</a>
-        <?php endif; ?>
-    </p>
-        </div>
+    <div class="card2 mb-3">
+        <h1 class="display-3">¡Bienvenido a EjercitaCode!</h1>
+        <p class="lead">¡Bienvenido a nuestro portal educativo! Aquí los Profesores comparten ejercicios de asignaturas para que los alumnos practiquen y aprendan. Los ejercicios disponen de pistas y soluciones. Perfiles de alumno, profesor y administrador con funciones específicas para una experiencia personalizada.</p>
+        <p>¿Listo para empezar?</p>
+        <p class="lead">
+            <?php if ($tipo_usuario == 'profesor' || $tipo_usuario == 'alumno'): ?>
+                <a class="btn btn-primary btn-lg" href="./modulos.php" role="button">Ver Asignaturas</a>
+            <?php endif; ?>
+            <?php if ($tipo_usuario == 'profesor'): ?>
+                <a class="btn btn-primary btn-lg" href="./crear_ejercicio.php" role="button">Crear Ejercicio</a>
+            <?php endif; ?>
+            <?php if ($tipo_usuario == 'profesor' || $tipo_usuario == 'alumno'): ?>
+                <a class="btn btn-secondary btn-lg" href="./soluciones.php" role="button">Ver Soluciones</a>
+            <?php endif; ?>
+            <?php if ($tipo_usuario === 'admin'): ?>
+                <a class="btn btn-primary btn-lg" href="./modificar_usuario.php" role="button">Usuarios</a>
+            <?php endif; ?>
+            <?php if ($tipo_usuario === 'admin'): ?>
+                <a class="btn btn-primary btn-lg" href="./crear_usuario.php" role="button">Crear Usuario</a>
+            <?php endif; ?>
+        </p>
+    </div>
 </div>
 
 <!-- Contenedor del gráfico -->
@@ -293,6 +327,27 @@ $total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
     // Actualiza la imagen del botón según el tema actual al cargar la página
     const themeIcon = document.getElementById('themeIcon');
     themeIcon.src = `./img/${currentTheme === 'dark' ? 'sun' : 'moon'}.png`;
+</script>
+
+<script>
+    // Mostrar la notificación durante unos segundos con una barra de progreso
+    window.onload = function() {
+        var notification = document.getElementById('notification');
+        var progressBar = document.getElementById('progressBar').children[0];
+        if (notification) {
+            notification.style.display = 'inline-block';
+            let width = 0;
+            const interval = setInterval(function() {
+                if (width >= 100) {
+                    clearInterval(interval);
+                    notification.style.display = 'none';
+                } else {
+                    width++;
+                    progressBar.style.width = width + '%';
+                }
+            }, 30); // La duración total es de aproximadamente 3 segundos (100 * 30ms = 3000ms)
+        }
+    };
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>

@@ -20,6 +20,25 @@ if (!isset($_GET['id'])) {
 // Obtener el ID del ejercicio desde el parámetro GET
 $id_ejercicio = $_GET['id'];
 
+// Consulta SQL para obtener el nombre del archivo de enunciado asociado al ejercicio
+$sql_select_enunciado = "SELECT enunciado_archivo FROM ejercicios WHERE id_ejercicio = $id_ejercicio";
+$resultado = $conn->query($sql_select_enunciado);
+
+if ($resultado->num_rows > 0) {
+    $fila = $resultado->fetch_assoc();
+    $nombre_enunciado = $fila["enunciado_archivo"];
+    // Eliminar el archivo de enunciado si existe
+    if (!empty($nombre_enunciado)) {
+        $ruta_enunciado = "./" . $nombre_enunciado;
+        if (file_exists($ruta_enunciado)) {
+            unlink($ruta_enunciado);
+        }
+    }
+} else {
+    echo "Error: No se encontró el ejercicio.";
+    exit();
+}
+
 // Consulta SQL para eliminar las soluciones asociadas al ejercicio
 $sql_delete_soluciones = "DELETE FROM soluciones WHERE id_ejercicio = $id_ejercicio";
 

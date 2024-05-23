@@ -28,6 +28,110 @@ if ($resultado->num_rows > 0) {
     $nombre_modulo = "Módulo Desconocido";
 }
 
+$error = ''; // Inicializar la variable de error
+
+// Procesar la subida de archivos
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["archivo"]) && isset($_FILES["enunciado_archivo"])) {
+    $asignatura_id = $_POST["asignatura"];
+    $titulo = $_POST["titulo"];
+    $enunciado = $_POST["enunciado"];
+    $dificultad = $_POST["dificultad"];
+
+    // Directorio donde se guardarán los archivos
+    $directorio = "ejercicios/";
+
+    // Verificar si el directorio existe, si no, crearlo
+    if (!file_exists($directorio)) {
+        mkdir($directorio, 0777, true);
+    }
+
+    // Verificar la extensión del archivo de la solución
+    $extension_permitida = array("html", "php", "pdf", "zip", "js", "css", "py", "sql");
+    $extension_archivo = strtolower(pathinfo($_FILES["archivo"]["name"], PATHINFO_EXTENSION));
+    
+    if (!in_array($extension_archivo, $extension_permitida)) {
+        $error = '<div class="alert alert-danger" role="alert">La extensión del archivo de solución no es válida. Por favor, seleccione un archivo con una de las siguientes extensiones: HTML, PHP, PDF, JS, CSS, PY, SQL o ZIP.</div>';
+    } else {
+        // Guardar la ruta de los archivos en la base de datos
+        $sql = "INSERT INTO ejercicios (id_asignatura, titulo, enunciado, enunciado_archivo, dificultad, solucion) VALUES ('$asignatura_id', '$titulo', '$enunciado', '', '$dificultad', '')";
+        if ($conn->query($sql) === TRUE) {
+            // Obtener el ID del ejercicio recién creado
+            $nuevo_id_ejercicio = $conn->insert_id;
+
+            // Procesar el archivo del enunciado después de haber obtenido $nuevo_id_ejercicio
+            $extension_enunciado = strtolower(pathinfo($_FILES["enunciado_archivo"]["name"], PATHINFO_EXTENSION));
+            if (in_array($extension_enunciado, array("jpg", "jpeg", "png", "gif", "pdf"))) {
+                // Obtener el nombre original del archivo del enunciado
+                $nombre_original_enunciado = pathinfo($_FILES["enunciado_archivo"]["name"], PATHINFO_FILENAME);
+
+                // Construir el nuevo nombre del archivo del enunciado
+                $nombre_enunciado = $nombre_original_enunciado . "." . $extension_enunciado;
+
+                // Construir la ruta completa del archivo del enunciado
+                $ruta_enunciado = "enunciados/" . $nombre_enunciado;
+
+                // Comprobar si el archivo ya existe y añadir un número incremental si es necesario
+                $contador = 1;
+                while (file_exists($ruta_enunciado)) {
+                    $nombre_enunciado = $nombre_original_enunciado . "_" . $contador . "." . $extension_enunciado;
+                    $ruta_enunciado = "enunciados/" . $nombre_enunciado;
+                    $contador++;
+                }
+
+                // Mover el archivo del enunciado a la carpeta de enunciados
+                move_uploaded_file($_FILES["enunciado_archivo"]["tmp_name"], $ruta_enunciado);
+
+                // Actualizar la ruta del archivo de enunciado en la base de datos
+                $sql_update_enunciado = "UPDATE ejercicios SET enunciado_archivo='$ruta_enunciado' WHERE id_ejercicio=$nuevo_id_ejercicio";
+                if ($conn->query($sql_update_enunciado) !== TRUE) {
+                    $error = '<div class="alert alert-danger" role="alert">Error al actualizar la ruta del archivo de enunciado: ' . $conn->error . '</div>';
+                }
+            }
+
+            // Procesar la subida de archivos de pistas
+            $pistas = array();
+            for ($i = 1; $i <= 3; $i++) {
+                if (isset($_FILES["pista$i"])) {
+                    $extension_pista = strtolower(pathinfo($_FILES["pista$i"]["name"], PATHINFO_EXTENSION));
+                    if (!empty($_FILES["pista$i"]["name"]) && in_array($extension_pista, array("html", "php", "pdf", "zip", "js", "css", "txt", "py", "sql"))) {
+                        // Construir el nombre del archivo de la pista
+                        $nombre_pista = $nuevo_id_ejercicio . "_pista$i." . $extension_pista;
+                        // Mover el archivo de la pista a la carpeta de pistas
+                        $ruta_pista = "pistas/" . $nombre_pista;
+                        move_uploaded_file($_FILES["pista$i"]["tmp_name"], $ruta_pista);
+                        // Agregar la ruta de la pista al array de pistas
+                        $pistas["pista$i"] = $ruta_pista;
+                    }
+                }
+            }
+            // Actualizar las rutas de las pistas en la base de datos
+            foreach ($pistas as $key => $value) {
+                $sql_update_pista = "UPDATE ejercicios SET $key='$value' WHERE id_ejercicio=$nuevo_id_ejercicio";
+                if ($conn->query($sql_update_pista) !== TRUE) {
+                    $error = '<div class="alert alert-danger" role="alert">Error al actualizar la ruta del archivo de la pista: ' . $conn->error . '</div>';
+                }
+            }
+
+            // Construir el nombre del archivo de la solución
+            $extension = strtolower(pathinfo($_FILES["archivo"]["name"], PATHINFO_EXTENSION));
+            $nombre_archivo = $nuevo_id_ejercicio . "." . $extension;
+
+            // Mover el archivo a la carpeta de ejercicios
+            $ruta_archivo = $directorio . $nombre_archivo;
+            move_uploaded_file($_FILES["archivo"]["tmp_name"], $ruta_archivo);
+
+            // Actualizar la ruta de la solución en la base de datos
+            $sql_update_ruta = "UPDATE ejercicios SET solucion='$ruta_archivo' WHERE id_ejercicio=$nuevo_id_ejercicio";
+            if ($conn->query($sql_update_ruta) !== TRUE) {
+                $error = '<div class="alert alert-danger" role="alert">Error al actualizar la ruta del archivo de solución: ' . $conn->error . '</div>';
+            } else {
+                $error = '<div class="alert alert-success" role="alert">Ejercicio creado exitosamente.</div>';
+            }
+        } else {
+            $error = '<div class="alert alert-danger" role="alert">Error al crear el ejercicio: ' . $conn->error . '</div>';
+        }
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -194,98 +298,7 @@ if ($resultado->num_rows > 0) {
 
 <div class="container form-container">
     <h1>Crear Nuevo Ejercicio</h1>
-    <?php
-
-    // Procesar la subida de archivos
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["archivo"]) && isset($_FILES["enunciado_archivo"])) {
-        $asignatura_id = $_POST["asignatura"];
-        $titulo = $_POST["titulo"];
-        $enunciado = $_POST["enunciado"];
-        $dificultad = $_POST["dificultad"];
-
-        // Directorio donde se guardarán los archivos
-        $directorio = "ejercicios/";
-
-        // Verificar si el directorio existe, si no, crearlo
-        if (!file_exists($directorio)) {
-            mkdir($directorio, 0777, true);
-        }
-
-        // Verificar la extensión del archivo de la solución
-        $extension_permitida = array("html", "php", "pdf", "zip", "js", "css", "py", "sql");
-        $extension_archivo = strtolower(pathinfo($_FILES["archivo"]["name"], PATHINFO_EXTENSION));
-        if (!in_array($extension_archivo, $extension_permitida)) {
-            header("Location: error.php");
-            exit; // Detiene la ejecución del script
-        }
-                
-        // Guardar la ruta de los archivos en la base de datos
-        $sql = "INSERT INTO ejercicios (id_asignatura, titulo, enunciado, enunciado_archivo, dificultad, solucion) VALUES ('$asignatura_id', '$titulo', '$enunciado', '', '$dificultad', '')";
-        if ($conn->query($sql) === TRUE) {
-            // Obtener el ID del ejercicio recién creado
-            $nuevo_id_ejercicio = $conn->insert_id;
-
-            // Procesar el archivo del enunciado después de haber obtenido $nuevo_id_ejercicio
-            $extension_enunciado = strtolower(pathinfo($_FILES["enunciado_archivo"]["name"], PATHINFO_EXTENSION));
-            if (in_array($extension_enunciado, array("jpg", "jpeg", "png", "gif", "pdf"))) {
-                // Obtener el nombre del archivo del enunciado
-                $nombre_enunciado = $nuevo_id_ejercicio . "." . $extension_enunciado;
-
-                // Mover el archivo del enunciado a la carpeta de enunciados
-                $ruta_enunciado = "enunciados/" . $nombre_enunciado;
-                move_uploaded_file($_FILES["enunciado_archivo"]["tmp_name"], $ruta_enunciado);
-
-                // Actualizar la ruta del archivo de enunciado en la base de datos
-                $sql_update_enunciado = "UPDATE ejercicios SET enunciado_archivo='$ruta_enunciado' WHERE id_ejercicio=$nuevo_id_ejercicio";
-                if ($conn->query($sql_update_enunciado) !== TRUE) {
-                    echo '<div class="alert alert-danger" role="alert">Error al actualizar la ruta del archivo de enunciado: ' . $conn->error . '</div>';
-                }
-            }
-
-            // Procesar la subida de archivos de pistas
-            $pistas = array();
-            for ($i = 1; $i <= 3; $i++) {
-                if (isset($_FILES["pista$i"])) {
-                    $extension_pista = strtolower(pathinfo($_FILES["pista$i"]["name"], PATHINFO_EXTENSION));
-                    if (!empty($_FILES["pista$i"]["name"]) && in_array($extension_pista, array("html", "php", "pdf", "zip", "js", "css", "txt", "py", "sql"))) {
-                        // Construir el nombre del archivo de la pista
-                        $nombre_pista = $nuevo_id_ejercicio . "_pista$i." . $extension_pista;
-                        // Mover el archivo de la pista a la carpeta de pistas
-                        $ruta_pista = "pistas/" . $nombre_pista;
-                        move_uploaded_file($_FILES["pista$i"]["tmp_name"], $ruta_pista);
-                        // Agregar la ruta de la pista al array de pistas
-                        $pistas["pista$i"] = $ruta_pista;
-                    }
-                }
-            }
-            // Actualizar las rutas de las pistas en la base de datos
-            foreach ($pistas as $key => $value) {
-                $sql_update_pista = "UPDATE ejercicios SET $key='$value' WHERE id_ejercicio=$nuevo_id_ejercicio";
-                if ($conn->query($sql_update_pista) !== TRUE) {
-                    echo '<div class="alert alert-danger" role="alert">Error al actualizar la ruta del archivo de la pista: ' . $conn->error . '</div>';
-                }
-            }
-
-            // Construir el nombre del archivo de la solución
-            $extension = strtolower(pathinfo($_FILES["archivo"]["name"], PATHINFO_EXTENSION));
-            $nombre_archivo = $nuevo_id_ejercicio . "." . $extension;
-
-            // Mover el archivo a la carpeta de ejercicios
-            $ruta_archivo = $directorio . $nombre_archivo;
-            move_uploaded_file($_FILES["archivo"]["tmp_name"], $ruta_archivo);
-
-            // Actualizar la ruta de la solución en la base de datos
-            $sql_update_ruta = "UPDATE ejercicios SET solucion='$ruta_archivo' WHERE id_ejercicio=$nuevo_id_ejercicio";
-            if ($conn->query($sql_update_ruta) !== TRUE) {
-                echo '<div class="alert alert-danger" role="alert">Error al actualizar la ruta del archivo de solución: ' . $conn->error . '</div>';
-            } else {
-                echo '<div class="alert alert-success" role="alert">Ejercicio creado exitosamente.</div>';
-            }
-        } else {
-            echo '<div class="alert alert-danger" role="alert">Error al crear el ejercicio: ' . $conn->error . '</div>';
-        }
-    }
-    ?>
+        <?php echo $error ?>
     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST" enctype="multipart/form-data">
         <div class="mb-3">
             <label for="titulo" class="form-label">Título:</label>
@@ -297,8 +310,8 @@ if ($resultado->num_rows > 0) {
         </div>
         <div class="mb-3">
             <label for="enunciado_archivo" class="form-label">Archivo del Enunciado (Opcional):</label>
-            <input type="file" class="form-control" id="enunciado_archivo" name="enunciado_archivo" accept=".jpg, .jpeg, .png, .gif, .pdf">
-            <small><p>Se permiten archivos de imagen (JPG, JPEG, PNG, GIF) o PDF.</p></small>
+            <input type="file" class="form-control" id="enunciado_archivo" name="enunciado_archivo" accept=".jpg, .jpeg, .png, .pdf">
+            <small><p>Se permiten archivos de imagen (JPG, JPEG, PNG) PDF.</p></small>
         </div>
         <div class="mb-3">
             <label for="dificultad" class="form-label">Dificultad:</label>
@@ -333,23 +346,23 @@ if ($resultado->num_rows > 0) {
         <!-- Campos para las pistas -->
         <div class="mb-3">
             <label for="pista1" class="form-label">Pista 1 (Opcional):</label>
-            <input type="file" class="form-control" id="pista1" name="pista1" accept=".html, .php, .pdf, .zip, .js, .css, .txt, .py, .sql">
-            <small><p>Solo se permiten archivos HTML, PHP, PDF, JS, CSS, TXT, PY, SQL o ZIP.</p></small>
+            <input type="file" class="form-control" id="pista1" name="pista1" accept=".html, .php, .js, .css, .txt, .py, .sql">
+            <small><p>Solo se permiten archivos HTML, PHP, JS, CSS, TXT, PY o SQL.</p></small>
         </div>
         <div class="mb-3">
             <label for="pista2" class="form-label">Pista 2 (Opcional):</label>
-            <input type="file" class="form-control" id="pista2" name="pista2" accept=".html, .php, .pdf, .zip, .js, .css, .txt, .py, .sql">
-            <small><p>Solo se permiten archivos HTML, PHP, PDF, JS, CSS, TXT, PY, SQL o ZIP.</p></small>
+            <input type="file" class="form-control" id="pista2" name="pista2" accept=".html, .php, .js, .css, .txt, .py, .sql">
+            <small><p>Solo se permiten archivos HTML, PHP, JS, CSS, TXT, PY o SQL.</p></small>
         </div>
         <div class="mb-3">
             <label for="pista3" class="form-label">Pista 3 (Opcional):</label>
-            <input type="file" class="form-control" id="pista3" name="pista3" accept=".html, .php, .pdf, .zip, .js, .css, .txt, .py, .sql">
-            <small><p>Solo se permiten archivos HTML, PHP, PDF, JS, CSS, TXT, PY, SQL o ZIP.</p></small>
+            <input type="file" class="form-control" id="pista3" name="pista3" accept=".html, .php, .js, .css, .txt, .py, .sql">
+            <small><p>Solo se permiten archivos HTML, PHP, JS, CSS, TXT, PY o SQL.</p></small>
         </div>
         <div class="mb-3">
             <label for="archivo" class="form-label">Archivo de la Solución:</label>
             <input type="file" class="form-control" id="archivo" name="archivo" accept=".html, .php, .pdf, .zip, .js, .css, .py, .sql" required>
-            <small><p>Solo se permiten archivos HTML, PHP, PDF, JS, CSS, PY, SQL o ZIP. Si la solución consiste en varios archivos, por favor, comprímalos en un archivo ZIP.</p></small>
+            <small><p>Solo se permiten archivos HTML, PHP, JS, CSS, PY, SQL, PDF o si la solución consiste en varios archivos, por favor, comprímalos en un archivo ZIP.</p></small>
         </div>
         <div class="btn-container">
             <button type="submit" class="btn btn-primary">Crear Ejercicio</button>

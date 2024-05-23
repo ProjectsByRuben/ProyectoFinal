@@ -3,20 +3,24 @@ session_start();
 
 include './scripts/conexion.php'; // Incluye el archivo de conexión
 
-$tipo_usuario = $_SESSION['tipo'];
-$id_modulo = $_SESSION['id_modulo'];
+// Sanitizar entradas
+$id_modulo = isset($_SESSION['id_modulo']) ? intval($_SESSION['id_modulo']) : NULL;
+$tipo_usuario = isset($_SESSION['tipo']) ? $_SESSION['tipo'] : '';
 
-// Verifica si id_modulo es NULL
+// Verificar si id_modulo es NULL
 if ($id_modulo === NULL) {
     $nombre_modulo = "Módulo Desconocido";
 } else {
     // Consulta el nombre del módulo si id_modulo no es NULL
-    $sql = "SELECT nombre FROM modulos WHERE id_modulo = $id_modulo";
-    $resultado = $conn->query($sql);
+    $sql = "SELECT nombre FROM modulos WHERE id_modulo = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id_modulo);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     // Verificar si se encontró el módulo y obtener su nombre
-    if ($resultado->num_rows > 0) {
-        $fila = $resultado->fetch_assoc();
+    if ($result->num_rows > 0) {
+        $fila = $result->fetch_assoc();
         $nombre_modulo = $fila["nombre"];
     } else {
         // Si no se encuentra el módulo, mostrar un mensaje de error
@@ -43,7 +47,9 @@ if ($tipo_usuario == 'alumno') {
             INNER JOIN ejercicios ON soluciones.id_ejercicio = ejercicios.id_ejercicio 
             INNER JOIN usuarios ON soluciones.id_usuario = usuarios.id_usuario
             INNER JOIN asignaturas ON ejercicios.id_asignatura = asignaturas.id_asignatura
-            WHERE soluciones.id_usuario = $id_usuario";
+            WHERE soluciones.id_usuario = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id_usuario);
 } elseif ($tipo_usuario == 'profesor') {
     // Si es un profesor, obtener soluciones de todos los usuarios
     $sql = "SELECT soluciones.*, ejercicios.titulo, ejercicios.id_ejercicio AS id_ejercicio, usuarios.usuario AS nombre_usuario, asignaturas.nombre AS nombre_asignatura
@@ -51,15 +57,18 @@ if ($tipo_usuario == 'alumno') {
         INNER JOIN ejercicios ON soluciones.id_ejercicio = ejercicios.id_ejercicio 
         INNER JOIN usuarios ON soluciones.id_usuario = usuarios.id_usuario
         INNER JOIN asignaturas ON ejercicios.id_asignatura = asignaturas.id_asignatura
-        WHERE asignaturas.id_modulo = $id_modulo";
+        WHERE asignaturas.id_modulo = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $id_modulo);
 } else {
     // Manejar cualquier otro tipo de usuario (opcional)
     // Puedes mostrar un mensaje de error o redireccionar a otra página
     echo "Tipo de usuario no reconocido";
     exit();
 }
-$result = $conn->query($sql);
 
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -70,7 +79,7 @@ $result = $conn->query($sql);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soluciones del Usuario</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
+    <link rel="stylesheet" href="./styles.css?v=4" id="themeStylesheet">
     <style>
         body {
             font-family: 'Bangers', cursive;
@@ -87,7 +96,8 @@ $result = $conn->query($sql);
         }
         /* Estilo para el botón de descarga al pasar el ratón por encima */
         .btn-descarga:hover {
-            background-color: #00d5d6; /* Mantener el color de fondo */
+            background-color: #2c7878; /* Color de fondo del botón */
+            color: white;
         }
         #themeIcon {
             width: 28px; /* Ajustar el ancho */
@@ -214,6 +224,7 @@ $result = $conn->query($sql);
                 $titulo = $row['titulo']; // Cambio de $enunciado a $titulo
                 $id_ejercicio = $row['id_ejercicio'];
                 $id_solucion = $row['id_solucion']; // Obtener id_solucion
+                $fecha = $row['fecha_envio'];
                 ?>
                 <div class="col" data-id="<?php echo $id_solucion; ?>"> <!-- Usar id_solucion como data-id -->
                 <div class="card">
@@ -224,6 +235,8 @@ $result = $conn->query($sql);
                         <p class="card-text-solution"><?php echo $row['nombre_asignatura']; ?></p>
                         <h5 class="card-title-solution">Título del Ejercicio</h5> <!-- Cambio de Enunciado a Título -->
                         <p class="card-text-solution"><?php echo $titulo; ?></p> <!-- Cambio de Enunciado a Título -->
+                        <h5 class="card-title-solution">Fecha de Envio</h5> <!-- Cambio de Enunciado a Título -->
+                        <p class="card-text-solution"><?php echo $fecha; ?></p> <!-- Cambio de Enunciado a Título -->
                         <h5 class="card-title-solution">Archivo</h5>
                         <p class="card-text-solution"><?php echo basename($ruta_archivo); ?></p>
                         <a href="<?php echo $ruta_archivo; ?>" class="btn btn-descarga" download>Descargar</a>

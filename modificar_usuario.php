@@ -29,37 +29,60 @@ if ($resultado_usuario->num_rows == 0) {
 
 $usuario = $resultado_usuario->fetch_assoc();
 
+$error_message = ''; // Variable para almacenar el mensaje de error
+$mensaje = '';
+
 // Procesar el formulario de edición cuando se envíe
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Recopilar los datos del formulario
     $nuevo_usuario = $_POST['usuario'];
-    $nueva_contrasena = $_POST['contrasena'];
-    $nuevo_tipo = $_POST['tipo'];
+    $cambiar_contrasena = isset($_POST['cambiar_contrasena']) && $_POST['cambiar_contrasena'] === 'si';
     
-    // Verificar si el tipo es admin
-    if ($nuevo_tipo === 'admin') {
-        $nuevo_modulo = null; // Si el tipo es admin, el módulo se establece en null
-    } else {
-        // Si el tipo no es admin, verificar si se seleccionó un módulo
-        if (isset($_POST['modulo']) && $_POST['modulo'] !== '') {
-            $nuevo_modulo = $_POST['modulo'];
+    // Solo actualizar la contraseña si se ha indicado
+    if ($cambiar_contrasena) {
+        $nueva_contrasena = $_POST['contrasena'];
+        $confirmar_contrasena = $_POST['confirmar_contrasena'];
+        if ($nueva_contrasena !== $confirmar_contrasena) {
+            $error_message = '<div class="alert alert-danger" role="alert">Las contraseñas no coinciden.</div>';
         } else {
-            $nuevo_modulo = null;
+            $hashed_password = hash('sha256', $nueva_contrasena);
         }
-    }
-
-    // Validar y actualizar los datos en la base de datos
-    $update_sql = "UPDATE usuarios SET usuario = '$nuevo_usuario', contraseña = '$nueva_contrasena', tipo = '$nuevo_tipo', id_modulo = " . ($nuevo_modulo !== null ? "'$nuevo_modulo'" : "NULL") . " WHERE id_usuario = $id_usuario";
-    if ($conn->query($update_sql) === TRUE) {
-        // Redireccionar al usuario de vuelta a la página de usuarios después de la edición
-        header("Location: usuarios.php");
-        exit();
     } else {
-        // En caso de error, puedes redirigir a una página de error o mostrar un mensaje al usuario
-        echo "Error al actualizar el usuario: " . $conn->error;
+        $hashed_password = $usuario['contraseña'];
+    }
+    
+    if (empty($error_message)) {
+        $nuevo_tipo = $_POST['tipo'];
+        
+        // Verificar si el tipo es admin
+        if ($nuevo_tipo === 'admin') {
+            $nuevo_modulo = null; // Si el tipo es admin, el módulo se establece en null
+        } else {
+            // Si el tipo no es admin, verificar si se seleccionó un módulo
+            if (isset($_POST['modulo']) && $_POST['modulo'] !== '') {
+                $nuevo_modulo = $_POST['modulo'];
+            } else {
+                $nuevo_modulo = null;
+            }
+        }
+
+        // Validar y actualizar los datos en la base de datos
+        $update_sql = "UPDATE usuarios SET usuario = '$nuevo_usuario', contraseña = '$hashed_password', tipo = '$nuevo_tipo', id_modulo = " . ($nuevo_modulo !== null ? "'$nuevo_modulo'" : "NULL") . " WHERE id_usuario = $id_usuario";
+        if ($conn->query($update_sql) === TRUE) {
+            $mensaje = '<div class="alert alert-success" role="alert">Usuario modificado exitosamente.</div>';
+            // Redirigir a la misma página para mostrar el mensaje
+            header("Location: modificar_usuario.php?id=$id_usuario&mensaje=modificado");
+            exit();
+        } else {
+            $error_message = "Error al actualizar el usuario: " . $conn->error;
+        }
     }
 }
 
+// Mostrar el mensaje de éxito si existe en la URL
+if (isset($_GET['mensaje']) && $_GET['mensaje'] == 'modificado') {
+    $mensaje = '<div class="alert alert-success" role="alert">Usuario modificado exitosamente.</div>';
+}
 ?>
 
 <!DOCTYPE html>
@@ -69,35 +92,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modificar Usuario</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=10" id="themeStylesheet">
+    <link rel="stylesheet" href="./styles.css?v=22" id="themeStylesheet">
     <style>
         body {
             font-family: 'Bangers', cursive;
             background-color: #f8f9fa;
         }
         .navbar {
-            padding-left: 0 !important; /* Eliminar el padding a la izquierda */
-            padding-right: 10px !important; /* Eliminar el padding a la derecha */
-            margin-top: 0 !important; /* Eliminar el margen superior */
+            padding-left: 0 !important;
+            padding-right: 10px !important;
+            margin-top: 0 !important;
         }
-        /* Estilos personalizados para el botón de la ventana modal */
         .modal-button {
-            margin-left: auto; /* Mover el botón hacia la derecha */
+            margin-left: auto;
         }
-        /* Estilo para la imagen del sol y la luna */
         #themeIcon {
-            width: 28px; /* Ajustar el ancho */
-            height: 25px; /* Ajustar la altura */
+            width: 28px;
+            height: 25px;
             margin-left: 10px;
             margin-right: 20px;
         }
-        /* Estilo para ocultar el botón y mostrar solo la imagen */
         #themeButton {
             background-color: transparent;
             border: none;
             padding: 0;
         }
-
         #themeButton img {
             width: 28px;
             height: 25px;
@@ -122,8 +141,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .input-group {
             position: relative;
         }
-        #togglePassword {
-            position: absolute;
+        #toggleNuevaPassword {
             top: 0;
             right: 0;
             bottom: 0;
@@ -132,11 +150,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             cursor: pointer;
             padding: 5px;
         }
-        /* Estilos para el mensaje de advertencia */
+        #toggleConfirmarPassword {
+            top: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+        }
         .warning-message {
             margin-top: 10px;
             font-size: 14px;
             color: #dc3545;
+        }
+        #passwordContainer {
+            display: none; /* Ocultar inicialmente */
         }
     </style>
 </head>
@@ -210,13 +239,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
 
-    <!-- Button trigger modal -->
     <button type="button" class="btn modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal" style="border: none;"><img src="./img/usuario.png" style="width: 25px; height: 25px;"></button>
     <button id="themeButton" onclick="toggleTheme()" class="btn">
         <img id="themeIcon" src="./img/<?php echo $currentTheme === 'dark' ? 'sun' : 'moon'; ?>.png" alt="<?php echo $currentTheme === 'dark' ? 'moon' : 'sun'; ?>">
     </button></nav>
 
-<!-- Modal -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -238,18 +265,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <div class="container2">
     <form method="post">
-    <h1 class="text-center">Modificar Usuario</h1>
+        <h1 class="text-center">Modificar Usuario</h1>
+        <?php echo $error_message ?>
+        <?php echo $mensaje ?>
         <div class="mb-3">
             <label for="usuario" class="form-label">Usuario</label>
             <input type="text" class="form-control" id="usuario" name="usuario" value="<?php echo $usuario['usuario']; ?>">
         </div>
+        <input type="hidden" name="cambiar_contrasena" id="cambiar_contrasena" value="no">
         <div class="mb-3">
-            <label for="contrasena" class="form-label">Contraseña</label>
+            <button type="button" class="btn btn-secondary" id="changePasswordButton">¿Cambiar Contraseña?</button>
+        </div>
+        <div class="mb-3" id="passwordContainer">
+            <label for="contrasena" class="form-label">Nueva Contraseña</label>
             <div class="input-group">
-                <input type="password" class="form-control" id="contrasena" name="contrasena" value="<?php echo $usuario['contraseña']; ?>">
-                <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                    <img id="eyeIcon" src="./img/cerrado.png" alt="Mostrar" style="width: 28px; height: 42px; padding-top: 0px; padding-bottom: 15px;">
+                <input type="password" class="form-control" id="contrasena" name="contrasena">
+                <button class="btn btn-outline-secondary" type="button" id="toggleNuevaPassword">
+                    <img id="eyeNuevaIcon" src="./img/cerrado.png" alt="Mostrar" style="width: 28px; height: 42px; padding-top: 0px; padding-bottom: 15px;">
                 </button>
+            </div>
+            <div class="mb-3">
+                <label for="confirmar_contrasena" class="form-label">Confirmar Contraseña</label>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="confirmarContrasena" name="confirmar_contrasena">
+                    <button class="btn btn-outline-secondary" type="button" id="toggleConfirmarPassword">
+                        <img id="eyeConfirmarIcon" src="./img/cerrado.png" alt="Mostrar" style="width: 28px; height: 42px; padding-top: 0px; padding-bottom: 15px;">
+                    </button>
+                </div>
             </div>
         </div>
         <div class="mb-3">
@@ -274,38 +316,77 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </div>
 
 <script>
-    document.getElementById('togglePassword').addEventListener('click', function() {
-        var passwordInput = document.getElementById('contrasena');
-        var eyeIcon = document.getElementById('eyeIcon');
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            eyeIcon.src = './img/abierto.png';
-        } else {
-            passwordInput.type = 'password';
-            eyeIcon.src = './img/cerrado.png';
-        }
-    });
-</script>
+    document.getElementById('toggleNuevaPassword').addEventListener('click', function() {
+    var passwordInput = document.getElementById('contrasena');
+    var eyeIcon = document.getElementById('eyeNuevaIcon');
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.src = './img/abierto.png';
+    } else {
+        passwordInput.type = 'password';
+        eyeIcon.src = './img/cerrado.png';
+    }
+});
 
-<script>
+document.getElementById('toggleConfirmarPassword').addEventListener('click', function() {
+    var passwordInput = document.getElementById('confirmarContrasena');
+    var eyeIcon = document.getElementById('eyeConfirmarIcon');
+    if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        eyeIcon.src = './img/abierto.png';
+    } else {
+        passwordInput.type = 'password';
+        eyeIcon.src = './img/cerrado.png';
+    }
+});
+
+document.getElementById('changePasswordButton').addEventListener('click', function() {
+    var passwordContainer = document.getElementById('passwordContainer');
+    passwordContainer.style.display = 'block';
+    this.style.display = 'none';
+    document.getElementById('cambiar_contrasena').value = 'si'; // Actualiza el valor a 'si'
+});
+
+// Agregar validación al enviar el formulario
+document.querySelector('form').addEventListener('submit', function(event) {
+    var cambiarContrasena = document.getElementById('cambiar_contrasena').value;
+    if (cambiarContrasena === 'si') {
+        var nuevaContrasena = document.getElementById('contrasena').value;
+        var confirmarContrasena = document.getElementById('confirmarContrasena').value;
+        if (nuevaContrasena === '' || confirmarContrasena === '') {
+            event.preventDefault(); // Evitar que se envíe el formulario
+
+            // Resaltar los campos de contraseña
+            document.getElementById('contrasena').style.backgroundColor = '#a92f2f';
+            document.getElementById('confirmarContrasena').style.backgroundColor = '#a92f2f';
+
+            // Mostrar mensaje al lado de los campos
+            var mensaje = document.createElement('p');
+            mensaje.textContent = 'Por favor, complete ambos campos de contraseña.';
+            mensaje.style.color = '#dc3545';
+            mensaje.style.fontSize = '14px';
+            mensaje.classList.add('warning-message');
+            var passwordContainer = document.getElementById('passwordContainer');
+            passwordContainer.appendChild(mensaje);
+        }
+    }
+});
+
     function toggleTheme() {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme); // Guarda el tema seleccionado en el almacenamiento local
+        localStorage.setItem('theme', newTheme);
 
-        // Actualiza la imagen del botón después de cambiar el tema
         const themeIcon = document.getElementById('themeIcon');
         themeIcon.src = `./img/${newTheme === 'dark' ? 'sun' : 'moon'}.png`;
     }
 
-    // Aplica el tema almacenado en localStorage al cargar la página
     const currentTheme = localStorage.getItem('theme');
     if (currentTheme) {
         document.documentElement.setAttribute('data-theme', currentTheme);
     }
 
-    // Actualiza la imagen del botón según el tema actual al cargar la página
     const themeIcon = document.getElementById('themeIcon');
     themeIcon.src = `./img/${currentTheme === 'dark' ? 'sun' : 'moon'}.png`;
 </script>

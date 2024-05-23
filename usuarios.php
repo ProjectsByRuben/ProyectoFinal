@@ -22,7 +22,7 @@ $resultado_usuarios = $conn->query($sql_usuarios);
     <title>Usuarios</title>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=5" id="themeStylesheet">
+    <link rel="stylesheet" href="./styles.css?v=13" id="themeStylesheet">
     <style>
         body {
             font-family: 'Bangers', cursive;

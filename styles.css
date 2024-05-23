@@ -68,6 +68,22 @@ body { /* Aplica los estilos según el tema */
     color: #ffffff; /* Color del texto en modo oscuro */
 }
 
+[data-theme="dark"] .card-body .btn:hover {
+    border: none;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .card-body .uno .btn {
+    border: none; /* Elimina el borde */
+    color: #ffffff; /* Color del texto en modo oscuro */
+}
+
+[data-theme="dark"] .card-body .uno .btn:hover {
+    background-color: grey;
+    border: none;
+    color: #ffffff;
+}
+
 [data-theme="dark"] .card-body .btn-eliminar {
     background-color: darkred; /* Color para el botón de eliminar */
     border-color: darkred; /* Color del borde */
@@ -75,7 +91,21 @@ body { /* Aplica los estilos según el tema */
 
 /* Estilos adicionales para el texto dentro de las tarjetas en el modo oscuro */
 [data-theme="dark"] .card-body {
+    border-radius: 15px;
+    transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease; /* Añade una transición suave */
+}
+
+[data-theme="dark"] .card-body:hover {
+    border-radius: 15px; /* Aplica el border-radius a los elementos internos que lo necesiten */
+    background-color: #43494e;
     color: #ffffff; /* Color del texto en modo oscuro */
+    transform: translateY(-3.5px); /* Mueve el elemento 5px hacia arriba */
+}
+
+/* Aplica el border-radius a los elementos internos de la tarjeta */
+[data-theme="dark"] .card-title {
+    border-radius: 15px; /* Aplica el border-radius a los elementos internos que lo necesiten */
+    color: white;
 }
 
 /* Estilos adicionales para los botones en las tarjetas en el modo oscuro */
@@ -135,21 +165,28 @@ body { /* Aplica los estilos según el tema */
 
 /* Estilos adicionales para el input de contraseña en modo oscuro */
 [data-theme="dark"] #contrasena {
-    background-color: #43494E !important; /* Color de fondo en modo oscuro */
+    background-color: #43494E; /* Color de fondo en modo oscuro */
     color: #ffffff; /* Color del texto en modo oscuro */
     border-style: none; /* Borde en modo oscuro */
+    border-radius: 5px;
 }
 
 [data-theme="dark"] #contrasena:focus {
-    background-color: #43494E !important; /* Fondo oscuro en modo oscuro */
+    background-color: #43494E; /* Fondo oscuro en modo oscuro */
     color: white;
     border-style: none;
 }
 
-/* Aplica el border-radius a los elementos internos de la tarjeta */
-[data-theme="dark"] .card-body {
-    border-radius: 15px; /* Aplica el border-radius a los elementos internos que lo necesiten */
-    background-color: #43494e;
+[data-theme="dark"] #confirmarContrasena {
+    background-color: #43494E; /* Color de fondo en modo oscuro */
+    color: #ffffff; /* Color del texto en modo oscuro */
+    border-style: none; /* Borde en modo oscuro */
+}
+
+[data-theme="dark"] #confirmarContrasena:focus {
+    background-color: #43494E; /* Fondo oscuro en modo oscuro */
+    color: white;
+    border-style: none;
 }
 
 /* Estilos específicos para el modo oscuro */
@@ -190,6 +227,16 @@ body { /* Aplica los estilos según el tema */
     color: white;
 }
 
+[data-theme="light"] #contrasena {
+    border-style: none;
+    border-radius: 5px;
+}
+
+[data-theme="light"] #confirmarContrasena {
+    border-style: none;
+    border-radius: 5px;
+}
+
 [data-theme="light"] .btn-primary {
     background-color: #228182; /* Color de fondo del botón */
     border-color: #228182; /* Color del borde del botón */
@@ -210,16 +257,17 @@ body { /* Aplica los estilos según el tema */
     background-color: #cedeecd0; /* Hereda el color de fondo */
 }
 
-/* Establece el color de fondo específico según el tema */
-[data-theme="light"] #contrasena:focus {
-    background-color: #ffffff !important; /* Fondo blanco en modo claro */
-    color: black !important;
+/* Estilos adicionales para el texto dentro de las tarjetas en el modo oscuro */
+[data-theme="light"] .card-body {
+    border-radius: 15px;
+    transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease; /* Añade una transición suave */
 }
 
-/* Estilos adicionales para el color de fondo del div dentro de .card-body en modo claro */
-[data-theme="light"] .card-body {
-    border: none;
+[data-theme="light"] .card-body:hover {
+    border-radius: 15px; /* Aplica el border-radius a los elementos internos que lo necesiten */
     background-color: #cacccc; /* Cambia el color de fondo en modo claro */
+    color: black; /* Color del texto en modo oscuro */
+    transform: translateY(-3.5px); /* Mueve el elemento 5px hacia arriba */
 }
 
 [data-theme="light"] .card {
@@ -230,10 +278,15 @@ body { /* Aplica los estilos según el tema */
 /* Aplica el border-radius a los elementos internos de la tarjeta */
 [data-theme="light"] .card-body, .card-title {
     border-radius: 15px; /* Aplica el border-radius a los elementos internos que lo necesiten */
+    color: black;
 }
 
 [data-theme="light"] .btn, .btn-outline-secondary {
-    border: 0.2px solid #CACCCC;
+    border: 0.2px solid #a8aaaa;
+}
+
+[data-theme="light"] .btn, .btn-danger {
+    border: none;
 }
 
 /* Estilos específicos para el modo claro */

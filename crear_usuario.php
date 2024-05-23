@@ -90,7 +90,7 @@ if ($id_modulo === NULL) {
             height: 25px;
         }
         #togglePassword {
-            position: absolute;
+            height: 20px;
             top: 0;
             right: 0;
             bottom: 0;
@@ -206,12 +206,13 @@ if ($id_modulo === NULL) {
         $usuario = $_POST["usuario"];
         $contrasena = $_POST["contrasena"];
         $tipo = $_POST["tipo"];
+        $hashed_password = hash('sha256', $contrasena);
 
         // Verificar si el tipo de usuario es administrador y establecer el id_modulo en NULL si es así
         $id_modulo = ($tipo === 'admin') ? 'NULL' : $_POST["id_modulo"];
 
         // Insertar los datos del nuevo usuario en la base de datos
-        $sql = "INSERT INTO usuarios (usuario, id_modulo, contraseña, tipo) VALUES ('$usuario', $id_modulo, '$contrasena', '$tipo')";
+        $sql = "INSERT INTO usuarios (usuario, id_modulo, contraseña, tipo) VALUES ('$usuario', $id_modulo, '$hashed_password', '$tipo')";
         if ($conn->query($sql) === TRUE) {
             echo '<div class="alert alert-success" role="alert">Usuario creado exitosamente.</div>';
         } else {

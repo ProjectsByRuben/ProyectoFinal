@@ -17,9 +17,11 @@ if (!isset($_SESSION['usuario'])) {
 if ($id_modulo === NULL) {
     $nombre_modulo = "Módulo Desconocido";
 } else {
-    // Consulta el nombre del módulo si id_modulo no es NULL
-    $sql = "SELECT nombre FROM modulos WHERE id_modulo = $id_modulo";
-    $resultado = $conn->query($sql);
+    // Consulta el nombre del módulo de manera segura
+    $stmt = $conn->prepare("SELECT nombre FROM modulos WHERE id_modulo = ?");
+    $stmt->bind_param("i", $id_modulo);
+    $stmt->execute();
+    $resultado = $stmt->get_result();
 
     // Verificar si se encontró el módulo y obtener su nombre
     if ($resultado->num_rows > 0) {
@@ -29,6 +31,7 @@ if ($id_modulo === NULL) {
         // Si no se encuentra el módulo, mostrar un mensaje de error
         $nombre_modulo = "Módulo Desconocido";
     }
+    $stmt->close();
 }
 
 // Verificar si se proporciona el ID del ejercicio
@@ -38,12 +41,14 @@ if (!isset($_GET['id'])) {
     exit();
 }
 
-// Obtener el ID del ejercicio desde el parámetro GET
-$id_ejercicio = $_GET['id'];
+// Obtener el ID del ejercicio de manera segura
+$id_ejercicio = intval($_GET['id']);
 
 // Consulta para obtener la información del ejercicio
-$sql = "SELECT * FROM ejercicios WHERE id_ejercicio = $id_ejercicio";
-$result = $conn->query($sql);
+$stmt = $conn->prepare("SELECT * FROM ejercicios WHERE id_ejercicio = ?");
+$stmt->bind_param("i", $id_ejercicio);
+$stmt->execute();
+$result = $stmt->get_result();
 
 if ($result->num_rows > 0) {
     // Obtener los datos del ejercicio
@@ -56,10 +61,13 @@ if ($result->num_rows > 0) {
     echo "El ejercicio no existe.";
     exit();
 }
+$stmt->close();
 
-// Consulta para obtener las pistas del ejercicio desde las columnas pista1, pista2 y pista3
-$sql_pistas = "SELECT pista1, pista2, pista3 FROM ejercicios WHERE id_ejercicio = $id_ejercicio";
-$result_pistas = $conn->query($sql_pistas);
+// Consulta para obtener las pistas del ejercicio
+$stmt_pistas = $conn->prepare("SELECT pista1, pista2, pista3 FROM ejercicios WHERE id_ejercicio = ?");
+$stmt_pistas->bind_param("i", $id_ejercicio);
+$stmt_pistas->execute();
+$result_pistas = $stmt_pistas->get_result();
 
 $pistas = [];
 if ($result_pistas->num_rows > 0) {
@@ -69,27 +77,45 @@ if ($result_pistas->num_rows > 0) {
     $pistas[] = $row_pistas['pista2'];
     $pistas[] = $row_pistas['pista3'];
 }
+$stmt_pistas->close();
 
 // Guardar la solución enviada por el usuario
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Verificar si se ha enviado un archivo
     if (isset($_FILES["archivo"]) && $_FILES["archivo"]["error"] == 0) {
-        // Obtener la ruta donde se guardará el archivo
-        $ruta = 'soluciones/' . $_FILES['archivo']['name'];
-
-        // Mover el archivo al directorio de descargas
-        move_uploaded_file($_FILES['archivo']['tmp_name'], $ruta);
-
         // Verificar si el ID de usuario está definido en la sesión
         if (isset($_SESSION['id_usuario'])) {
             $id_usuario = $_SESSION['id_usuario'];
             
-            // Insertar la solución en la tabla de soluciones
-            $query = "INSERT INTO soluciones (id_ejercicio, id_usuario, solucion) VALUES ('$id_ejercicio', '$id_usuario', '$ruta')";
-            if ($conn->query($query) === TRUE) {
-                echo '<script>alert("Respuesta enviada correctamente."); window.location.href = window.location.href.split("?")[0];</script>';
+            // Obtener la extensión del archivo
+            $archivo_nombre = pathinfo($_FILES['archivo']['name'], PATHINFO_FILENAME);
+            $archivo_extension = pathinfo($_FILES['archivo']['name'], PATHINFO_EXTENSION);
+            
+            // Construir el nuevo nombre del archivo
+            $nuevo_nombre_archivo = $archivo_nombre . '.' . $archivo_extension;
+            $ruta = 'soluciones/' . $nuevo_nombre_archivo;
+
+            // Comprobar si el archivo ya existe y añadir un número incremental si es necesario
+            $contador = 1;
+            while (file_exists($ruta)) {
+                $nuevo_nombre_archivo = $archivo_nombre . '_' . $contador . '.' . $archivo_extension;
+                $ruta = 'soluciones/' . $nuevo_nombre_archivo;
+                $contador++;
+            }
+
+            // Mover el archivo al directorio de descargas
+            if (move_uploaded_file($_FILES['archivo']['tmp_name'], $ruta)) {
+                // Insertar la solución en la tabla de soluciones
+                $stmt_sol = $conn->prepare("INSERT INTO soluciones (id_ejercicio, id_usuario, solucion) VALUES (?, ?, ?)");
+                $stmt_sol->bind_param("iis", $id_ejercicio, $id_usuario, $ruta);
+                if ($stmt_sol->execute()) {
+                    echo '<script>alert("Respuesta enviada correctamente."); window.location.href = window.location.href.split("?")[0];</script>';
+                } else {
+                    echo '<script>alert("Error al enviar la respuesta.");</script>';
+                }
+                $stmt_sol->close();
             } else {
-                echo '<script>alert("Error al enviar la respuesta.");</script>';
+                echo '<script>alert("Error al subir el archivo.");</script>';
             }
         } else {
             echo '<script>alert("El ID de usuario no está definido en la sesión.");</script>';

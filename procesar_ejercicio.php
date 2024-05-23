@@ -11,27 +11,31 @@ if (!isset($_SESSION['usuario'])) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Verificar si se recibieron los datos del formulario
-    if (isset($_POST['titulo']) && isset($_POST['enunciado']) && isset($_POST['dificultad']) && isset($_POST['asignatura'])) {
+    if (isset($_POST['titulo'], $_POST['enunciado'], $_POST['dificultad'], $_POST['asignatura'])) {
 
-        // Obtener datos del formulario
-        $titulo = $_POST['titulo'];
-        $enunciado = $_POST['enunciado'];
-        $dificultad = $_POST['dificultad'];
-        $asignatura = $_POST['asignatura'];
+        // Obtener datos del formulario y limpiarlos
+        $titulo = htmlspecialchars($_POST['titulo']);
+        $enunciado = htmlspecialchars($_POST['enunciado']);
+        $dificultad = htmlspecialchars($_POST['dificultad']);
+        $asignatura = intval($_POST['asignatura']); // Convertir a entero para evitar inyección SQL
 
-        // Insertar nuevo ejercicio en la base de datos
-        $sql = "INSERT INTO ejercicios (titulo, enunciado, dificultad, id_asignatura) VALUES ('$titulo', '$enunciado', '$dificultad', '$asignatura')";
+        // Insertar nuevo ejercicio en la base de datos utilizando sentencia preparada
+        $sql = "INSERT INTO ejercicios (titulo, enunciado, dificultad, id_asignatura) VALUES (?, ?, ?, ?)";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("sssi", $titulo, $enunciado, $dificultad, $asignatura);
 
-        if ($conn->query($sql) === TRUE) {
+        if ($stmt->execute()) {
             // Ejercicio creado exitosamente
             header("Location: dashboard.php"); // Redirigir al dashboard
             exit();
         } else {
             // Error al crear el ejercicio
-            echo "Error: " . $sql . "<br>" . $conn->error;
+            echo "Error al crear el ejercicio. Por favor, inténtelo de nuevo más tarde.";
+            // Log de errores
+            error_log("Error al crear el ejercicio: " . $stmt->error);
         }
 
-        $conn->close();
+        $stmt->close();
     } else {
         // Datos del formulario incompletos
         echo "Por favor complete todos los campos del formulario.";

@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+// Verifica si el usuario está autenticado
 if (!isset($_SESSION['usuario'])) {
     header("Location: index.php");
     exit();
@@ -12,23 +13,56 @@ $tipo_usuario = $_SESSION['tipo'];
 $id_modulo = $_SESSION['id_modulo'];
 $id_usuario = $_SESSION['id_usuario'];
 
-// Verifica si id_modulo es NULL
-if ($id_modulo === NULL) {
-    $nombre_modulo = "Módulo Desconocido";
-} else {
-    // Consulta el nombre del módulo si id_modulo no es NULL
-    $sql = "SELECT nombre FROM modulos WHERE id_modulo = $id_modulo";
-    $resultado = $conn->query($sql);
-
-    // Verificar si se encontró el módulo y obtener su nombre
-    if ($resultado->num_rows > 0) {
-        $fila = $resultado->fetch_assoc();
-        $nombre_modulo = $fila["nombre"];
+// Función para obtener el nombre del módulo
+function obtenerNombreModulo($conn, $id_modulo) {
+    if ($id_modulo === NULL) {
+        return "Módulo Desconocido";
     } else {
-        // Si no se encuentra el módulo, mostrar un mensaje de error
-        $nombre_modulo = "Módulo Desconocido";
+        $stmt = $conn->prepare("SELECT nombre FROM modulos WHERE id_modulo = ?");
+        $stmt->bind_param("i", $id_modulo);
+        $stmt->execute();
+        $resultado = $stmt->get_result();
+        if ($resultado->num_rows > 0) {
+            $fila = $resultado->fetch_assoc();
+            return $fila["nombre"];
+        } else {
+            return "Módulo Desconocido";
+        }
     }
 }
+
+// Función para obtener el número de ejercicios
+function obtenerNumeroEjercicios($conn, $id_modulo, $id_curso = null) {
+    $query = "SELECT COUNT(e.id_ejercicio) AS num_ejercicios
+              FROM asignaturas a
+              LEFT JOIN ejercicios e ON a.id_asignatura = e.id_asignatura
+              WHERE a.id_modulo = ?";
+    if ($id_curso !== null) {
+        $query .= " AND a.id_curso = ?";
+    }
+
+    $stmt = $conn->prepare($query);
+    if ($id_curso !== null) {
+        $stmt->bind_param("ii", $id_modulo, $id_curso);
+    } else {
+        $stmt->bind_param("i", $id_modulo);
+    }
+    $stmt->execute();
+    $resultado = $stmt->get_result();
+    if ($resultado->num_rows > 0) {
+        $fila = $resultado->fetch_assoc();
+        return $fila['num_ejercicios'];
+    } else {
+        return 0;
+    }
+}
+
+$nombre_modulo = obtenerNombreModulo($conn, $id_modulo);
+$num_ejercicios = obtenerNumeroEjercicios($conn, $id_modulo);
+$num_ejercicios_curso1 = obtenerNumeroEjercicios($conn, $id_modulo, 1);
+$num_ejercicios_curso2 = obtenerNumeroEjercicios($conn, $id_modulo, 2);
+
+$imagen_modulo = ($id_modulo == 1) ? "asir.png" : "teleco.png";
 ?>
 
 <!DOCTYPE html>
@@ -38,7 +72,8 @@ if ($id_modulo === NULL) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ejercicios</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=4" id="themeStylesheet">
+    <link rel="stylesheet" href="./styles.css?v=6" id="themeStylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <style>
         body {
             font-family: 'Bangers', cursive;
@@ -49,19 +84,6 @@ if ($id_modulo === NULL) {
             padding-right: 10px !important; /* Eliminar el padding a la derecha */
             margin-top: 0 !important; /* Eliminar el margen superior */
             margin-bottom: 10px !important; /* Añade margen inferior de 10px */
-        }
-        /* Estilos para la tarjeta de ejercicios */
-        .ejercicios-card {
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-            max-width: 400px; /* Tamaño máximo de la tarjeta */
-            margin: 0 auto; /* Centrar la tarjeta */
-        }
-        .ejercicios-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
         }
         #themeIcon {
             width: 28px; /* Ajustar el ancho */
@@ -87,6 +109,37 @@ if ($id_modulo === NULL) {
         }
         .card-text {
             font-size: 18px;
+        }
+        .ejercicios-card {
+        background-color: #ffffff;
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        transition: transform 1s, box-shadow 1s;
+        }
+        .ejercicios-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+        }
+        .ejercicios-card .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .ejercicios-card .card-text {
+            font-size: 1.2rem;
+        }
+        .btn-outline-primary {
+            border-color: #007bff;
+            color: black;
+            transition: 0.5s;
+        }
+        .btn-outline-primary:hover {
+            background-color: transparent;
+            font-size: 20px;
+            color: black;
+        }
+        .bi {
+            margin-right: 0.5rem;
         }
     </style>
 </head>
@@ -166,75 +219,32 @@ if ($id_modulo === NULL) {
     </div>
 </div>
 
-<?php
-// Consulta para obtener el número de ejercicios disponibles según el id_modulo del usuario
-$sql_ejercicios = "SELECT COUNT(e.id_ejercicio) AS num_ejercicios
-                   FROM asignaturas a
-                   LEFT JOIN ejercicios e ON a.id_asignatura = e.id_asignatura
-                   WHERE a.id_modulo = $id_modulo";
-
-$result_ejercicios = $conn->query($sql_ejercicios);
-
-// Verificar si se encontraron ejercicios y obtener el número
-if ($result_ejercicios && $result_ejercicios->num_rows > 0) {
-    $row_ejercicios = $result_ejercicios->fetch_assoc();
-    $num_ejercicios = $row_ejercicios['num_ejercicios'];
-} else {
-    $num_ejercicios = 0;
-}
-
-// Consulta para obtener el número de ejercicios disponibles según el id_modulo del usuario y el id_curso = 1
-$sql_ejercicios_curso1 = "SELECT COUNT(e.id_ejercicio) AS num_ejercicios_curso1
-                          FROM asignaturas a
-                          LEFT JOIN ejercicios e ON a.id_asignatura = e.id_asignatura
-                          WHERE a.id_modulo = $id_modulo AND a.id_curso = 1";
-
-$result_ejercicios_curso1 = $conn->query($sql_ejercicios_curso1);
-
-// Verificar si se encontraron ejercicios y obtener el número
-if ($result_ejercicios_curso1 && $result_ejercicios_curso1->num_rows > 0) {
-    $row_ejercicios_curso1 = $result_ejercicios_curso1->fetch_assoc();
-    $num_ejercicios_curso1 = $row_ejercicios_curso1['num_ejercicios_curso1'];
-} else {
-    $num_ejercicios_curso1 = 0;
-}
-
-// Consulta para obtener el número de ejercicios disponibles según el id_modulo del usuario y el id_curso = 2
-$sql_ejercicios_curso2 = "SELECT COUNT(e.id_ejercicio) AS num_ejercicios_curso2
-                          FROM asignaturas a
-                          LEFT JOIN ejercicios e ON a.id_asignatura = e.id_asignatura
-                          WHERE a.id_modulo = $id_modulo AND a.id_curso = 2";
-
-$result_ejercicios_curso2 = $conn->query($sql_ejercicios_curso2);
-
-// Verificar si se encontraron ejercicios y obtener el número
-if ($result_ejercicios_curso2 && $result_ejercicios_curso2->num_rows > 0) {
-    $row_ejercicios_curso2 = $result_ejercicios_curso2->fetch_assoc();
-    $num_ejercicios_curso2 = $row_ejercicios_curso2['num_ejercicios_curso2'];
-} else {
-    $num_ejercicios_curso2 = 0;
-}
-
-?>
-
-<?php
-// Determina qué imagen mostrar según el valor de $id_modulo
-$imagen_modulo = ($id_modulo == 1) ? "asir.png" : "teleco.png";
-?>
-
 <div class="container">
     <div class="row justify-content-center mt-5">
         <div class="col-md-6">
-            <div class="card ejercicios-card">
-                <img src="./img/<?php echo $imagen_modulo; ?>" class="card-img-top" alt="Imagen del módulo">
-                <div class="card-body">
-                <p class="card-text">Este módulo tiene disponibles <span class="color"><?php echo $num_ejercicios; ?></span> ejercicio/s en total.</p>
+            <div class="card ejercicios-card p-4 mb-4">
+                <div class="card-body text-center">
+                    <h5 class="card-title">Módulo: <?php echo $nombre_modulo; ?></h5>
+                    <p class="card-text-solution">Este módulo tiene disponibles <span class="text-primary"><?php echo $num_ejercicios; ?></span> ejercicio/s en total.</p>
+                    <hr>
                     <?php if ($id_modulo == 1): ?>
-                        <a href="./asignaturas/asignaturas_asir_primero.php" class="btn btn-primary mb-2">Explorar 1º Curso (<span class="color"><?php echo $num_ejercicios_curso1; ?></span> ejercicio/s)</a>
-                        <a href="./asignaturas/asignaturas_asir_segundo.php" class="btn btn-primary mb-2">Explorar 2º Curso (<span class="color"><?php echo $num_ejercicios_curso2; ?></span> ejercicio/s)</a>
+                        <div class="d-grid gap-2">
+                            <a href="./asignaturas/asignaturas_asir_primero.php" class="uno btn btn-outline-primary mb-2">
+                                <i class="bi bi-book"></i> Explorar 1º Curso (<span class="text-primary"><?php echo $num_ejercicios_curso1; ?></span> ejercicio/s)
+                            </a>
+                            <a href="./asignaturas/asignaturas_asir_segundo.php" class="uno btn btn-outline-primary mb-2">
+                                <i class="bi bi-book"></i> Explorar 2º Curso (<span class="text-primary"><?php echo $num_ejercicios_curso2; ?></span> ejercicio/s)
+                            </a>
+                        </div>
                     <?php elseif ($id_modulo == 2): ?>
-                        <a href="./asignaturas/asignaturas_teleco_primero.php" class="btn btn-primary mb-2">Explorar 1º Curso (<span class="color"><?php echo $num_ejercicios_curso1; ?></span> ejercicio/s)</a>
-                        <a href="./asignaturas/asignaturas_teleco_segundo.php" class="btn btn-primary mb-2">Explorar 2º Curso (<span class="color"><?php echo $num_ejercicios_curso2; ?></span> ejercicio/s)</a>
+                        <div class="d-grid gap-2">
+                            <a href="./asignaturas/asignaturas_teleco_primero.php" class="uno btn btn-outline-primary mb-2">
+                                <i class="bi bi-book"></i> Explorar 1º Curso (<span class="text-primary"><?php echo $num_ejercicios_curso1; ?></span> ejercicio/s)
+                            </a>
+                            <a href="./asignaturas/asignaturas_teleco_segundo.php" class="uno btn btn-outline-primary mb-2">
+                                <i class="bi bi-book"></i> Explorar 2º Curso (<span class="text-primary"><?php echo $num_ejercicios_curso2; ?></span> ejercicio/s)
+                            </a>
+                        </div>
                     <?php endif; ?>
                 </div>
             </div>

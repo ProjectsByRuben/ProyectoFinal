@@ -123,19 +123,25 @@
         ?>
         <form action="./login.php" method="post">
             <div class="form-group">
-                <input type="text" class="form-control" name="usuario" placeholder="Usuario" required="">
+                <label for="usuario">Usuario</label>
+                <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Usuario" required>
             </div>
             <div class="form-group">
-                <input type="password" class="form-control" name="pass" placeholder="Contraseña" required="">
+                <label for="pass">Contraseña</label>
+                <input type="password" class="form-control" id="pass" name="pass" placeholder="Contraseña" required>
             </div>
             <div class="form-group">
                 <button type="submit" class="btn btn-primary btn-block submit-btn">Enviar</button>
             </div>
         </form>
+        <!-- <div class="forgot-password">
+            <a href="#">¿Olvidaste tu contraseña?</a>
+        </div> -->
     </div>
 </div>
 
-<!-- Bootstrap JS -->
+<!-- jQuery and Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

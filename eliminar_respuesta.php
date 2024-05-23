@@ -1,49 +1,75 @@
 <?php
 session_start();
 
-include './scripts/conexion.php'; // Incluye el archivo de conexión
+include './scripts/conexion.php';
 
-// Verificar si el usuario ha iniciado sesión
 if (!isset($_SESSION['usuario'])) {
-    // Si el usuario no ha iniciado sesión, redireccionar al formulario de inicio de sesión
     header("Location: index.php");
     exit();
 }
 
-// Verificar si se proporciona el ID de la solución a eliminar
-if (!isset($_GET['id'])) {
-    // Si no se proporciona el ID de la solución, redireccionar a alguna página apropiada
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     header("Location: alguna_pagina_apropiada.php");
     exit();
 }
 
-// Obtener el ID de la solución a eliminar
 $id_solucion = $_GET['id'];
 
-// Consulta para obtener la ruta del archivo de la solución
-$sql = "SELECT solucion FROM soluciones WHERE id_solucion = $id_solucion";
-$result = $conn->query($sql);
+$sql = "SELECT solucion FROM soluciones WHERE id_solucion = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $id_solucion);
+$stmt->execute();
+$result = $stmt->get_result();
 
 if ($result->num_rows > 0) {
     $row = $result->fetch_assoc();
     $ruta_archivo = $row['solucion'];
     
-    // Eliminar el archivo físico de la carpeta "soluciones"
-    if (unlink($ruta_archivo)) {
-        // Si se elimina el archivo correctamente, procede a eliminar la entrada de la base de datos
-        $sql_delete = "DELETE FROM soluciones WHERE id_solucion = $id_solucion";
-        if ($conn->query($sql_delete) === TRUE) {
-            // Redireccionar a la página actual para recargarla
-            echo "<script>window.location.reload();</script>";
+    // Verificar si hay un archivo en la ruta especificada o si el campo está vacío
+    if (empty($ruta_archivo) || !file_exists($ruta_archivo)) {
+        // Si no hay archivo, proceder a eliminar la entrada de la base de datos directamente
+        $sql_delete = "DELETE FROM soluciones WHERE id_solucion = ?";
+        $stmt_delete = $conn->prepare($sql_delete);
+        $stmt_delete->bind_param("i", $id_solucion);
+        
+        if ($stmt_delete->execute()) {
+            // Recargar la página actual después de 2 segundos
+            echo "<script>
+                    setTimeout(function() {
+                        window.location.reload();
+                    }, 2000);
+                  </script>";
+            exit();
         } else {
             echo "Error al eliminar la entrada de la base de datos: " . $conn->error;
         }
     } else {
-        echo "Error al eliminar el archivo físico.";
+        // Si hay un archivo, intentar eliminarlo primero
+        if (unlink($ruta_archivo)) {
+            $sql_delete = "DELETE FROM soluciones WHERE id_solucion = ?";
+            $stmt_delete = $conn->prepare($sql_delete);
+            $stmt_delete->bind_param("i", $id_solucion);
+            
+            if ($stmt_delete->execute()) {
+                // Recargar la página actual después de 2 segundos
+                echo "<script>
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 2000);
+                      </script>";
+                exit();
+            } else {
+                echo "Error al eliminar la entrada de la base de datos: " . $conn->error;
+            }
+        } else {
+            echo "Error al eliminar el archivo físico.";
+        }
     }
 } else {
     echo "No se encontró la solución con el ID proporcionado.";
 }
 
+$stmt->close();
+$stmt_delete->close();
 $conn->close();
 ?>
