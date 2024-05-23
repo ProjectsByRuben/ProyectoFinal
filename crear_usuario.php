@@ -106,55 +106,41 @@ if ($id_modulo === NULL) {
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <img src="./img/logo.png" alt="Bootstrap" width="140" height="90">
     <div class="container-fluid">
-        <a class="nav-link active" aria-current="page" href="javascript:history.back()">
-            <img src="../img/flecha.png" class="img-fluid" style="max-width: 30px;" alt="Flecha">
-            <span style='margin: 0 10px;'></span>
-        </a>
         <a class="navbar-brand" href="./dashboard.php">Inicio</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
-            <?php if ($tipo_usuario == 'alumno'): ?>
-                <li class="nav-item dropdown">
-                    <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Módulo
-                    </a>
+                <?php if ($tipo_usuario === 'alumno'): ?>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Módulo
+                        </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="./modulos.php"><?php echo $nombre_modulo; ?></a></li>
-                        <?php if ($id_modulo == 1): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Asir</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Asir</a></li>
-                        <?php elseif ($id_modulo == 2): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Teleco</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Teleco</a></li>
-                        <?php endif; ?>
+                        <li><a class="dropdown-item" href="./asignaturas.php?id_curso=1">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas.php?id_curso=2">2º Curso</a></li>
                     </ul>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>
-                </li>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>
+                    </li>
                 <?php endif; ?>
                 <?php if ($tipo_usuario === 'profesor'): ?>
                     <li class="nav-item dropdown">
-                    <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Módulo
-                    </a>
+                        <a class="nav-link active dropdown-toggle" href="./modulos.php" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Módulo
+                        </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="./modulos.php"><?php echo $nombre_modulo; ?></a></li>
-                        <?php if ($id_modulo == 1): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Asir</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Asir</a></li>
-                        <?php elseif ($id_modulo == 2): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Teleco</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Teleco</a></li>
-                        <?php endif; ?>
+                        <li><a class="dropdown-item" href="./asignaturas.php?id_curso=1">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas.php?id_curso=2">2º Curso</a></li>
                     </ul>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>
-                </li>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./soluciones.php">Soluciones</a>
+                    </li>
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="./crear_ejercicio.php">Crear Ejercicio</a>
                     </li>
@@ -166,14 +152,28 @@ if ($id_modulo === NULL) {
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="./crear_usuario.php">Crear Usuario</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./crear_modulos.php">Crear Modulos</a>
+                    </li>
                 <?php endif; ?>
             </ul>
         </div>
     </div>
 
+    <!-- Contenedor de la notificación -->
+    <?php if (isset($_SESSION['showNotification']) && $_SESSION['showNotification']): ?>
+        <div id="notification">
+            Inicio de sesión correcto
+            <div id="progressBar"><div></div></div>
+        </div>
+        <?php unset($_SESSION['showNotification']); ?>
+    <?php endif; ?>
+
     <!-- Button trigger modal -->
-    <button type="button" class="btn modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal" style="border: none;"><img src="./img/usuario.png" style="width: 25px; height: 25px;"></button>
-    <button id="themeButton" onclick="toggleTheme()" class="btn">
+    <button type="button" class="btn modal-button" data-bs-toggle="modal" data-bs-target="#exampleModal" style="border: none;">
+        <img src="./img/usuario.png" style="width: 25px; height: 25px;">
+    </button>
+    <button id="themeButton" onclick="toggleTheme()">
         <img id="themeIcon" src="./img/<?php echo $currentTheme === 'dark' ? 'sun' : 'moon'; ?>.png" alt="<?php echo $currentTheme === 'dark' ? 'moon' : 'sun'; ?>">
     </button>
 </nav>

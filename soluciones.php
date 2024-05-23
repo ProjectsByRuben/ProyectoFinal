@@ -125,7 +125,7 @@ $result = $stmt->get_result();
     <img src="./img/logo.png" alt="Bootstrap" width="140" height="90">
     <div class="container-fluid">
         <a class="nav-link active" aria-current="page" href="javascript:history.back()">
-            <img src="../img/flecha.png" class="img-fluid" style="max-width: 30px;" alt="Flecha">
+            <img src="./img/flecha.png" class="img-fluid" style="max-width: 30px;" alt="Flecha">
             <span style='margin: 0 10px;'></span>
         </a>
         <a class="navbar-brand" href="./dashboard.php">Inicio</a>
@@ -141,13 +141,8 @@ $result = $stmt->get_result();
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="./modulos.php"><?php echo $nombre_modulo; ?></a></li>
-                        <?php if ($id_modulo == 1): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Curso</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Curso</a></li>
-                        <?php elseif ($id_modulo == 2): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Curso</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Curso</a></li>
-                        <?php endif; ?>
+                        <li><a class="dropdown-item" href="./asignaturas.php?id_curso=1">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas.php?id_curso=2">2º Curso</a></li>
                     </ul>
                 </li>
                 <li class="nav-item">
@@ -161,13 +156,8 @@ $result = $stmt->get_result();
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="./modulos.php"><?php echo $nombre_modulo; ?></a></li>
-                        <?php if ($id_modulo == 1): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Curso</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Curso</a></li>
-                        <?php elseif ($id_modulo == 2): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Curso</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Curso</a></li>
-                        <?php endif; ?>
+                        <li><a class="dropdown-item" href="./asignaturas.php?id_curso=1">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas.php?id_curso=2">2º Curso</a></li>
                     </ul>
                 </li>
                 <li class="nav-item">

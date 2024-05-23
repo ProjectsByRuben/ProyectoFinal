@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 include './scripts/conexion.php'; // Incluye el archivo de conexión
 
 if (!isset($_SESSION['usuario'])) {
@@ -8,45 +9,37 @@ if (!isset($_SESSION['usuario'])) {
 }
 
 $tipo_usuario = $_SESSION['tipo'];
-$id_modulo = $_SESSION['id_modulo'];
+$message = '';
 
-// Verifica si id_modulo es NULL
-$nombre_modulo = "Módulo Desconocido";
-if ($id_modulo !== NULL) {
-    $sql = "SELECT nombre FROM modulos WHERE id_modulo = ?";
-    if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param("i", $id_modulo);
-        $stmt->execute();
-        $stmt->bind_result($nombre_modulo);
-        $stmt->fetch();
-        $stmt->close();
+// Procesar el envío del formulario
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Obtener datos del formulario
+    $nombre_modulo = $_POST["nombreModulo"];
+    $asignaturas_1 = $_POST["asignaturas_1"];
+    $asignaturas_2 = $_POST["asignaturas_2"];
+
+    // Insertar el módulo en la tabla de módulos
+    $sql_modulo = "INSERT INTO modulos (nombre) VALUES ('$nombre_modulo')";
+    if ($conn->query($sql_modulo) === TRUE) {
+        $id_modulo = $conn->insert_id;
+
+        // Insertar las asignaturas del 1º Curso en la tabla de asignaturas
+        foreach ($asignaturas_1 as $asignatura) {
+            $sql_asignatura_1 = "INSERT INTO asignaturas (id_modulo, id_curso, nombre) VALUES ($id_modulo, 1, '$asignatura')";
+            $conn->query($sql_asignatura_1);
+        }
+
+        // Insertar las asignaturas del 2º Curso en la tabla de asignaturas
+        foreach ($asignaturas_2 as $asignatura) {
+            $sql_asignatura_2 = "INSERT INTO asignaturas (id_modulo, id_curso, nombre) VALUES ($id_modulo, 2, '$asignatura')";
+            $conn->query($sql_asignatura_2);
+        }
+
+        $message = '<div class="alert alert-success" role="alert">Módulo y asignaturas creados exitosamente.</div>';
+    } else {
+        $message = '<div class="alert alert-danger" role="alert">Error al crear el módulo: ' . $conn->error . '</div>';
     }
 }
-
-// Consulta el número total de ejercicios disponibles (solo si el tipo de usuario no es admin)
-$total_ejercicios = 0;
-if ($tipo_usuario !== 'admin') {
-    $sql_total_ejercicios = "SELECT COUNT(e.id_ejercicio) AS total_ejercicios
-                             FROM asignaturas a
-                             LEFT JOIN ejercicios e ON a.id_asignatura = e.id_asignatura
-                             WHERE a.id_modulo = ?";
-    if ($stmt = $conn->prepare($sql_total_ejercicios)) {
-        $stmt->bind_param("i", $id_modulo);
-        $stmt->execute();
-        $stmt->bind_result($total_ejercicios);
-        $stmt->fetch();
-        $stmt->close();
-    }
-}
-
-// Consulta el número total de usuarios
-$total_usuarios = 0;
-$sql_total_usuarios = "SELECT COUNT(*) AS total_usuarios FROM usuarios";
-if ($resultado_total_usuarios = $conn->query($sql_total_usuarios)) {
-    $total_usuarios = $resultado_total_usuarios->fetch_assoc()['total_usuarios'];
-}
-
-$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -55,70 +48,73 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
-    <title>Dashboard</title>
+    <link rel="stylesheet" href="./styles.css?v=6" id="themeStylesheet">
+    <title>Crear Nuevo Usuario</title>
     <style>
         body {
             font-family: 'Bangers', cursive;
-            background-color: #F8F9FA;
+            background-color: #f8f9fa;
         }
         .navbar {
-            padding-left: 0 !important;
-            padding-right: 10px !important;
-            margin-top: 0 !important;
+            padding-left: 0 !important; /* Eliminar el padding a la izquierda */
+            padding-right: 10px !important; /* Eliminar el padding a la derecha */
+            margin-top: 0 !important; /* Eliminar el margen superior */
         }
-        .jumbotron {
-            padding-top: 5px;
-            padding-left: 5px;
-            padding-right: 5px;
+
+        .form-container2 {
+            background-color: #CACCCC;
+            margin-top: 50px;
+            max-width: 400px;
+            padding: 20px;
+            border-radius: 10px;
+            border: none;
+            box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1);
         }
-        .modal-button {
-            margin-left: auto;
+
+        .form-label {
+            font-weight: bold;
         }
+
+        .btn-primary {
+            color: white;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+        }
+
         #themeIcon {
-            width: 28px;
-            height: 25px;
-            margin-left: 10px;
-            margin-right: 20px;
+            width: 28px; /* Ajustar el ancho */
+            height: 25px; /* Ajustar la altura */
+            margin-left: 11px;
+            margin-right: 10px;
         }
+
         #themeButton {
             background-color: transparent;
             border: none;
             padding: 0;
         }
+
         #themeButton img {
             width: 28px;
             height: 25px;
         }
-        #notification {
-            display: none;
-            padding: 10px;
-            background-color: #28a745;
-            color: white;
-            border-radius: 5px;
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            width: 300px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }
-        #progressBar {
-            width: 100%;
-            background-color: #f1f1f1;
-            border-radius: 5px;
-            overflow: hidden;
-            margin-top: 10px;
-        }
-        #progressBar div {
-            height: 10px;
-            width: 0;
-            background-color: #007bff;
+        #togglePassword {
+            height: 20px;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
         }
     </style>
 </head>
 <body>
-
+    
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <img src="./img/logo.png" alt="Bootstrap" width="140" height="90">
     <div class="container-fluid">
@@ -214,92 +210,51 @@ $conn->close();
     </div>
 </div>
 
-<div class="jumbotron text-center">
-    <div class="card2 mb-3">
-        <h1 class="display-3">¡Bienvenido a EjercitaCode!</h1>
-        <p class="lead">¡Bienvenido a nuestro portal educativo! Aquí los Profesores comparten ejercicios de asignaturas para que los alumnos practiquen y aprendan. Los ejercicios disponen de pistas y soluciones. Perfiles de alumno, profesor y administrador con funciones específicas para una experiencia personalizada.</p>
-        <p>¿Listo para empezar?</p>
-        <p class="lead">
-            <?php if ($tipo_usuario == 'profesor' || $tipo_usuario == 'alumno'): ?>
-                <a class="btn btn-primary btn-lg" href="./modulos.php" role="button">Ver Asignaturas</a>
-            <?php endif; ?>
-            <?php if ($tipo_usuario == 'profesor'): ?>
-                <a class="btn btn-primary btn-lg" href="./crear_ejercicio.php" role="button">Crear Ejercicio</a>
-            <?php endif; ?>
-            <?php if ($tipo_usuario == 'profesor' || $tipo_usuario == 'alumno'): ?>
-                <a class="btn btn-secondary btn-lg" href="./soluciones.php" role="button">Ver Soluciones</a>
-            <?php endif; ?>
-            <?php if ($tipo_usuario === 'admin'): ?>
-                <a class="btn btn-primary btn-lg" href="./modificar_usuario.php" role="button">Usuarios</a>
-            <?php endif; ?>
-            <?php if ($tipo_usuario === 'admin'): ?>
-                <a class="btn btn-primary btn-lg" href="./crear_usuario.php" role="button">Crear Usuario</a>
-            <?php endif; ?>
-            <?php if ($tipo_usuario === 'admin'): ?>
-                <a class="btn btn-primary btn-lg" href="./crear_modulos.php" role="button">Crear Módulo</a>
-            <?php endif; ?>
-        </p>
-    </div>
-</div>
-
-<!-- Contenedor del gráfico -->
-<div class="container">
-    <h2 class="text-center mb-4">Estadísticas</h2>
-    <div class="row justify-content-center"> <!-- Centra horizontalmente -->
-        <div class="col-md-8">
-            <div class="text-center"> <!-- Centra verticalmente -->
-                <canvas id="barChart" width="1000" height="500"></canvas> <!-- Ajustado para que sea más grande -->
-            </div>
+<div class="container2 form-container2">
+    <h1 class="text-center">Crear Nuevo Módulo</h1>
+    <!-- Mostrar mensaje de éxito o error -->
+    <?php if ($message != ''): ?>
+        <div class="text-center"><?php echo $message; ?></div>
+    <?php endif; ?>
+    <!-- Formulario para crear un nuevo módulo -->
+    <form method="post">
+        <div class="mb-3">
+            <label for="nombreModulo" class="form-label">Nombre del Módulo:</label>
+            <input type="text" class="form-control" id="nombreModulo" name="nombreModulo" required>
         </div>
-    </div>
+        <div class="mb-3">
+            <label class="form-label">Asignaturas para el 1º Curso:</label>
+            <div id="asignaturasContainer_1">
+                <input type="text" class="form-control mb-2" name="asignaturas_1[]" required>
+            </div>
+            <button type="button" class="btn btn-primary mb-2" onclick="agregarAsignatura('asignaturasContainer_1')">Agregar Asignatura</button>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Asignaturas para el 2º Curso:</label>
+            <div id="asignaturasContainer_2">
+                <input type="text" class="form-control mb-2" name="asignaturas_2[]" required>
+            </div>
+            <button type="button" class="btn btn-primary mb-2" onclick="agregarAsignatura('asignaturasContainer_2')">Agregar Asignatura</button>
+        </div>
+
+        <div class="btn-container">
+            <button type="submit" class="btn btn-primary">Crear Módulo</button>
+        </div>
+    </form>
 </div>
 
-<!-- Script para incluir la biblioteca Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- Script para configurar y mostrar el gráfico -->
+<!-- Scripts al final del body -->
 <script>
-    // Datos del gráfico
-    var totalEjercicios = <?php echo $total_ejercicios; ?>;
-    var totalUsuarios = <?php echo $total_usuarios; ?>;
-
-    // Configuración del gráfico
-    var ctx = document.getElementById('barChart').getContext('2d');
-    var barChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Ejercicios Disponibles', 'Usuarios Totales'],
-            datasets: [{
-                label: 'Ejercicios', // Etiqueta para los ejercicios
-                data: [totalEjercicios, 0], // Se establece 0 para el total de usuarios para que no se muestre en la leyenda
-                backgroundColor: '#007bff',
-                borderWidth: 1
-            }, {
-                label: 'Usuarios', // Etiqueta para los usuarios
-                data: [0, totalUsuarios], // Se establece 0 para el total de ejercicios para que no se muestre en la leyenda
-                backgroundColor: '#28a745',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            },
-            plugins: {
-                legend: {
-                    display: true,
-                    labels: {
-                        // Filtrar las etiquetas para que solo muestre las de ejercicios y usuarios
-                        filter: function(item, chart) {
-                            return item.text === 'Ejercicios' || item.text === 'Usuarios';
-                        }
-                    }
-                }
-            }
-        }
-    });
+    function agregarAsignatura(containerId) {
+        var container = document.getElementById(containerId);
+        var newInput = document.createElement('input');
+        newInput.type = 'text';
+        newInput.className = 'form-control mb-2';
+        newInput.name = containerId.replace('asignaturasContainer_', '') === '1' ? 'asignaturas_1[]' : 'asignaturas_2[]'; // Asignar el nombre correcto según el contenedor
+        newInput.required = true;
+        var button = container.querySelector('button'); // Obtener el botón "Agregar Asignatura"
+        container.insertBefore(newInput, button); // Insertar el nuevo campo antes del botón "Agregar Asignatura"
+    }
 </script>
 
 <script>
@@ -324,28 +279,6 @@ $conn->close();
     const themeIcon = document.getElementById('themeIcon');
     themeIcon.src = `./img/${currentTheme === 'dark' ? 'sun' : 'moon'}.png`;
 </script>
-
-<script>
-    // Mostrar la notificación durante unos segundos con una barra de progreso
-    window.onload = function() {
-        var notification = document.getElementById('notification');
-        var progressBar = document.getElementById('progressBar').children[0];
-        if (notification) {
-            notification.style.display = 'inline-block';
-            let width = 0;
-            const interval = setInterval(function() {
-                if (width >= 100) {
-                    clearInterval(interval);
-                    notification.style.display = 'none';
-                } else {
-                    width++;
-                    progressBar.style.width = width + '%';
-                }
-            }, 30); // La duración total es de aproximadamente 3 segundos (100 * 30ms = 3000ms)
-        }
-    };
-</script>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

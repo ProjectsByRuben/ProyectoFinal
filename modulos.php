@@ -57,12 +57,19 @@ function obtenerNumeroEjercicios($conn, $id_modulo, $id_curso = null) {
     }
 }
 
+// Obtener los cursos asociados al módulo desde la tabla de asignaturas
+$sql_cursos = "SELECT DISTINCT c.id_curso, c.nombre
+               FROM asignaturas a
+               JOIN cursos c ON a.id_curso = c.id_curso
+               WHERE a.id_modulo = ?";
+$stmt_cursos = $conn->prepare($sql_cursos);
+$stmt_cursos->bind_param("i", $id_modulo);
+$stmt_cursos->execute();
+$result_cursos = $stmt_cursos->get_result();
+$cursos = $result_cursos->fetch_all(MYSQLI_ASSOC);
+
 $nombre_modulo = obtenerNombreModulo($conn, $id_modulo);
 $num_ejercicios = obtenerNumeroEjercicios($conn, $id_modulo);
-$num_ejercicios_curso1 = obtenerNumeroEjercicios($conn, $id_modulo, 1);
-$num_ejercicios_curso2 = obtenerNumeroEjercicios($conn, $id_modulo, 2);
-
-$imagen_modulo = ($id_modulo == 1) ? "asir.png" : "teleco.png";
 ?>
 
 <!DOCTYPE html>
@@ -149,7 +156,7 @@ $imagen_modulo = ($id_modulo == 1) ? "asir.png" : "teleco.png";
     <img src="./img/logo.png" alt="Bootstrap" width="140" height="90">
     <div class="container-fluid">
         <a class="nav-link active" aria-current="page" href="javascript:history.back()">
-            <img src="../img/flecha.png" class="img-fluid" style="max-width: 30px;" alt="Flecha">
+            <img src="./img/flecha.png" class="img-fluid" style="max-width: 30px;" alt="Flecha">
             <span style='margin: 0 10px;'></span>
         </a>
         <a class="navbar-brand" href="./dashboard.php">Inicio</a>
@@ -165,13 +172,8 @@ $imagen_modulo = ($id_modulo == 1) ? "asir.png" : "teleco.png";
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <li><a class="dropdown-item" href="./modulos.php"><?php echo $nombre_modulo; ?></a></li>
-                        <?php if ($id_modulo == 1): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_primero.php">1º Curso</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_asir_segundo.php">2º Curso</a></li>
-                        <?php elseif ($id_modulo == 2): ?>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_primero.php">1º Curso</a></li>
-                        <li><a class="dropdown-item" href="./asignaturas/asignaturas_teleco_segundo.php">2º Curso</a></li>
-                        <?php endif; ?>
+                        <li><a class="dropdown-item" href="./asignaturas.php?id_curso=1">1º Curso</a></li>
+                        <li><a class="dropdown-item" href="./asignaturas.php?id_curso=2">2º Curso</a></li>
                     </ul>
                 </li>
                 <li class="nav-item">
@@ -227,25 +229,16 @@ $imagen_modulo = ($id_modulo == 1) ? "asir.png" : "teleco.png";
                     <h5 class="card-title">Módulo: <?php echo $nombre_modulo; ?></h5>
                     <p class="card-text-solution">Este módulo tiene disponibles <span class="text-primary"><?php echo $num_ejercicios; ?></span> ejercicio/s en total.</p>
                     <hr>
-                    <?php if ($id_modulo == 1): ?>
-                        <div class="d-grid gap-2">
-                            <a href="./asignaturas/asignaturas_asir_primero.php" class="uno btn btn-outline-primary mb-2">
-                                <i class="bi bi-book"></i> Explorar 1º Curso (<span class="text-primary"><?php echo $num_ejercicios_curso1; ?></span> ejercicio/s)
+                    <div class="d-grid gap-2">
+                        <?php foreach ($cursos as $curso): ?>
+                            <?php
+                                $num_ejercicios_curso = obtenerNumeroEjercicios($conn, $id_modulo, $curso['id_curso']);
+                            ?>
+                            <a href="./asignaturas.php?id_curso=<?php echo $curso['id_curso']; ?>" class="uno btn btn-outline-primary mb-2">
+                                <i class="bi bi-book"></i> Explorar <?php echo $curso['nombre']; ?> (<span class="text-primary"><?php echo $num_ejercicios_curso; ?></span> ejercicio/s)
                             </a>
-                            <a href="./asignaturas/asignaturas_asir_segundo.php" class="uno btn btn-outline-primary mb-2">
-                                <i class="bi bi-book"></i> Explorar 2º Curso (<span class="text-primary"><?php echo $num_ejercicios_curso2; ?></span> ejercicio/s)
-                            </a>
-                        </div>
-                    <?php elseif ($id_modulo == 2): ?>
-                        <div class="d-grid gap-2">
-                            <a href="./asignaturas/asignaturas_teleco_primero.php" class="uno btn btn-outline-primary mb-2">
-                                <i class="bi bi-book"></i> Explorar 1º Curso (<span class="text-primary"><?php echo $num_ejercicios_curso1; ?></span> ejercicio/s)
-                            </a>
-                            <a href="./asignaturas/asignaturas_teleco_segundo.php" class="uno btn btn-outline-primary mb-2">
-                                <i class="bi bi-book"></i> Explorar 2º Curso (<span class="text-primary"><?php echo $num_ejercicios_curso2; ?></span> ejercicio/s)
-                            </a>
-                        </div>
-                    <?php endif; ?>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             </div>
         </div>
