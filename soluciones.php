@@ -79,7 +79,7 @@ $result = $stmt->get_result();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Soluciones del Usuario</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=4" id="themeStylesheet">
+    <link rel="stylesheet" href="./estilos/styles.css?v=4" id="themeStylesheet">
     <style>
         body {
             font-family: 'Bangers', cursive;
@@ -198,7 +198,7 @@ $result = $stmt->get_result();
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <a href="cerrar_sesion.php" class="btn btn-primary">Cerrar sesión</a>
+                    <a href="../scripts/cerrar_sesion.php" class="btn btn-primary">Cerrar sesión</a>
                 </div>
             </div>
         </div>
@@ -244,31 +244,31 @@ $result = $stmt->get_result();
     </div>
 </div>
     
-    <script>
-        function eliminarRespuesta(id_solucion, ruta_archivo) {
-    if (confirm("¿Estás seguro de que deseas eliminar esta respuesta?")) {
-        fetch('eliminar_respuesta.php?id=' + id_solucion, {
-            method: 'GET'
-        })
-        .then(response => {
-            if (response.ok) {
-                const cardToRemove = document.querySelector(`[data-id="${id_solucion}"]`);
-                if (cardToRemove) {
-                    cardToRemove.parentNode.removeChild(cardToRemove);
+<script>
+    function eliminarRespuesta(id_solucion, ruta_archivo) {
+        if (confirm("¿Estás seguro de que deseas eliminar esta respuesta?")) {
+            fetch('../scripts/eliminar_respuesta.php?id=' + id_solucion, { // Cambio de ruta
+                method: 'GET'
+            })
+            .then(response => {
+                if (response.ok) {
+                    const cardToRemove = document.querySelector(`[data-id="${id_solucion}"]`);
+                    if (cardToRemove) {
+                        cardToRemove.parentNode.removeChild(cardToRemove);
+                    }
+                    // Eliminar el archivo de la carpeta "soluciones"
+                    eliminarArchivoDescarga(ruta_archivo);
+                } else {
+                    throw new Error('Error al eliminar la respuesta');
                 }
-                // Eliminar el archivo de la carpeta "soluciones"
-                eliminarArchivoDescarga(ruta_archivo);
-            } else {
-                throw new Error('Error al eliminar la respuesta');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
     }
-}
 
-        function toggleTheme() {
+    function toggleTheme() {
         const currentTheme = document.documentElement.getAttribute('data-theme');
         const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', newTheme);
@@ -288,7 +288,7 @@ $result = $stmt->get_result();
     // Actualiza la imagen del botón según el tema actual al cargar la página
     const themeIcon = document.getElementById('themeIcon');
     themeIcon.src = `./img/${currentTheme === 'dark' ? 'sun' : 'moon'}.png`;
-    </script>
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>

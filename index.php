@@ -121,7 +121,7 @@
                 unset($_SESSION['error']);
             }
         ?>
-        <form action="./login.php" method="post">
+        <form action="./scripts/login.php" method="post">
             <div class="form-group">
                 <label for="usuario">Usuario</label>
                 <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Usuario" required>

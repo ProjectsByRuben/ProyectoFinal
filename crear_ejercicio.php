@@ -140,7 +140,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["archivo"]) && isset($
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
+    <link rel="stylesheet" href="./estilos/styles.css?v=2" id="themeStylesheet">
     <title>Crear Ejercicio</title>
     <style>
         body {
@@ -280,7 +280,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["archivo"]) && isset($
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <a href="cerrar_sesion.php" class="btn btn-primary">Cerrar sesión</a>
+                <a href="../scripts/cerrar_sesion.php" class="btn btn-primary">Cerrar sesión</a>
             </div>
         </div>
     </div>

@@ -1,6 +1,6 @@
 <?php
 session_start();
-include './scripts/conexion.php'; // Incluye el archivo de conexión utilizando una ruta relativa
+include './conexion.php'; // Incluye el archivo de conexión utilizando una ruta relativa
 
 if (isset($_POST['usuario']) && isset($_POST['pass'])) {
 
@@ -29,18 +29,18 @@ if (isset($_POST['usuario']) && isset($_POST['pass'])) {
                 $_SESSION['tipo'] = $tipo; // Guardar el tipo de usuario en la sesión
                 $_SESSION['id_modulo'] = $id_modulo; // Guardar el id del módulo en la sesión
                 $_SESSION['showNotification'] = true;
-                header("Location: dashboard.php");
+                header("Location: ../dashboard.php");
                 exit();
             } else {
                 // Contraseña incorrecta
                 $_SESSION['error'] = "Credenciales incorrectas.";
-                header("Location: index.php");
+                header("Location: ../index.php");
                 exit();
             }
         } else {
             // Usuario no encontrado
             $_SESSION['error'] = "Credenciales incorrectas.";
-            header("Location: index.php");
+            header("Location: ../index.php");
             exit();
         }
 
@@ -48,14 +48,14 @@ if (isset($_POST['usuario']) && isset($_POST['pass'])) {
     } else {
         // Error en la preparación de la consulta
         $_SESSION['error'] = "Error en la conexión a la base de datos.";
-        header("Location: index.php");
+        header("Location: ../index.php");
         exit();
     }
 
     $conn->close();
 } else {
     // Si el formulario no ha sido enviado correctamente
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit();
 }
 ?>

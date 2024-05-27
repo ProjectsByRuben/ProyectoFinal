@@ -10,8 +10,8 @@ if (!isset($_SESSION['usuario'])) {
 $tipo_usuario = $_SESSION['tipo'];
 
 // Consulta todos los usuarios disponibles en la base de datos agrupados por tipo
-$sql_usuarios = "SELECT * FROM usuarios ORDER BY tipo";
-$resultado_usuarios = $conn->query($sql_usuarios);
+$sql_usuarios = "SELECT * FROM modulos";
+$resultado_modulos = $conn->query($sql_usuarios);
 ?>
 
 <!DOCTYPE html>
@@ -177,44 +177,42 @@ $resultado_usuarios = $conn->query($sql_usuarios);
 </div>
 
 <div class="container mt-4">
-    <h1 class="mb-4">Usuarios</h1>
-    <!-- Verifica si hay usuarios en la base de datos -->
-    <?php if ($resultado_usuarios->num_rows > 0): ?>
-        <!-- Itera sobre cada tipo de usuario y muestra los usuarios agrupados -->
-        <?php $tipo_anterior = ''; ?>
-        <?php while ($fila = $resultado_usuarios->fetch_assoc()): ?>
-            <?php if ($fila['tipo'] !== $tipo_anterior): ?>
-                <?php if ($tipo_anterior !== ''): ?>
-                    </div><!-- Cierra el contenedor de usuarios -->
+    <h1 class="mb-4">Módulos</h1>
+    <!-- Verifica si hay módulos en la base de datos -->
+    <?php if ($resultado_modulos->num_rows > 0): ?>
+        <!-- Itera sobre cada módulo y muestra los nombres agrupados -->
+        <?php $nombre_anterior = ''; ?>
+        <?php while ($fila = $resultado_modulos->fetch_assoc()): ?>
+            <?php if ($fila['nombre'] !== $nombre_anterior): ?>
+                <?php if ($nombre_anterior !== ''): ?>
+                    </div><!-- Cierra el contenedor de módulos -->
                 <?php endif; ?>
-                <!-- Cambia los nombres de los tipos de usuarios -->
+                <!-- Cambia los nombres de los módulos -->
                 <h2>
-                    <?php if ($fila['tipo'] === 'alumno'): ?>
-                        Alumnos
-                    <?php elseif ($fila['tipo'] === 'profesor'): ?>
-                        Profesores
-                    <?php elseif ($fila['tipo'] === 'admin'): ?>
-                        Administradores
+                    <?php if ($fila['nombre'] === 'curso'): ?>
+                        Cursos
+                    <?php elseif ($fila['nombre'] === 'asignatura'): ?>
+                        Asignaturas
                     <?php endif; ?>
                 </h2>
-                <div class="row row-cols-1 row-cols-md-3 g-4"><!-- Abre un nuevo contenedor de usuarios -->
+                <div class="row row-cols-1 row-cols-md-3 g-4"><!-- Abre un nuevo contenedor de módulos -->
             <?php endif; ?>
             <div class="col">
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title"><?php echo $fila['usuario']; ?></h5>
-                        <!-- Botón para modificar el usuario -->
-                        <a href="modificar_usuario.php?id=<?php echo $fila['id_usuario']; ?>" class="btn btn-primary">Modificar</a>
-                        <!-- Botón para eliminar el usuario -->
-                        <a href="./scripts/eliminar_usuario.php?id=<?php echo $fila['id_usuario']; ?>" class="btn btn-danger">Eliminar</a>
+                        <h5 class="card-title"><?php echo $fila['nombre']; ?></h5>
+                        <!-- Botón para modificar el módulo -->
+                        <a href="modificar_modulo.php?id_modulo=<?php echo $fila['id_modulo']; ?>" class="btn btn-primary">Modificar</a>
+                        <!-- Botón para eliminar el módulo -->
+                        <a href="./scripts/eliminar_modulo.php?id_modulo=<?php echo $fila['id_modulo']; ?>" class="btn btn-danger">Eliminar</a>
                     </div>
                 </div>
             </div>
-            <?php $tipo_anterior = $fila['tipo']; ?>
+            <?php $nombre_anterior = $fila['nombre']; ?>
         <?php endwhile; ?>
-        </div><!-- Cierra el último contenedor de usuarios -->
+        </div><!-- Cierra el último contenedor de módulos -->
     <?php else: ?>
-        <p class="mt-4">No hay usuarios disponibles.</p>
+        <p class="mt-4">No hay módulos disponibles.</p>
     <?php endif; ?>
 </div>
 

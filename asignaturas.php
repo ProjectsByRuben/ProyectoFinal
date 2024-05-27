@@ -47,7 +47,7 @@ $result = $conn->query($sql);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asignaturas de ASIR - 1º Curso</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
+    <link rel="stylesheet" href="./estilos/styles.css?v=2" id="themeStylesheet">
     <style>
         body {
             font-family: 'Bangers', cursive;
@@ -160,7 +160,7 @@ $result = $conn->query($sql);
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <a href="./cerrar_sesion.php" class="btn btn-primary">Cerrar sesión</a>
+                <a href="../scripts/cerrar_sesion.php" class="btn btn-primary">Cerrar sesión</a>
             </div>
         </div>
     </div>
@@ -168,7 +168,7 @@ $result = $conn->query($sql);
 
 <!-- Contenido principal -->
 <div class="container mt-4">
-    <h2>Asignaturas de <?php echo $nombre_modulo; ?> - 1º Curso</h2>
+    <h2>Asignaturas de <?php echo $nombre_modulo; ?> - <?php echo $id_curso; ?>º Curso</h2>
     <div class="list-group">
         <?php
         if ($result->num_rows > 0) {
@@ -178,7 +178,7 @@ $result = $conn->query($sql);
                 // Aquí aplicamos una clase condicional según el valor del número de ejercicios
                 $clase_ejercicios = $row['num_ejercicios'] == 0 ? 'rojo' : 'verde';
                 echo "<h5 class='card-title'>{$row['nombre']} <small class='small-text'>(<span class='num-ejercicios $clase_ejercicios'>{$row['num_ejercicios']}</span> ejercicio/s)</small></h5>";
-                echo "<a href='./ejercicios.php?asignatura_id={$row['id_asignatura']}' class='btn btn-primary'>Ver ejercicios</a>";
+                echo "<a href='./ejercicios.php?asignatura_id={$row['id_asignatura']}&nombre_asignatura={$row['nombre']}' class='btn btn-primary'>Ver ejercicios</a>";
                 echo "</div>";
                 echo "</div>";            
             }

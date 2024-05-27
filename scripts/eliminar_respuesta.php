@@ -1,15 +1,15 @@
 <?php
 session_start();
 
-include './scripts/conexion.php';
+include './conexion.php';
 
 if (!isset($_SESSION['usuario'])) {
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit();
 }
 
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    header("Location: alguna_pagina_apropiada.php");
+    header("Location: ../index.php");
     exit();
 }
 

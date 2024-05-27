@@ -13,6 +13,7 @@ $tipo_usuario = $_SESSION['tipo'];
 $id_modulo = $_SESSION['id_modulo'];
 $id_curso = isset($_GET['id_curso']) ? $_GET['id_curso'] : null; // Captura el id_curso de la URL, maneja si no está definido
 $id_asignatura = isset($_GET['asignatura_id']) ? $_GET['asignatura_id'] : null; // Captura el id_asignatura de la URL, maneja si no está definido
+$nombre = isset($_GET['nombre_asignatura']) ? $_GET['nombre_asignatura'] : null; // Captura el id_asignatura de la URL, maneja si no está definido
 
 // Verifica si id_modulo es NULL
 if ($id_modulo === NULL) {
@@ -49,7 +50,7 @@ if ($id_asignatura !== null) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ejercicios de <?php echo $nombre_modulo; ?> - <?php echo $id_curso; ?>º Curso</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=2">
+    <link rel="stylesheet" href="./estilos/styles.css?v=2">
     <style>
         body {
             font-family: 'Bangers', cursive;
@@ -182,7 +183,7 @@ if ($id_asignatura !== null) {
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <a href="./cerrar_sesion.php" class="btn btn-primary">Cerrar sesión</a>
+                <a href="../scripts/cerrar_sesion.php" class="btn btn-primary">Cerrar sesión</a>
             </div>
         </div>
     </div>
@@ -190,7 +191,7 @@ if ($id_asignatura !== null) {
 
 <!-- Contenido principal -->
 <div class="container mt-4">
-    <h2>Ejercicios de <?php echo $nombre_modulo; ?> - <?php echo $id_curso; ?>º Curso</h2>
+    <h2>Ejercicios de <?php echo $nombre; ?></h2>
     <div class="list-group">
         <?php
         if ($result && $result->num_rows > 0) {
@@ -218,7 +219,7 @@ if ($id_asignatura !== null) {
                 echo "<p class='card-text'>{$row['enunciado']}</p>";
                 echo "<a href='../solucion.php?id={$row['id_ejercicio']}' class='btn btn-primary'>Intentar</a>";
                 if ($tipo_usuario === 'profesor'):
-                    echo "<a href='../eliminar_ejercicio.php?id={$row['id_ejercicio']}' class='btn'><button type='button' class='btn btn-danger'>Eliminar Ejercicio</button></a>";
+                    echo "<a href='./scripts/eliminar_ejercicio.php?id={$row['id_ejercicio']}' class='btn'><button type='button' class='btn btn-danger'>Eliminar Ejercicio</button></a>";
                 endif;
                 echo "</div>";
                 echo "</div>";            

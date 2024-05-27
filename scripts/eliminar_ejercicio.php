@@ -1,19 +1,19 @@
 <?php
 session_start();
 
-include './scripts/conexion.php'; // Incluye el archivo de conexión
+include './conexion.php'; // Incluye el archivo de conexión
 
 // Verificar si el usuario ha iniciado sesión
 if (!isset($_SESSION['usuario'])) {
     // Si el usuario no ha iniciado sesión, redireccionar al formulario de inicio de sesión
-    header("Location: index.php");
+    header("Location: ../index.php");
     exit();
 }
 
 // Verificar si se proporciona el ID del ejercicio
 if (!isset($_GET['id'])) {
     // Si no se proporciona el ID del ejercicio, redireccionar a la página de ejercicios
-    header("Location: modulos.php");
+    header("Location: ../modulos.php");
     exit();
 }
 
@@ -29,7 +29,7 @@ if ($resultado->num_rows > 0) {
     $nombre_enunciado = $fila["enunciado_archivo"];
     // Eliminar el archivo de enunciado si existe
     if (!empty($nombre_enunciado)) {
-        $ruta_enunciado = "./" . $nombre_enunciado;
+        $ruta_enunciado = "../" . $nombre_enunciado;
         if (file_exists($ruta_enunciado)) {
             unlink($ruta_enunciado);
         }
@@ -48,9 +48,9 @@ if ($conn->query($sql_delete_soluciones) === TRUE) {
 
     if ($conn->query($sql_delete_ejercicio) === TRUE) {
         // Directorios donde se encuentran los archivos de ejercicios, enunciados y pistas
-        $directorio_ejercicios = 'ejercicios/';
-        $directorio_enunciados = 'enunciados/';
-        $directorio_pistas = 'pistas/';
+        $directorio_ejercicios = '../ejercicios/';
+        $directorio_enunciados = '../enunciados/';
+        $directorio_pistas = '../pistas/';
 
         // Patrones para buscar archivos asociados al ejercicio, enunciado y pistas
         $patron_archivos_ejercicio = $directorio_ejercicios . $id_ejercicio . ".*";

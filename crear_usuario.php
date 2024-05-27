@@ -36,7 +36,7 @@ if ($id_modulo === NULL) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=6" id="themeStylesheet">
+    <link rel="stylesheet" href="./estilos/styles.css?v=6" id="themeStylesheet">
     <title>Crear Nuevo Usuario</title>
     <style>
         body {
@@ -150,6 +150,9 @@ if ($id_modulo === NULL) {
                         <a class="nav-link active" aria-current="page" href="./usuarios.php">Usuarios</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="./ver_modulos.php">Modulos</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="./crear_usuario.php">Crear Usuario</a>
                     </li>
                     <li class="nav-item">
@@ -192,7 +195,7 @@ if ($id_modulo === NULL) {
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <a href="cerrar_sesion.php" class="btn btn-primary">Cerrar sesión</a>
+                <a href="../scripts/cerrar_sesion.php" class="btn btn-primary">Cerrar sesión</a>
             </div>
         </div>
     </div>

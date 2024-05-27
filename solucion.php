@@ -106,7 +106,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Mover el archivo al directorio de descargas
             if (move_uploaded_file($_FILES['archivo']['tmp_name'], $ruta)) {
                 // Insertar la solución en la tabla de soluciones
-                $stmt_sol = $conn->prepare("INSERT INTO soluciones (id_ejercicio, id_usuario, solucion) VALUES (?, ?, ?)");
+                $stmt_sol = $conn->prepare("INSERT INTO soluciones (id_ejercicio, id_usuario, solucion) VALUES (?, ?, CONCAT('../', ?))");
                 $stmt_sol->bind_param("iis", $id_ejercicio, $id_usuario, $ruta);
                 if ($stmt_sol->execute()) {
                     echo '<script>alert("Respuesta enviada correctamente."); window.location.href = window.location.href.split("?")[0];</script>';
@@ -135,7 +135,7 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Realizar Ejercicio</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="./styles.css?v=2" id="themeStylesheet">
+    <link rel="stylesheet" href="./estilos/styles.css?v=2" id="themeStylesheet">
     <style>
         body {
             font-family: 'Bangers', cursive;
@@ -292,7 +292,7 @@ $conn->close();
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <a href="cerrar_sesion.php" class="btn btn-primary">Cerrar sesión</a>
+                <a href="../scripts/cerrar_sesion.php" class="btn btn-primary">Cerrar sesión</a>
             </div>
         </div>
     </div>
