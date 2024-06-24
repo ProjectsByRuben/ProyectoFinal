@@ -118,6 +118,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <img src="./img/logo.png" alt="Bootstrap" width="140" height="90">
     <div class="container-fluid">
+        <a class="nav-link active" aria-current="page" href="javascript:history.back()">
+            <img src="./img/flecha.png" class="img-fluid" style="max-width: 30px;" alt="Flecha">
+            <span style='margin: 0 10px;'></span>
+        </a>
         <a class="navbar-brand" href="./dashboard.php">Inicio</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -230,14 +234,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div id="asignaturasContainer_1">
                 <input type="text" class="form-control mb-2" name="asignaturas_1[]" required>
             </div>
-            <button type="button" class="btn btn-primary mb-2" onclick="agregarAsignatura('asignaturasContainer_1')">Agregar Asignatura</button>
+            <button type="button" class="btn btn-secondary mb-2" onclick="agregarAsignatura('asignaturasContainer_1')">Agregar Asignatura</button>
         </div>
         <div class="mb-3">
             <label class="form-label">Asignaturas para el 2º Curso:</label>
             <div id="asignaturasContainer_2">
                 <input type="text" class="form-control mb-2" name="asignaturas_2[]" required>
             </div>
-            <button type="button" class="btn btn-primary mb-2" onclick="agregarAsignatura('asignaturasContainer_2')">Agregar Asignatura</button>
+            <button type="button" class="btn btn-secondary mb-2" onclick="agregarAsignatura('asignaturasContainer_2')">Agregar Asignatura</button>
         </div>
 
         <div class="btn-container">

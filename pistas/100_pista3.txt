@@ -1,0 +1,4 @@
+Para ordenar la lista, puedes usar la función sorted(), que devuelve una nueva lista ordenada. Por
+ ejemplo, sorted(numeros) te dará la lista en orden ascendente, y sorted(numeros, reverse=True)
+ te dará la lista en orden descendente. Aquí tienes un fragmento de código que te muestra cómo
+ hacerlo:

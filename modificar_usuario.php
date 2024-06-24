@@ -89,7 +89,7 @@ $sql_modulos = "SELECT * FROM modulos";
 $resultado_modulos = $conn->query($sql_modulos);
 
 // Variable para almacenar las opciones de módulo
-$options_modulos = '';
+$options_modulos = '<option value="" ' . (is_null($usuario['id_modulo']) ? 'selected' : '') . '>Ninguno</option>';
 
 if ($resultado_modulos->num_rows > 0) {
     // Recorrer los resultados y generar las opciones
@@ -190,6 +190,10 @@ if ($resultado_modulos->num_rows > 0) {
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <img src="./img/logo.png" alt="Bootstrap" width="140" height="90">
     <div class="container-fluid">
+        <a class="nav-link active" aria-current="page" href="javascript:history.back()">
+            <img src="./img/flecha.png" class="img-fluid" style="max-width: 30px;" alt="Flecha">
+            <span style='margin: 0 10px;'></span>
+        </a>
         <a class="navbar-brand" href="./dashboard.php">Inicio</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>

@@ -1,0 +1,2 @@
+Aplica las leyes de Kirchhoff para establecer ecuaciones 
+que describan el flujo de corriente en el circuito.

@@ -266,7 +266,7 @@ $conn->close();
 <!-- Script para configurar y mostrar el gráfico -->
 <script>
     // Datos del gráfico
-    var totalEjercicios = <?php echo $total_ejercicios; ?>;
+    var totalEjercicios = <?php echo $tipo_usuario !== 'admin' ? $total_ejercicios : 'null'; ?>;
     var totalUsuarios = <?php echo $total_usuarios; ?>;
 
     // Configuración del gráfico
@@ -274,18 +274,22 @@ $conn->close();
     var barChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Ejercicios Disponibles', 'Usuarios Totales'],
-            datasets: [{
-                label: 'Ejercicios', // Etiqueta para los ejercicios
-                data: [totalEjercicios, 0], // Se establece 0 para el total de usuarios para que no se muestre en la leyenda
-                backgroundColor: '#007bff',
-                borderWidth: 1
-            }, {
-                label: 'Usuarios', // Etiqueta para los usuarios
-                data: [0, totalUsuarios], // Se establece 0 para el total de ejercicios para que no se muestre en la leyenda
-                backgroundColor: '#28a745',
-                borderWidth: 1
-            }]
+            labels: <?php echo $tipo_usuario !== 'admin' ? "['Ejercicios Disponibles', 'Usuarios Totales']" : "['Usuarios Totales']"; ?>,
+            datasets: [
+                <?php if ($tipo_usuario !== 'admin'): ?>{
+                    label: 'Ejercicios', // Etiqueta para los ejercicios
+                    data: [totalEjercicios, 0], // Se establece 0 para el total de usuarios para que no se muestre en la leyenda
+                    backgroundColor: '#007bff',
+                    borderWidth: 1
+                },
+                <?php endif; ?>
+                {
+                    label: 'Usuarios', // Etiqueta para los usuarios
+                    data: <?php echo $tipo_usuario !== 'admin' ? "[0, totalUsuarios]" : "[totalUsuarios]"; ?>, // Ajusta los datos según el tipo de usuario
+                    backgroundColor: '#28a745',
+                    borderWidth: 1
+                }
+            ]
         },
         options: {
             scales: {

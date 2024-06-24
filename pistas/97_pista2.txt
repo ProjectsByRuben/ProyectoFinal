@@ -1,0 +1,4 @@
+Durante la configuración de Apache, presta especial atención 
+a la configuración de los sitios virtuales (VirtualHosts) para 
+garantizar que la aplicación web se pueda acceder correctamente 
+a través del navegador.

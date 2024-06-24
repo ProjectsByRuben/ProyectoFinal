@@ -1,0 +1,2 @@
+Asegúrate de configurar correctamente las reglas de firewall en el 
+servidor Linux para permitir el tráfico de red necesario para el funcionamiento de Samba.

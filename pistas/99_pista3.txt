@@ -1,0 +1,2 @@
+Después de la instalación, configura el archivo /etc/dhcp/dhcpd.conf 
+para definir los rangos de direcciones IP y otras opciones de configuración.

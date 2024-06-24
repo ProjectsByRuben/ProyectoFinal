@@ -1,0 +1,2 @@
+Para compartir una carpeta en Windows Server, 
+necesitarás usar la herramienta "Administrador de archivos compartidos".

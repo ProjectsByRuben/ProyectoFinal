@@ -1,0 +1,4 @@
+Antes de comenzar, asegúrate de que el servidor cumpla con los 
+requisitos mínimos del sistema para la aplicación web que deseas 
+desplegar, incluyendo versiones compatibles de PHP, MySQL u otros 
+servicios necesarios.

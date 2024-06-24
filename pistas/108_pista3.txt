@@ -1,0 +1,4 @@
+Al importar la base de datos de la aplicación web, verifica que los datos se 
+importen correctamente y que los parámetros de configuración de la aplicación 
+se actualicen adecuadamente para reflejar la nueva ubicación de la base de 
+datos en el servidor.

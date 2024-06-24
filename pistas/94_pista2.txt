@@ -1,0 +1,2 @@
+Considera la configuración de reglas de firewall para permitir el tráfico necesario 
+(como navegación web y correo electrónico) mientras se bloquea el tráfico no deseado.

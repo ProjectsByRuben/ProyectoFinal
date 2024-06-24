@@ -1,0 +1,3 @@
+Para calcular el promedio, recuerda que necesitas la suma total de los números y la cantidad de
+ números en la lista. Puedes obtener la suma con sum(numeros) y la cantidad de elementos con
+ len(numeros). El promedio sería la suma dividida por la cantidad de elementos.
